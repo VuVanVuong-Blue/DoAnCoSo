@@ -1,0 +1,74 @@
+﻿@model IEnumerable<System_Music.Models.SqlModels.Genre>
+
+@{
+    ViewData["Title"] = "Sync Genres from Zing MP3";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h1 class="mt-4">Sync Genres from Zing MP3</h1>
+
+<p>
+    <a asp-action="Index" class="btn btn-secondary">Back to Genres List</a>
+</p>
+
+<!-- Form để nhập genreIds -->
+<form asp-action="SyncFromZingMp3" method="get">
+    <div class="form-group">
+        <label for="genreIds">Enter Genre IDs (comma-separated, e.g., IWZ9Z08I,IWZ97FCD,IWZ9Z08U):</label>
+        <input type="text" id="genreIds" name="genreIds" class="form-control" value="@ViewData["GenreIds"]" />
+    </div>
+    <button type="submit" class="btn btn-primary">Sync Selected Genres from Zing MP3</button>
+</form>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-warning">
+        No genres synced yet. Enter Genre IDs and click "Sync Selected Genres" to sync.
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.GenreId)</th>
+                <th>@Html.DisplayNameFor(model => model.Name)</th>
+                <th>@Html.DisplayNameFor(model => model.Description)</th>
+                <th>Zing MP3 Genre ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var genre in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => genre.GenreId)</td>
+                    <td>@Html.DisplayFor(modelItem => genre.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => genre.Description)</td>
+                    <td>@Html.DisplayFor(modelItem => genre.ZingMp3GenreId)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $('form').on('submit', function (e) {
+                var genreIds = $('#genreIds').val();
+                if (!genreIds.trim()) {
+                    e.preventDefault();
+                    alert('Please enter at least one Genre ID.');
+                }
+            });
+        });
+    </script>
+}

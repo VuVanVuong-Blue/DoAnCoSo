@@ -1,0 +1,41 @@
+﻿@model IEnumerable<System_Music.Models.SqlModels.Genre>
+
+@{
+    ViewData["Title"] = "Manage Genres";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h1 class="mt-4">Manage Genres</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Genre</a>
+    <a asp-action="SyncFromZingMp3" asp-route-refresh="true" class="btn btn-success">Sync from Zing MP3</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.GenreId)</th>
+            <th>@Html.DisplayNameFor(model => model.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.Description)</th>
+            <th>Zing MP3 Genre ID</th> <!-- Thêm cột này -->
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var genre in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => genre.GenreId)</td>
+                <td>@Html.DisplayFor(modelItem => genre.Name)</td>
+                <td>@Html.DisplayFor(modelItem => genre.Description)</td>
+                <td>@Html.DisplayFor(modelItem => genre.ZingMp3GenreId)</td> <!-- Hiển thị ZingMp3GenreId -->
+                <td>
+                    <a asp-action="Edit" asp-route-id="@genre.GenreId" class="btn btn-warning btn-sm">Edit</a>
+                    <a asp-action="Details" asp-route-id="@genre.GenreId" class="btn btn-info btn-sm">Details</a>
+                    <a asp-action="Delete" asp-route-id="@genre.GenreId" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,387 @@
+﻿@{
+    ViewData["Title"] = "Thanh toán";
+    Layout = "~/Views/Shared/PremiumLayout.cshtml";
+}
+
+<style>
+    .payment-result-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        color: #FFFFFF;
+        text-align: center;
+    }
+
+        .payment-result-container h2 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+    .plan-info {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        background-color: #121212;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        text-align: left;
+    }
+
+    .plan-info-left {
+        display: flex;
+        align-items: flex-start;
+    }
+
+        .plan-info-left img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .plan-info-left div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .plan-info-left h3 {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .plan-info-left p {
+            font-size: 12px;
+            color: #b3b3b3;
+            margin: 2px 0;
+        }
+
+    .plan-info-right {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .order-summary {
+        background-color: #181818;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: left;
+        margin-bottom: 30px;
+        display: none; /* Ẩn mặc định */
+    }
+
+        .order-summary h3 {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .order-summary p {
+            font-size: 12px;
+            color: #b3b3b3;
+            margin: 2px 0;
+        }
+
+        .order-summary .plan-name {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+            .order-summary .plan-name img {
+                width: 30px;
+                height: 30px;
+                margin-right: 10px;
+            }
+
+            .order-summary .plan-name span {
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+    .payment-methods {
+        margin-bottom: 30px;
+    }
+
+        .payment-methods h3 {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+    .payment-option {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        border: 1px solid #3e3e3e;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        cursor: pointer;
+    }
+
+        .payment-option.selected {
+            border-color: #1DB954;
+            background-color: rgba(29, 185, 84, 0.1);
+        }
+
+        .payment-option input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .payment-option label {
+            flex: 1;
+            font-size: 16px;
+            color: #FFFFFF;
+        }
+
+        .payment-option img {
+            height: 20px;
+            margin-left: 10px;
+        }
+
+    .total-section {
+        text-align: left;
+        margin-bottom: 20px;
+        display: none; /* Ẩn mặc định */
+    }
+
+        .total-section h3 {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .total-section p {
+            font-size: 18px;
+        }
+
+        .total-section .terms {
+            font-size: 14px;
+            color: #b3b3b3;
+        }
+
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .action-btn {
+        padding: 12px 24px;
+        border-radius: 25px;
+        font-weight: bold;
+        text-decoration: none;
+        transition: transform 0.2s ease, background-color 0.3s ease;
+        text-align: center;
+        width: 200px;
+    }
+
+    .complete-btn {
+        background-color: #1DB954;
+        color: #FFFFFF;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        font-weight: bold;
+        transition: transform 0.2s ease, background-color 0.3s ease;
+        text-align: center;
+        width: 200px;
+        cursor: pointer;
+    }
+
+    .change-plan-btn {
+        background-color: transparent;
+        border: 2px solid #FFFFFF;
+        color: #FFFFFF;
+    }
+
+    .complete-btn:hover {
+        transform: scale(1.05);
+        background-color: #17a34a;
+    }
+
+    .change-plan-btn:hover {
+        transform: scale(1.05);
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .footer {
+        background-color: #000000;
+        padding: 40px 20px;
+        color: #b3b3b3;
+        font-size: 14px;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .footer-column {
+        flex: 1;
+        min-width: 200px;
+        margin-bottom: 20px;
+    }
+
+        .footer-column h4 {
+            color: #FFFFFF;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+        }
+
+            .footer-column ul li {
+                margin-bottom: 10px;
+            }
+
+                .footer-column ul li a {
+                    color: #b3b3b3;
+                    text-decoration: none;
+                }
+
+                    .footer-column ul li a:hover {
+                        color: #FFFFFF;
+                    }
+
+    .social-icons {
+        display: flex;
+        gap: 15px;
+    }
+
+        .social-icons a {
+            color: #FFFFFF;
+            font-size: 20px;
+        }
+
+    .footer-bottom {
+        text-align: center;
+        margin-top: 20px;
+        color: #b3b3b3;
+        font-size: 12px;
+    }
+</style>
+
+<div class="payment-result-container">
+    <h2>Thanh toán</h2>
+
+    <!-- Thông tin gói -->
+    <div class="plan-info">
+        <div class="plan-info-left">
+            <img src="/images/spotify-icon.webp" alt="Spotify" />
+            <div>
+                <h3>Premium @(ViewBag.PlanName ?? "Không xác định")</h3>
+                <p>1 tài khoản Premium</p>
+                <p>Hôm nay: 4 tháng với giá @(ViewBag.Amount != 0 ? ViewBag.Amount + " ₫" : "59.000 ₫")</p>
+                <p>Bắt đầu từ 17/8, 2025: @(ViewBag.Amount != 0 ? ViewBag.Amount + " ₫" : "59.000 ₫")/tháng</p>
+                <p>Hủy bất cứ lúc nào. Có áp dụng các điều khoản.</p>
+            </div>
+        </div>
+        <div class="plan-info-right">
+            @(ViewBag.Amount != 0 ? ViewBag.Amount + " ₫" : "59.000 ₫")
+        </div>
+    </div>
+
+    <!-- Phương thức thanh toán -->
+    <div class="payment-methods">
+        <h3>Phương thức thanh toán</h3>
+        <div class="payment-option" data-method="momo">
+            <input type="radio" name="payment-method" value="momo" />
+            <label>Ví MoMo</label>
+            <img src="/images/payment-methods/momo.webp" alt="MoMo" />
+        </div>
+        <div class="payment-option" data-method="credit-card">
+            <input type="radio" name="payment-method" value="credit-card" />
+            <label>Thẻ tín dụng hoặc thẻ ghi nợ</label>
+            <div>
+                <img src="/images/payment-methods/visa.webp" alt="Visa" />
+                <img src="/images/payment-methods/mastercard.webp" alt="Mastercard" />
+            </div>
+        </div>
+        <div class="payment-option" data-method="paypal">
+            <input type="radio" name="payment-method" value="paypal" />
+            <label>PayPal</label>
+        </div>
+    </div>
+
+    <!-- Tóm tắt đơn hàng -->
+    <div class="order-summary" id="order-summary">
+        <h3>Tóm tắt</h3>
+        <div class="plan-name">
+            <img src="/images/spotify-icon.webp" alt="Spotify" />
+            <span>Premium @(ViewBag.PlanName ?? "Individual")</span>
+        </div>
+        <p>@(ViewBag.Amount != 0 ? ViewBag.Amount + " ₫" : "59.000 ₫")</p>
+        <p>Hôm nay - 4 tháng với giá @(ViewBag.Amount != 0 ? ViewBag.Amount + " ₫" : "59.000 ₫")</p>
+        <p>Bắt đầu từ 17/8, 2025: @(ViewBag.Amount != 0 ? ViewBag.Amount + " ₫" : "59.000 ₫")/tháng</p>
+        <p>Hủy bất cứ lúc nào. Có áp dụng điều khoản.</p>
+    </div>
+
+    <!-- Tổng tiền -->
+    <div class="total-section" id="total-section">
+        <h3>Tổng tiền</h3>
+        <p>@(ViewBag.Amount != 0 ? ViewBag.Amount + " ₫" : "29.500 ₫")</p>
+        <p class="terms">
+            Gửi đến Spotify để xử lý thanh toán. Khi bạn đồng ý với <a href="#" style="color: #1DB954;">Điều khoản sử dụng</a> và <a href="#" style="color: #1DB954;">Chính sách quyền riêng tư</a> của Spotify. Không áp dụng thuế giá trị gia tăng vì đây là dịch vụ miễn thuế.
+        </p>
+    </div>
+
+    <!-- Nút hành động -->
+    <div class="action-buttons">
+        <a href="/Home/Premium" class="action-btn change-plan-btn">Thay đổi gói</a>
+        <form method="POST" asp-action="CreatePaymentMomo" asp-controller="Payment">
+            <input type="hidden" name="Amount" value="@(Model?.GrandTotal ?? 59000)" />
+            <input type="hidden" name="OrderId" value="@Guid.NewGuid().ToString()" />
+            <input type="hidden" name="OrderInfor" value="Thanh toán đặt hàng qua Momo tại Spotify Clone" />
+            <input type="hidden" name="FullName" value="@(User?.Identity?.Name ?? "Khách")" />
+            <button class="btn btn-danger" name="PayUrl" type="submit">Pay with MoMo</button>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const paymentOptions = document.querySelectorAll('.payment-option');
+        const orderSummary = document.getElementById('order-summary');
+        const totalSection = document.getElementById('total-section');
+
+        // Hàm kiểm tra xem có phương thức thanh toán nào được chọn không
+        function updateVisibility() {
+            const isAnyMethodSelected = document.querySelector('input[name="payment-method"]:checked');
+            if (isAnyMethodSelected) {
+                orderSummary.style.display = 'block';
+                totalSection.style.display = 'block';
+            } else {
+                orderSummary.style.display = 'none';
+                totalSection.style.display = 'none';
+            }
+        }
+
+        // Gọi hàm updateVisibility ngay khi trang được tải
+        updateVisibility();
+
+        paymentOptions.forEach(option => {
+            option.addEventListener('click', function () {
+                // Bỏ class selected khỏi tất cả các tùy chọn
+                paymentOptions.forEach(opt => opt.classList.remove('selected'));
+                // Thêm class selected cho tùy chọn được click
+                this.classList.add('selected');
+                // Cập nhật trạng thái checked của radio
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+
+                // Cập nhật hiển thị
+                updateVisibility();
+            });
+        });
+    });
+</script>

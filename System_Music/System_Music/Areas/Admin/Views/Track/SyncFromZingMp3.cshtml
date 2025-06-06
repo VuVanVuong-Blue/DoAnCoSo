@@ -1,0 +1,156 @@
+﻿@model IEnumerable<System_Music.Models.SqlModels.Track>
+@{
+    ViewData["Title"] = "Sync Tracks from Zing MP3";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h1 class="mt-4">Sync Tracks from Zing MP3</h1>
+
+<p>
+    <a asp-action="Index" class="btn btn-secondary">Back to Tracks List</a>
+</p>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <form asp-action="SyncFromZingMp3" method="get">
+            <div class="form-group">
+                <label for="encodeId">Enter Track Encode ID (e.g., Z6BOBWWZ):</label>
+                <input type="text" id="encodeId" name="encodeId" class="form-control" value="@ViewData["EncodeId"]" />
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Sync Track from Zing MP3</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <form asp-action="SyncArtistSongsFromZingMp3" method="get">
+            <div class="form-group">
+                <label for="artistId">Enter Artist ID (e.g., IW76C8FU):</label>
+                <input type="text" id="artistId" name="artistId" class="form-control" placeholder="Enter Artist ID" />
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Sync Artist Songs</button>
+        </form>
+    </div>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-warning">
+        No tracks synced yet. Enter a Track Encode ID or Artist ID and click "Sync" to sync.
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.First().TrackId)</th>
+                <th>@Html.DisplayNameFor(model => model.First().Title)</th>
+                <th>@Html.DisplayNameFor(model => model.First().ImageUrl)</th>
+                <th>@Html.DisplayNameFor(model => model.First().Duration)</th>
+                <th>Album</th>
+                <th>Artists</th>
+                <th>Genres</th>
+                <th>Zing MP3 Track ID</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var track in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => track.TrackId)</td>
+                    <td>@Html.DisplayFor(modelItem => track.Title)</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(track.ImageUrl))
+                        {
+                            <img src="@track.ImageUrl" alt="@track.Title" style="width: 50px; height: 50px;" />
+                        }
+                        else
+                        {
+                            <span>No Image</span>
+                        }
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => track.Duration)</td>
+                    <td>@(track.Album != null ? track.Album.Name : "No Album")</td>
+                    <td>
+                        @if (track.TrackArtists != null && track.TrackArtists.Any())
+                        {
+                            @foreach (var trackArtist in track.TrackArtists)
+                            {
+                                <span>@trackArtist.Artist.Name</span>
+                                if (trackArtist != track.TrackArtists.Last())
+                                {
+                                    <span>, </span>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <span>No Artists</span>
+                        }
+                    </td>
+                    <td>
+                        @if (track.TrackGenres != null && track.TrackGenres.Any())
+                        {
+                            @foreach (var trackGenre in track.TrackGenres)
+                            {
+                                <span>@trackGenre.Genre.Name</span>
+                                if (trackGenre != track.TrackGenres.Last())
+                                {
+                                    <span>, </span>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <span>No Genres</span>
+                        }
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => track.ZingMp3TrackId)</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@track.TrackId" class="btn btn-info btn-sm">Details</a>
+                        <a asp-action="Edit" asp-route-id="@track.TrackId" class="btn btn-warning btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@track.TrackId" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $('form').on('submit', function (e) {
+                var encodeId = $('#encodeId').val().trim();
+                var artistId = $('#artistId').val().trim();
+
+                // Kiểm tra form Sync Track
+                if ($(this).attr('asp-action') === 'SyncFromZingMp3' && !encodeId) {
+                    e.preventDefault();
+                    alert('Please enter a Track Encode ID.');
+                }
+
+                // Kiểm tra form Sync Artist Songs
+                if ($(this).attr('asp-action') === 'SyncArtistSongsFromZingMp3' && !artistId) {
+                    e.preventDefault();
+                    alert('Please enter an Artist ID.');
+                }
+            });
+        });
+    </script>
+}

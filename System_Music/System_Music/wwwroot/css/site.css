@@ -1,0 +1,170 @@
+﻿/* site.css */
+html {
+    font-size: 14px;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    min-height: 100%;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: white;
+    border-radius: 0;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+    color: var(--bs-secondary-color);
+    text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+    text-align: start;
+}
+
+/* Root layout */
+.root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: transparent;
+}
+
+/* Container chính sử dụng CSS Grid */
+.container {
+    display: grid;
+    grid-template-areas:
+        "global-nav global-nav global-nav"
+        "left-sidebar main-view right-sidebar"
+        "now-playing now-playing now-playing";
+    grid-template-columns: 420px 1fr 0;
+    grid-template-rows: 80px 1fr 90px;
+    height: 100vh;
+    gap: 8px;
+    background-color: transparent;
+    overflow-x: auto;
+}
+
+/* Thanh điều hướng trên cùng */
+.global-nav {
+    grid-area: global-nav;
+    background-color: #080808;
+    padding: 0;
+    height: 80px;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 8px;
+    position: relative;
+    z-index: 1000;
+}
+
+/* Thanh bên trái */
+.left-sidebar {
+    grid-area: left-sidebar;
+    background-color: #181818;
+    padding: 10px;
+    margin: 0;
+    border-radius: 8px;
+    max-height: calc(100vh - 170px);
+    z-index: 100;
+}
+
+/* Khu vực chính */
+.main-view {
+    grid-area: main-view;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-attachment: fixed;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 8px;
+    width: 100%;
+    min-height: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+    .main-view > .content-spacing {
+        padding-top: 24px;
+        padding-bottom: 24px;
+        padding-left: 24px;
+        padding-right: 24px;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+/* Thanh phát nhạc */
+.now-playing {
+    grid-area: now-playing;
+    background-color: #181818;
+    border-radius: 8px;
+    z-index: 100;
+}
+
+/* Menu item trong sidebar */
+.menu-item {
+    margin: 10px 0;
+    color: #b3b3b3;
+    cursor: pointer;
+}
+
+    .menu-item:hover {
+        color: white;
+    }
+
+/* Playlist grid */
+.playlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+}
+
+.playlist-item {
+    background-color: #282828;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Responsive: Giảm chiều rộng sidebar trên màn hình nhỏ */
+@media (max-width: 768px) {
+    .container {
+        grid-template-columns: 200px 1fr 0;
+    }
+
+    .left-sidebar {
+        padding: 8px;
+        max-height: calc(100vh - 170px);
+    }
+
+    .main-view > .content-spacing {
+        padding-top: 200px;
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+
+/* Đảm bảo dropdown tìm kiếm hiển thị trên các phần tử khác */
+.search-bar {
+    position: relative;
+    z-index: 9999;
+}
+
+.search-dropdown {
+    position: absolute;
+    z-index: 9999;
+}

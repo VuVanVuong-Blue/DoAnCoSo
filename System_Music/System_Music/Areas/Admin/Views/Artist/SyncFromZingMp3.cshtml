@@ -1,0 +1,90 @@
+﻿@model IEnumerable<System_Music.Models.SqlModels.Artist>
+
+@{
+    ViewData["Title"] = "Sync Artists from Zing MP3";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h1 class="mt-4">Sync Artists from Zing MP3</h1>
+
+<p>
+    <a asp-action="Index" class="btn btn-secondary">Back to Artists List</a>
+</p>
+
+<!-- Form để nhập artistName hoặc artistId -->
+<form asp-action="SyncFromZingMp3" method="get">
+    <div class="form-group">
+        <label for="artistName">Enter Artist Name (e.g., NewJeans):</label>
+        <input type="text" id="artistName" name="artistName" class="form-control" value="@ViewData["ArtistName"]" />
+    </div>
+    <div class="form-group">
+        <label for="artistId">Or Enter Artist ID (e.g., IW6ZZ690):</label>
+        <input type="text" id="artistId" name="artistId" class="form-control" value="@ViewData["ArtistId"]" />
+    </div>
+    <button type="submit" class="btn btn-primary">Sync Artist from Zing MP3</button>
+</form>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-warning">
+        No artists synced yet. Enter an Artist Name or ID and click "Sync Artist" to sync.
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.ArtistId)</th>
+                <th>@Html.DisplayNameFor(model => model.Name)</th>
+                <th>@Html.DisplayNameFor(model => model.Country)</th>
+                <th>@Html.DisplayNameFor(model => model.Image)</th>
+                <th>Zing MP3 Artist ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var artist in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => artist.ArtistId)</td>
+                    <td>@Html.DisplayFor(modelItem => artist.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => artist.Country)</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(artist.Image))
+                        {
+                            <img src="@artist.Image" alt="@artist.Name" style="width: 50px; height: 50px;" />
+                        }
+                        else
+                        {
+                            <span>No Image</span>
+                        }
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => artist.ZingMp3ArtistId)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $('form').on('submit', function (e) {
+                var artistName = $('#artistName').val().trim();
+                var artistId = $('#artistId').val().trim();
+                if (!artistName && !artistId) {
+                    e.preventDefault();
+                    alert('Please enter either an Artist Name or an Artist ID.');
+                }
+            });
+        });
+    </script>
+}

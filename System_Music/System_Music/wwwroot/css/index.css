@@ -1,0 +1,532 @@
+﻿/* index.css */
+
+/* Reset cơ bản */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container chính */
+.main-view {
+    grid-area: main-view;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: linear-gradient(to bottom, #2A2A2A 0%, #121212 90px) !important;
+    background-attachment: fixed; /* Chỉ giữ 1 giá trị, loại bỏ background-attachment: scroll */
+    background-color: #121212 !important;
+    overflow-y: auto;
+    border-radius: 8px;
+    width: 100%;
+    min-height: 100%; /* Đảm bảo đồng bộ với site.css */
+    position: relative;
+}
+
+/* Main content */
+#main-content {
+    width: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Khoảng cách nội dung */
+.content-spacing {
+    padding: 16px;
+}
+
+/* Section chung */
+.shelf {
+    padding: 16px;
+    min-height: 260px;
+}
+
+/* Header của section */
+.shelf-header {
+    margin-bottom: 16px;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+}
+
+.title-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.shelf-title {
+    margin: 0;
+}
+
+    .shelf-title a {
+        font-size: 24px;
+        font-weight: bold;
+        color: #FFFFFF;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+        .shelf-title a:hover {
+            color: #FFFFFF;
+            text-decoration: underline;
+        }
+
+.show-all-wrapper {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+
+.show-all-link {
+    font-size: 12px;
+    font-weight: bold;
+    color: #b3b3b3;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+    .show-all-link:hover {
+        color: #FFFFFF;
+        text-decoration: underline;
+        background-color: #282828;
+    }
+
+/* Grid container chung */
+.grid-container {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 24px;
+    scrollbar-width: thin;
+    scrollbar-color: #b3b3b3 #282828;
+    padding-bottom: 16px;
+}
+
+    .grid-container::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .grid-container::-webkit-scrollbar-thumb {
+        background-color: #b3b3b3;
+        border-radius: 4px;
+    }
+
+    .grid-container::-webkit-scrollbar-track {
+        background-color: #282828;
+    }
+
+/* Card chung (dùng cho các section như Spotify Picks, Album, Artist, Recent Content) */
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background-color: transparent;
+    border-radius: 8px;
+    padding: 8px;
+    transition: background-color 0.2s ease;
+    min-width: 160px;
+    max-width: 160px;
+    flex-shrink: 0;
+}
+
+    .card:hover {
+        background-color: #282828;
+    }
+
+.card-image-container {
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+}
+
+.card-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+    .card-image.artist-image {
+        border-radius: 50%;
+    }
+
+.play-button-container {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.card:hover .play-button-container {
+    opacity: 1;
+}
+
+.play-button {
+    background-color: #1DB954;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+    .play-button:hover {
+        background-color: #1ed760;
+    }
+
+.play-icon {
+    width: 20px;
+    height: 20px;
+    fill: #000000;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.card-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #FFFFFF;
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+    .card-title:hover {
+        color: #FFFFFF;
+        text-decoration: underline;
+    }
+
+.card-subtitle {
+    font-size: 12px;
+    color: #b3b3b3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+    .card-subtitle:hover {
+        color: #FFFFFF;
+        text-decoration: underline;
+    }
+
+/* Show All Section */
+#show-all-content {
+    display: none;
+}
+
+    #show-all-content.active {
+        display: block;
+    }
+
+    #show-all-content .shelf-header {
+        margin-bottom: 32px;
+    }
+
+.grid-container-show-all {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 24px;
+}
+
+#show-all-grid .card {
+    min-width: 160px;
+    max-width: 160px;
+}
+
+/* Ẩn phần tử */
+.hidden {
+    display: none !important;
+}
+
+/* Video MV Section */
+.grid-container#videos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    max-height: 300px;
+    overflow-x: hidden;
+}
+
+.is-3 {
+    flex: 0 0 calc(33.33% - 16px);
+    max-width: calc(33.33% - 16px);
+}
+
+.list-border {
+    padding: 8px;
+    min-height: 280px;
+    max-height: 280px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.zm-card.video-item {
+    background-color: #181818;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: background-color 0.2s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+    .zm-card.video-item:hover {
+        background-color: #282828;
+    }
+
+.zm-card-image.video-image {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    height: 0;
+}
+
+    .zm-card-image.video-image > div {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .zm-card-image.video-image .image.is-16x9 {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .zm-card-image.video-image .card-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .zm-card-image.video-image .opacity {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+.zm-card.video-item:hover .opacity {
+    opacity: 1;
+}
+
+.zm-box.zm-actions.video-actions {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.zm-card.video-item:hover .zm-actions.video-actions {
+    opacity: 1;
+}
+
+.zm-btn.action-play {
+    background-color: #1DB954;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+    .zm-btn.action-play:hover {
+        background-color: #1ed760;
+    }
+
+    .zm-btn.action-play .play-icon {
+        width: 20px;
+        height: 20px;
+        fill: #000000;
+    }
+
+.zm-brand {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #FFFFFF;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+/* Show All Section cho Video MV */
+#show-all-videos {
+    display: none;
+    width: 100%;
+    min-height: 300px;
+    position: relative;
+    z-index: 10;
+}
+
+    #show-all-videos .shelf-header {
+        margin-bottom: 32px;
+    }
+
+#show-all-videos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    padding: 16px;
+    overflow-x: hidden;
+    min-height: 260px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+    #show-all-videos-grid .list-border {
+        padding: 8px;
+        min-height: 280px;
+        max-height: none;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        visibility: visible;
+        width: 100%;
+    }
+
+    #show-all-videos-grid .zm-card.video-item {
+        background-color: #181818;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: background-color 0.2s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        visibility: visible;
+    }
+
+        #show-all-videos-grid .zm-card.video-item:hover {
+            background-color: #282828;
+        }
+
+    #show-all-videos-grid .is-3 {
+        flex: none;
+        max-width: none;
+        width: 100%;
+    }
+
+.media {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    flex-grow: 1;
+}
+
+.media-left {
+    margin-right: 8px;
+}
+
+    .media-left .image.is-40x40 {
+        width: 40px;
+        height: 40px;
+    }
+
+    .media-left .image.is-rounded img {
+        border-radius: 50%;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.media-content {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+    .media-content .title {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFFFFF;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-height: 20px;
+    }
+
+        .media-content .title a {
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+
+            .media-content .title a:hover {
+                text-decoration: underline;
+            }
+
+    .media-content .subtitle.is-one-line {
+        font-size: 12px;
+        color: #b3b3b3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-height: 18px;
+    }
+
+        .media-content .subtitle.is-one-line a.is-ghost {
+            color: #b3b3b3;
+            text-decoration: none;
+        }
+
+            .media-content .subtitle.is-one-line a.is-ghost:hover {
+                color: #FFFFFF;
+                text-decoration: underline;
+            }
+
+/* Font family cho các phần tử */
+.card,
+.card-content,
+.card-title,
+.card-subtitle,
+.play-button,
+.play-button-container,
+.grid-container,
+.shelf,
+.shelf-header,
+.shelf-title,
+.show-all-link,
+.zm-card,
+.zm-card-image,
+.zm-btn,
+.zm-brand,
+.media,
+.media-content {
+    font-family: inherit !important;
+}

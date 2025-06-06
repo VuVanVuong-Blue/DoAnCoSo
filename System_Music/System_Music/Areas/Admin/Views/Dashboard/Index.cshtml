@@ -1,0 +1,154 @@
+﻿@model IEnumerable<System_Music.Models.SqlModels.Track>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h2 class="mb-4">Admin Dashboard</h2>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Thống kê -->
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">Users</h5>
+                        <h3 class="text-primary">@ViewBag.UserCount</h3>
+                    </div>
+                    <i class="las la-users text-primary" style="font-size: 40px;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">Artists</h5>
+                        <h3 class="text-success">@ViewBag.ArtistCount</h3>
+                    </div>
+                    <i class="las la-user-tie text-success" style="font-size: 40px;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">Albums</h5>
+                        <h3 class="text-warning">@ViewBag.AlbumCount</h3>
+                    </div>
+                    <i class="las la-compact-disc text-warning" style="font-size: 40px;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">Tracks</h5>
+                        <h3 class="text-danger">@ViewBag.TrackCount</h3>
+                    </div>
+                    <i class="las la-music text-danger" style="font-size: 40px;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Biểu đồ -->
+    <div class="col-lg-8 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Listening Activity</h5>
+                <canvas id="listeningChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Danh sách bài hát mới -->
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Latest Tracks</h5>
+                <ul class="list-group list-group-flush">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var track in Model.OrderByDescending(t => t.CreatedDate).Take(5)) // Sửa lỗi CS1001: Sắp xếp theo CreatedDate
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>@track.Title</strong><br /> <!-- Sửa lỗi CS1061: Dùng Title thay vì Id -->
+                                    <small class="text-muted">
+                                        @if (track.TrackArtists != null && track.TrackArtists.Any())
+                                        {
+                                            @string.Join(", ", track.TrackArtists.Select(ta => ta.Artist.Name))
+                                        }
+                                        else
+                                        {
+                                            @:Unknown Artist
+                                        }
+                                    </small> <!-- Sửa lỗi CS1061: Lấy tên nghệ sĩ từ TrackArtists -->
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-primary">
+                                        <i class="las la-play"></i> @track.ListenHistories?.Count() <!-- Sửa lỗi CS1061: Đếm số lượt nghe từ ListenHistories -->
+                                    </span><br />
+                                    <small class="text-muted">
+                                        @(TimeSpan.FromSeconds(track.Duration).ToString(@"mm\:ss")) <!-- Sửa lỗi CS1061: Chuyển Duration thành mm:ss -->
+                                    </small>
+                                </div>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li class="list-group-item text-muted">No tracks found.</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var ctx = document.getElementById('listeningChart').getContext('2d');
+        var listeningChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Plays',
+                    data: [120, 190, 300, 500, 200, 300],
+                    borderColor: '#ff4545',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+}

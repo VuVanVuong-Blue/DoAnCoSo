@@ -1,0 +1,109 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Đăng ký";
+    Layout = null;
+    var show = Request.Query["show"].ToString();
+    var containerClass = show == "signup" ? "container active" : "container";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/auth.css" />
+    <script src="path/to/jquery.min.js"></script>
+    <script src="path/to/jquery.validate.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Đăng ký | Spotify Clone</title>
+</head>
+<body>
+    <div class="@containerClass" id="container">
+        <!-- Form Đăng ký -->
+        <div class="form-container sign-up">
+            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                <h1>Tạo tài khoản</h1>
+                <div class="social-icons">
+                    <a href="#" class="icon"><i class="fa-brands fa-google-plus-g"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
+                <span>hoặc sử dụng email để đăng ký</span>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <!-- Thêm trường Fullname -->
+                <input asp-for="Input.Fullname" placeholder="Họ và tên" aria-required="true" />
+                <span asp-validation-for="Input.Fullname" class="text-danger"></span>
+                <!-- Thêm trường Country -->
+                <input asp-for="Input.Country" placeholder="Quốc gia" aria-required="true" />  
+                <span asp-validation-for="Input.Country" class="text-danger"></span>
+
+                <!-- Thêm Trường DateOfBirth -->
+                <input asp-for="Input.DateOfBirth" placeholder="Ngày sinh" type="date" aria-required="true" />
+                <span asp-validation-for="Input.DateOfBirth" class="text-danger"></span>
+                <input asp-for="Input.Email" placeholder="Email" autocomplete="username" aria-required="true" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                <input asp-for="Input.Password" placeholder="Mật khẩu" autocomplete="new-password" aria-required="true" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                <input asp-for="Input.ConfirmPassword" placeholder="Xác nhận mật khẩu" autocomplete="new-password" aria-required="true" />
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                <!-- Dropdown chọn Role -->
+                <div class="form-group">
+                    <label asp-for="Input.Role"></label>
+                    <select asp-for="Input.Role" asp-items="Model.Input.RoleList" class="form-control"></select>
+                </div>
+                <button type="submit">Đăng ký</button>
+                <div class="back-btn">
+                    <a asp-page="/Index" asp-area="">
+                        <i class="fas fa-arrow-left"></i> Quay lại trang chủ
+                    </a>
+                </div>
+            </form>
+        </div>>
+
+        <!-- Form Đăng nhập (chỉ để hiển thị giao diện, không hoạt động trên trang này) -->
+        <div class="form-container sign-in">
+            <form>
+                <h1>Đăng nhập</h1>
+                <div class="social-icons">
+                    <a href="#" class="icon"><i class="fa-brands fa-google-plus-g"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
+                <span>hoặc sử dụng email và mật khẩu</span>
+                <input type="email" placeholder="Email" />
+                <input type="password" placeholder="Mật khẩu" />
+                <a asp-page="./ForgotPassword">Quên mật khẩu?</a>
+                <button>Đăng nhập</button>
+                <div class="back-btn">
+                    <a asp-page="/Index" asp-area="">
+                        <i class="fas fa-arrow-left"></i> Quay lại trang chủ
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Toggle Panel -->
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <h1>Chào mừng bạn trở lại!</h1>
+                    <p>Nhập thông tin cá nhân để sử dụng tất cả tính năng của trang</p>
+                    <button class="hidden" id="login">Đăng nhập</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1>Xin chào, bạn mới!</h1>
+                    <p>Đăng ký với thông tin cá nhân để sử dụng tất cả tính năng của trang</p>
+                    <button class="hidden" id="register">Đăng ký</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/js/auth.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+</body>
+</html>

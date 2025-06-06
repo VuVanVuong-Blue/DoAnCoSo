@@ -1,0 +1,101 @@
+﻿@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = null;
+    var show = Request.Query["show"].ToString();
+    var containerClass = show == "signin" ? "container" : "container active";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/auth.css" />
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Đăng nhập | Spotify Clone</title>
+</head>
+<body>
+    <div class="@containerClass" id="container">
+        <!-- Form Đăng ký (chỉ để hiển thị giao diện, không hoạt động trên trang này) -->
+        <div class="form-container sign-up">
+            <form>
+                <h1>Tạo tài khoản</h1>
+                <div class="social-icons">
+                    <a href="#" class="icon"><i class="fa-brands fa-google-plus-g"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
+                <span>hoặc sử dụng email để đăng ký</span>
+                <!-- Các trường của form đăng ký -->
+                <input type="text" placeholder="Họ và tên" />
+                <input type="text" placeholder="Quốc gia" />
+                <input type="date" placeholder="Ngày sinh" />
+                <input type="email" placeholder="Email" />
+                <input type="password" placeholder="Mật khẩu" />
+                <input type="password" placeholder="Xác nhận mật khẩu" />
+                <button>Đăng ký</button>
+                <div class="back-btn">
+                    <a asp-page="/Index" asp-area="">
+                        <i class="fas fa-arrow-left"></i> Quay lại trang chủ
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Form Đăng nhập -->
+        <div class="form-container sign-in">
+            <form id="loginForm" method="post">
+                <h1>Đăng nhập</h1>
+                <div class="social-icons">
+                    <a href="#" class="icon"><i class="fa-brands fa-google-plus-g"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
+                <span>hoặc sử dụng email và mật khẩu</span>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Input.Email" placeholder="Email" autocomplete="username" aria-required="true" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                <input asp-for="Input.Password" placeholder="Mật khẩu" autocomplete="current-password" aria-required="true" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                <div class="checkbox-container">
+                    <input asp-for="Input.RememberMe" id="Input_RememberMe" />
+                    <label for="Input_RememberMe">@Html.DisplayNameFor(m => m.Input.RememberMe)</label>
+                </div>
+                <a asp-page="./ForgotPassword">Quên mật khẩu?</a>
+                <button type="submit" class="hidden">Đăng nhập</button>
+                <div class="back-btn">
+                    <a asp-page="/Index" asp-area="">
+                        <i class="fas fa-arrow-left"></i> Quay lại trang chủ
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Toggle Panel -->
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <h1>Chào mừng bạn trở lại!</h1>
+                    <p>Nhập thông tin cá nhân để sử dụng tất cả tính năng của trang</p>
+                    <button class="hidden" id="login">Đăng nhập</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1>Xin chào, bạn mới!</h1>
+                    <p>Đăng ký với thông tin cá nhân để sử dụng tất cả tính năng của trang</p>
+                    <button class="hidden" id="register">Đăng ký</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/js/auth.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+</body>
+</html>

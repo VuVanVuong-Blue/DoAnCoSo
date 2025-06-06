@@ -1,0 +1,804 @@
+﻿/* SidebarLoggedIn.css */
+
+/* Container chính của sidebar */
+.sidebar-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: #b3b3b3;
+    font-family: Arial, sans-serif;
+    position: relative;
+    width: 420px; /* Đồng bộ với left-sidebar trong site.css */
+    transition: width 0.3s ease;
+    background-color: #181818; /* Màu nền giống Spotify */
+}
+
+    /* Trạng thái thu gọn */
+    .sidebar-container.collapsed {
+        width: 80px !important; /* Ưu tiên cao nhất để ghi đè inline style từ resize */
+    }
+
+    /* Khu vực chứa header và filter chip */
+    .sidebar-container .library-header-container {
+        flex-shrink: 0;
+    }
+
+    /* Header của sidebar */
+    .sidebar-container .sidebar-header {
+        padding: 8px 12px;
+        flex-shrink: 0;
+    }
+
+    .sidebar-container .sidebar-header-content {
+        display: flex;
+        flex-direction: row; /* Mặc định là hàng ngang */
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Khi thu gọn, chuyển thành hàng dọc và căn giữa */
+    .sidebar-container.collapsed .sidebar-header-content {
+        flex-direction: column;
+        gap: 16px; /* Khoảng cách giữa các nút */
+        align-items: center;
+    }
+
+    /* Ẩn nội dung khi thu gọn */
+    .sidebar-container.collapsed .library-title span,
+    .sidebar-container.collapsed .create-text,
+    .sidebar-container.collapsed .filter-chip,
+    .sidebar-container.collapsed .sidebar-search-input,
+    .sidebar-container.collapsed .sort-btn span,
+    .sidebar-container.collapsed .playlist-info,
+    .sidebar-container.collapsed .suggestion-section {
+        display: none;
+    }
+
+    /* Ẩn các nút không cần thiết khi thu gọn */
+    .sidebar-container.collapsed .sidebar-header-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 16px; /* Khoảng cách giữa các nút */
+        align-items: center;
+    }
+
+        /* Chỉ hiển thị nút collapse và create khi thu gọn */
+        .sidebar-container.collapsed .sidebar-header-actions > *:not(.collapse-btn):not(.create-btn) {
+            display: none;
+        }
+
+    /* Ẩn toàn bộ phần search-filter-section khi thu gọn */
+    .sidebar-container.collapsed .search-filter-section {
+        display: none;
+    }
+
+    /* Hiển thị biểu tượng khi thu gọn */
+    .sidebar-container.collapsed .collapse-btn,
+    .sidebar-container.collapsed .create-btn {
+        justify-content: center;
+        padding: 4px 8px; /* Giữ padding mặc định */
+        background-color: #2A2A2A; /* Nền xám giống Spotify */
+        border-radius: 16px; /* Bo tròn như mặc định */
+    }
+
+        .sidebar-container.collapsed .collapse-btn svg,
+        .sidebar-container.collapsed .create-btn svg {
+            margin: 0;
+            width: 18px; /* Giữ kích thước biểu tượng mặc định */
+            height: 18px;
+        }
+
+    /* Điều chỉnh playlist-row khi thu gọn */
+    .sidebar-container.collapsed .playlist-row {
+        height: 56px;
+    }
+
+    .sidebar-container.collapsed .playlist-item {
+        justify-content: center;
+        padding: 0; /* Bỏ padding để căn giữa hình ảnh */
+    }
+
+    .sidebar-container.collapsed .playlist-image {
+        width: 48px; /* Tăng kích thước hình ảnh để nổi bật hơn */
+        height: 48px;
+    }
+
+    /* Ẩn các nút play và delete khi thu gọn */
+    .sidebar-container.collapsed .sidebar-play-button,
+    .sidebar-container.collapsed .delete-button {
+        display: none;
+    }
+
+    /* Hiển thị playlist-grid khi thu gọn, nhưng chỉ giữ hình ảnh */
+    .sidebar-container.collapsed .sidebar-content-container {
+        display: flex; /* Đảm bảo nội dung chính vẫn hiển thị */
+    }
+
+    .sidebar-container.collapsed .playlist-view {
+        display: block; /* Hiển thị playlist-view khi thu gọn */
+    }
+
+    .sidebar-container.collapsed .playlist-grid {
+        display: flex; /* Đảm bảo playlist-grid hiển thị */
+    }
+
+    .sidebar-container .library-title span {
+        font-size: 14px;
+        font-weight: bold;
+        color: #b3b3b3;
+        transition: color 0.2s ease;
+    }
+
+    .sidebar-container .library-title:hover span {
+        color: #FFFFFF;
+    }
+
+    /* Nút "Thu gọn Thư viện" */
+    .sidebar-container .collapse-btn {
+        background: none;
+        border: none;
+        color: #b3b3b3;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        font-weight: bold;
+        transition: color 0.2s ease;
+    }
+
+        .sidebar-container .collapse-btn:hover {
+            color: #FFFFFF;
+        }
+
+        .sidebar-container .collapse-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: #b3b3b3;
+            margin-right: 8px;
+            transition: fill 0.2s ease;
+        }
+
+        .sidebar-container .collapse-btn:hover svg {
+            fill: #FFFFFF;
+        }
+
+    .sidebar-container .sidebar-header-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .sidebar-container .create-btn {
+        background-color: #2A2A2A;
+        border: none;
+        border-radius: 16px;
+        padding: 4px 8px;
+        color: #b3b3b3;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        font-weight: bold;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+        .sidebar-container .create-btn:hover {
+            background-color: #3A3A3A;
+            color: #FFFFFF;
+        }
+
+        .sidebar-container .create-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: #b3b3b3;
+            margin-right: 8px;
+            transition: fill 0.2s ease;
+        }
+
+        .sidebar-container .create-btn:hover svg {
+            fill: #FFFFFF;
+        }
+
+    .sidebar-container .create-text {
+        color: #b3b3b3;
+        transition: color 0.2s ease;
+    }
+
+    .sidebar-container .create-btn:hover .create-text {
+        color: #FFFFFF;
+    }
+
+    /* Nội dung chính */
+    .sidebar-container .sidebar-content-container {
+        flex: 1;
+        padding: 0px 8px 8px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        max-height: none; /* Bỏ max-height vì đã xử lý ở .left-sidebar */
+    }
+
+        .sidebar-container .sidebar-content-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar-container .sidebar-content-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-container .sidebar-content-container::-webkit-scrollbar-thumb {
+            background: #4A4A4A;
+            border-radius: 4px;
+        }
+
+            .sidebar-container .sidebar-content-container::-webkit-scrollbar-thumb:hover {
+                background: #6A6A6A;
+            }
+
+    /* Khu vực tìm kiếm và bộ lọc */
+    .sidebar-container .search-filter-section {
+        padding: 8px 8px;
+        margin-bottom: 8px;
+        flex-shrink: 0; /* Đảm bảo khu vực này không bị co lại */
+    }
+
+    /* Container chứa nút "Playlist" */
+    .sidebar-container .filter-chip-container {
+        padding: 0px 8px;
+        margin-bottom: 12px;
+        flex-shrink: 0;
+    }
+
+    .sidebar-container .filter-chip {
+        background-color: #2A2A2A;
+        border: none;
+        border-radius: 16px;
+        padding: 4px 12px;
+        color: #b3b3b3;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+        .sidebar-container .filter-chip:hover {
+            background-color: #3A3A3A;
+            color: #FFFFFF;
+        }
+
+    /* Hàng chứa thanh tìm kiếm và nút "Gần đây" */
+    .sidebar-container .filter-section {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Thanh tìm kiếm */
+    .sidebar-container .sidebar-search-bar {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: none;
+        transition: background-color 0.2s ease;
+        flex: 1;
+    }
+
+        .sidebar-container .sidebar-search-bar:hover .search-icon-wrapper {
+            background-color: #2A2A2A;
+            border-radius: 50%;
+        }
+
+        .sidebar-container .sidebar-search-bar.expanded {
+            background-color: #2A2A2A;
+            border-radius: 4px;
+            padding: 2px 6px;
+        }
+
+    .sidebar-container .search-icon-wrapper {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        padding: 2px;
+        transition: background-color 0.2s ease;
+    }
+
+        .sidebar-container .search-icon-wrapper svg {
+            width: 18px;
+            height: 18px;
+            fill: #b3b3b3;
+        }
+
+    .sidebar-container .expand-search-btn {
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .sidebar-container .sidebar-search-input {
+        background: none;
+        border: none;
+        color: #FFFFFF;
+        font-size: 12px;
+        width: 0;
+        padding: 0;
+        outline: none;
+        transition: width 0.3s ease, padding 0.3s ease;
+    }
+
+        .sidebar-container .sidebar-search-input::placeholder {
+            color: #b3b3b3;
+        }
+
+    .sidebar-container .sidebar-search-bar.expanded .sidebar-search-input {
+        width: 100%;
+        padding: 2px 6px;
+    }
+
+    .sidebar-container .sort-btn {
+        background: none;
+        border: none;
+        color: #b3b3b3;
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.2s ease;
+        flex-shrink: 0;
+    }
+
+        .sidebar-container .sort-btn:hover {
+            color: #FFFFFF;
+        }
+
+        .sidebar-container .sort-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: #b3b3b3;
+            margin-left: 8px;
+            transition: fill 0.2s ease;
+        }
+
+        .sidebar-container .sort-btn:hover svg {
+            fill: #FFFFFF;
+        }
+
+    /* Khu vực gợi ý mặc định */
+    .sidebar-container .default-view {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .sidebar-container .suggestion-section {
+        background-color: #2A2A2A;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin: 8px 0px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .sidebar-container .suggestion-text {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .sidebar-container .suggestion-title {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFFFFF;
+    }
+
+    .sidebar-container .suggestion-subtitle {
+        font-size: 12px;
+        color: #b3b3b3;
+    }
+
+    .sidebar-container .suggestion-action {
+        margin-top: 8px;
+    }
+
+    .sidebar-container .action-btn {
+        background-color: #FFFFFF;
+        border: none;
+        border-radius: 20px;
+        padding: 6px 12px;
+        color: #000000;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: background-color 0.2s ease;
+    }
+
+        .sidebar-container .action-btn:hover {
+            background-color: #F5F5F5;
+        }
+
+    /* Thông điệp khi không có playlist */
+    .sidebar-container .no-playlist-message {
+        font-size: 12px;
+        color: #b3b3b3;
+        text-align: center;
+        margin-top: 16px;
+    }
+
+    .sidebar-container.collapsed .no-playlist-message {
+        display: none; /* Ẩn thông điệp khi không có playlist trong trạng thái thu gọn */
+    }
+
+    /* Danh sách playlist */
+    .sidebar-container .playlist-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        min-height: 0; /* Đảm bảo playlist-grid không vượt quá chiều cao của container cha */
+        overflow-y: auto; /* Kích hoạt thanh cuộn dọc khi nội dung vượt quá */
+        flex: 1; /* Đảm bảo playlist-grid chiếm hết không gian còn lại */
+    }
+
+        /* Định kiểu thanh cuộn cho playlist-grid */
+        .sidebar-container .playlist-grid::-webkit-scrollbar {
+            width: 8px; /* Chiều rộng thanh cuộn giống Spotify */
+        }
+
+        .sidebar-container .playlist-grid::-webkit-scrollbar-track {
+            background: transparent; /* Nền trong suốt */
+        }
+
+        .sidebar-container .playlist-grid::-webkit-scrollbar-thumb {
+            background: #4A4A4A; /* Màu xám giống Spotify */
+            border-radius: 4px;
+        }
+
+            .sidebar-container .playlist-grid::-webkit-scrollbar-thumb:hover {
+                background: #6A6A6A; /* Sáng hơn khi hover */
+            }
+
+    .sidebar-container .playlist-row {
+        height: 56px;
+        transition: background-color 0.2s ease;
+        cursor: pointer;
+        margin: 0; /* Đảm bảo không có khoảng cách giữa các hàng */
+        padding: 0; /* Không có padding gây khoảng cách */
+        flex-shrink: 0; /* Đảm bảo mỗi hàng không bị co lại */
+    }
+
+        .sidebar-container .playlist-row:hover {
+            background-color: transparent; /* Đặt transparent để không ảnh hưởng đến màu nền của playlist-item */
+            border-radius: 4px;
+        }
+
+            .sidebar-container .playlist-row:hover .playlist-item {
+                background-color: #2A2A2A; /* Chuyển màu xám khi hover */
+            }
+
+        .sidebar-container .playlist-row[aria-selected="true"] .playlist-item {
+            background-color: #282828; /* Màu khi được chọn */
+        }
+
+    .sidebar-container .playlist-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+        height: 100%;
+        padding: 0 8px;
+        margin: 0;
+        background-color: #181818; /* Màu nền mặc định là #181818 */
+        transition: background-color 0.2s ease; /* Thêm transition để hiệu ứng mượt mà */
+    }
+
+    .sidebar-container .playlist-image {
+        width: 40px;
+        height: 40px;
+        background-color: #2A2A2A;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        position: relative; /* Thêm để làm tham chiếu cho nút play */
+    }
+
+        .sidebar-container .playlist-image svg {
+            width: 20px;
+            height: 20px;
+            fill: #b3b3b3;
+        }
+
+        .sidebar-container .playlist-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+            transition: opacity 0.2s ease; /* Hiệu ứng làm mờ ảnh khi hover */
+        }
+
+    /* Hiệu ứng hover: làm mờ ảnh và thêm lớp phủ màu xám nhẹ */
+    .sidebar-container .playlist-row:hover .playlist-image img {
+        opacity: 0.6; /* Làm mờ ảnh đi một chút */
+    }
+
+    /* Thêm lớp phủ màu xám nhẹ bằng pseudo-element */
+    .sidebar-container .playlist-image {
+        position: relative;
+    }
+
+        .sidebar-container .playlist-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0); /* Mặc định trong suốt */
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+    .sidebar-container .playlist-row:hover .playlist-image::after {
+        background-color: rgba(0, 0, 0, 0.3); /* Lớp phủ màu xám nhẹ khi hover */
+    }
+
+    .sidebar-container .playlist-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .sidebar-container .playlist-title {
+        font-size: 14px; /* Tăng kích thước chữ để giống Spotify */
+        font-weight: 500; /* Độ đậm vừa phải */
+        color: #FFFFFF;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+        /* Đảm bảo thẻ <a> trong playlist-title có màu trắng */
+        .sidebar-container .playlist-title a {
+            color: #FFFFFF;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+            .sidebar-container .playlist-title a:hover,
+            .sidebar-container .playlist-title a:visited,
+            .sidebar-container .playlist-title a:active {
+                color: #FFFFFF;
+            }
+
+    .sidebar-container .playlist-subtitle {
+        font-size: 12px; /* Tăng kích thước chữ để giống Spotify */
+        color: #b3b3b3;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .sidebar-container .sidebar-play-button {
+        display: none;
+        position: absolute;
+        left: 50%; /* Căn giữa theo chiều ngang */
+        top: 50%; /* Căn giữa theo chiều dọc */
+        transform: translate(-50%, -50%); /* Căn giữa chính xác */
+        width: 32px; /* Kích thước nút play */
+        height: 32px;
+    }
+
+    .sidebar-container .playlist-row:hover .sidebar-play-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .sidebar-container .sidebar-play-btn {
+        background: none; /* Bỏ nền màu xám */
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.1s ease; /* Giữ hiệu ứng phóng to */
+    }
+
+        .sidebar-container .sidebar-play-btn:hover {
+            transform: scale(1.1); /* Phóng to nhẹ khi hover */
+        }
+
+        .sidebar-container .sidebar-play-btn svg {
+            width: 20px; /* Tăng kích thước icon play */
+            height: 20px;
+            fill: #FFFFFF; /* Icon màu trắng */
+        }
+
+    /* Nút xóa playlist */
+    .sidebar-container .playlist-row:hover .delete-button {
+        display: block;
+    }
+
+    .sidebar-container .delete-btn {
+        background: none;
+        border: none;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+        .sidebar-container .delete-btn:hover {
+            background-color: #3A3A3A;
+            border-radius: 50%;
+        }
+
+        .sidebar-container .delete-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: #b3b3b3;
+            transition: fill 0.2s ease;
+        }
+
+        .sidebar-container .delete-btn:hover svg {
+            fill: #FFFFFF;
+        }
+
+    /* Thanh điều chỉnh kích thước */
+    .sidebar-container:hover .resize-bar {
+        visibility: visible; /* Hiển thị khi hover */
+        background-color: #4A4A4A;
+        cursor: ew-resize;
+    }
+
+    .sidebar-container .resize-bar {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        visibility: hidden; /* Ẩn mặc định */
+    }
+
+    .sidebar-container .resize-input {
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: ew-resize;
+    }
+
+    /* Ẩn thanh resize khi sidebar thu gọn */
+    .sidebar-container.collapsed .resize-bar {
+        display: none;
+    }
+
+    /* Phần footer trong sidebar (Công ty, Công đồng, v.v.) */
+    .sidebar-container .sidebar-footer {
+        flex-shrink: 0;
+        padding: 16px 8px;
+        color: #b3b3b3;
+        font-size: 12px;
+    }
+
+    .sidebar-container .footer-section {
+        margin-bottom: 16px;
+    }
+
+        .sidebar-container .footer-section h3 {
+            font-size: 12px;
+            font-weight: bold;
+            color: #FFFFFF;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-container .footer-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-container .footer-section li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-container .footer-section a {
+            color: #b3b3b3;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+            .sidebar-container .footer-section a:hover {
+                color: #FFFFFF;
+            }
+
+    .sidebar-container .playlist-row[data-playlist-id="liked-songs"] .playlist-image {
+        background-color: transparent; /* Xóa màu nền mặc định */
+        background-image: url('https://misc.scdn.co/liked-songs/liked-songs-64.png');
+        background-size: cover;
+        background-position: center;
+        position: relative;
+    }
+
+        .sidebar-container .playlist-row[data-playlist-id="liked-songs"] .playlist-image img {
+            opacity: 0; /* Ẩn ảnh gốc để chỉ hiển thị background */
+        }
+
+        .sidebar-container .playlist-row[data-playlist-id="liked-songs"] .playlist-image .sidebar-play-button {
+            z-index: 1; /* Đảm bảo nút play hiển thị trên background */
+        }
+/* Định kiểu cho Menu ngữ cảnh - Cập nhật để giống Spotify */
+.context-menu {
+    position: fixed; /* Sử dụng fixed để tránh bị ảnh hưởng bởi scroll */
+    background-color: #282828; /* Nền tối giống Spotify */
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* Bóng đổ đậm hơn để tạo chiều sâu */
+    z-index: 1000;
+    min-width: 220px; /* Tăng chiều rộng để giống Spotify */
+    padding: 4px 0;
+    font-family: 'Arial', sans-serif; /* Đảm bảo font chữ giống Spotify */
+}
+
+.context-menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.context-menu-item {
+    display: block;
+}
+
+    .context-menu-item button {
+        width: 100%;
+        background: none;
+        border: none;
+        color: #FFFFFF;
+        font-size: 13px; /* Kích thước chữ giống Spotify */
+        font-weight: 400; /* Độ đậm vừa phải */
+        padding: 8px 16px; /* Tăng padding để các mục rộng rãi hơn */
+        text-align: left;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        line-height: 1.4; /* Tăng khoảng cách dòng để dễ đọc */
+    }
+
+        .context-menu-item button:hover {
+            background-color: #3E3E3E; /* Màu nền khi hover giống Spotify */
+        }
+
+/* Đảm bảo playlist-row nhận sự kiện chuột */
+.playlist-row {
+    pointer-events: auto !important;
+}
+
+.playlist-item {
+    pointer-events: auto !important;
+}
+
+/* Đảm bảo SVG và văn bản trong nút context menu căn chỉnh đúng */
+.context-menu-item button {
+    display: flex;
+    align-items: center; /* Căn giữa theo chiều dọc */
+    gap: 8px; /* Khoảng cách giữa SVG và văn bản */
+}
+
+    /* Định kiểu cho SVG trong context menu */
+    .context-menu-item button svg {
+        width: 16px; /* Kích thước SVG */
+        height: 16px;
+        fill: #FFFFFF; /* Màu SVG */
+    }
+
+.context-menu-divider {
+    height: 1px;
+    background-color: #3E3E3E; /* Màu xám nhạt giống Spotify */
+    margin: 4px 0; /* Khoảng cách trên dưới để không sát với các mục */
+}

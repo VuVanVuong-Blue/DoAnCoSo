@@ -1,0 +1,370 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\seven\\source\\repos\\System_Music\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\views\\shared\\_globalnavloggedin.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\views\\shared\\_globalnavloggedin.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\views\\shared\\_globalnavloggedout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\views\\shared\\_globalnavloggedout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\wwwroot\\css\\global-nav.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\wwwroot\\css\\global-nav.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\wwwroot\\css\\sidebarnotloggedin.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\wwwroot\\css\\sidebarnotloggedin.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\wwwroot\\css\\index.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\wwwroot\\css\\index.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\extensions\\controllerextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\extensions\\controllerextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\controllers\\web\\albumcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\controllers\\web\\albumcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\controllers\\web\\trackcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\controllers\\web\\trackcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\controllers\\web\\artistcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\controllers\\web\\artistcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\areas\\admin\\controllers\\albumcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\areas\\admin\\controllers\\albumcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\areas\\admin\\views\\artist\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\areas\\admin\\views\\artist\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\areas\\admin\\views\\shared\\_adminlayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\areas\\admin\\views\\shared\\_adminlayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\views\\playlist\\indexplaylist.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\views\\playlist\\indexplaylist.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\system_music.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\system_music.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\models\\sqlmodels\\artist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\models\\sqlmodels\\artist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\wwwroot\\js\\indexplaylist.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\wwwroot\\js\\indexplaylist.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\models\\sqlmodels\\listenhistory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\models\\sqlmodels\\listenhistory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|c:\\users\\seven\\source\\repos\\system_music\\system_music\\controllers\\api\\listenhistorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C056818-86F6-41D0-9D5B-23A200127381}|System_Music\\System_Music.csproj|solutionrelative:system_music\\controllers\\api\\listenhistorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 9,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "index.css",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\index.css",
+              "RelativeDocumentMoniker": "System_Music\\wwwroot\\css\\index.css",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\index.css",
+              "RelativeToolTip": "System_Music\\wwwroot\\css\\index.css",
+              "ViewState": "AgIAAJkAAAAAAAAAAAAnwBQCAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-05-31T06:34:37.235Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "AlbumController.cs",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Controllers\\Web\\AlbumController.cs",
+              "RelativeDocumentMoniker": "System_Music\\Controllers\\Web\\AlbumController.cs",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Controllers\\Web\\AlbumController.cs",
+              "RelativeToolTip": "System_Music\\Controllers\\Web\\AlbumController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T02:02:45.373Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "_GlobalNavLoggedOut.cshtml",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Views\\Shared\\_GlobalNavLoggedOut.cshtml",
+              "RelativeDocumentMoniker": "System_Music\\Views\\Shared\\_GlobalNavLoggedOut.cshtml",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Views\\Shared\\_GlobalNavLoggedOut.cshtml",
+              "RelativeToolTip": "System_Music\\Views\\Shared\\_GlobalNavLoggedOut.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-06T01:59:10.472Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "SidebarNotLoggedIn.css",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\SidebarNotLoggedIn.css",
+              "RelativeDocumentMoniker": "System_Music\\wwwroot\\css\\SidebarNotLoggedIn.css",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\SidebarNotLoggedIn.css",
+              "RelativeToolTip": "System_Music\\wwwroot\\css\\SidebarNotLoggedIn.css",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAnwD0BAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-06-06T01:57:02.831Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "site.css",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\site.css",
+              "RelativeDocumentMoniker": "System_Music\\wwwroot\\css\\site.css",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\site.css",
+              "RelativeToolTip": "System_Music\\wwwroot\\css\\site.css",
+              "ViewState": "AgIAAI0AAAAAAAAAAAAYwJUAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-06-06T01:54:07.587Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ArtistController.cs",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Controllers\\Web\\ArtistController.cs",
+              "RelativeDocumentMoniker": "System_Music\\Controllers\\Web\\ArtistController.cs",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Controllers\\Web\\ArtistController.cs",
+              "RelativeToolTip": "System_Music\\Controllers\\Web\\ArtistController.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAAqwEUAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T01:51:22.542Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "AlbumController.cs",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Areas\\Admin\\Controllers\\AlbumController.cs",
+              "RelativeDocumentMoniker": "System_Music\\Areas\\Admin\\Controllers\\AlbumController.cs",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Areas\\Admin\\Controllers\\AlbumController.cs",
+              "RelativeToolTip": "System_Music\\Areas\\Admin\\Controllers\\AlbumController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T01:44:28.366Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "TrackController.cs",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Controllers\\Web\\TrackController.cs",
+              "RelativeDocumentMoniker": "System_Music\\Controllers\\Web\\TrackController.cs",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Controllers\\Web\\TrackController.cs",
+              "RelativeToolTip": "System_Music\\Controllers\\Web\\TrackController.cs",
+              "ViewState": "AgIAAK0AAAAAAAAAAAAuwMgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T01:40:10.281Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "global-nav.css",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\global-nav.css",
+              "RelativeDocumentMoniker": "System_Music\\wwwroot\\css\\global-nav.css",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\global-nav.css",
+              "RelativeToolTip": "System_Music\\wwwroot\\css\\global-nav.css",
+              "ViewState": "AgIAAGMCAAAAAAAAAAAYwIYCAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-06-05T16:21:20.862Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "_GlobalNavLoggedIn.cshtml",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Views\\Shared\\_GlobalNavLoggedIn.cshtml",
+              "RelativeDocumentMoniker": "System_Music\\Views\\Shared\\_GlobalNavLoggedIn.cshtml",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Views\\Shared\\_GlobalNavLoggedIn.cshtml",
+              "RelativeToolTip": "System_Music\\Views\\Shared\\_GlobalNavLoggedIn.cshtml",
+              "ViewState": "AgIAADYAAAAAAAAAAAAAAA0AAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-05T14:40:11.932Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "System_Music\\Views\\Home\\Index.cshtml",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "System_Music\\Views\\Home\\Index.cshtml",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAAC8AAAA9AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-05T14:35:58.859Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "System_Music\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "System_Music\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAA0AAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-05T14:28:33.787Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Areas\\Admin\\Views\\Artist\\Index.cshtml",
+              "RelativeDocumentMoniker": "System_Music\\Areas\\Admin\\Views\\Artist\\Index.cshtml",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Areas\\Admin\\Views\\Artist\\Index.cshtml",
+              "RelativeToolTip": "System_Music\\Areas\\Admin\\Views\\Artist\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-05T14:03:04.2Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "_AdminLayout.cshtml",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Areas\\Admin\\Views\\Shared\\_AdminLayout.cshtml",
+              "RelativeDocumentMoniker": "System_Music\\Areas\\Admin\\Views\\Shared\\_AdminLayout.cshtml",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Areas\\Admin\\Views\\Shared\\_AdminLayout.cshtml",
+              "RelativeToolTip": "System_Music\\Areas\\Admin\\Views\\Shared\\_AdminLayout.cshtml",
+              "ViewState": "AgIAADIAAAAAAAAAAAAIwEwAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-05T14:01:25.211Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ControllerExtensions.cs",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Extensions\\ControllerExtensions.cs",
+              "RelativeDocumentMoniker": "System_Music\\Extensions\\ControllerExtensions.cs",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Extensions\\ControllerExtensions.cs",
+              "RelativeToolTip": "System_Music\\Extensions\\ControllerExtensions.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAAEIAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-05T05:53:31.511Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "System_Music.csproj",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\System_Music.csproj",
+              "RelativeDocumentMoniker": "System_Music\\System_Music.csproj",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\System_Music.csproj",
+              "RelativeToolTip": "System_Music\\System_Music.csproj",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAgwC4AAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-06-05T05:49:26.092Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Artist.cs",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Models\\SqlModels\\Artist.cs",
+              "RelativeDocumentMoniker": "System_Music\\Models\\SqlModels\\Artist.cs",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Models\\SqlModels\\Artist.cs",
+              "RelativeToolTip": "System_Music\\Models\\SqlModels\\Artist.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-04T09:23:12.398Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "IndexPlayList.cshtml",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Views\\Playlist\\IndexPlayList.cshtml",
+              "RelativeDocumentMoniker": "System_Music\\Views\\Playlist\\IndexPlayList.cshtml",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Views\\Playlist\\IndexPlayList.cshtml",
+              "RelativeToolTip": "System_Music\\Views\\Playlist\\IndexPlayList.cshtml",
+              "ViewState": "AgIAACoAAAAAAAAAAAAkwDAAAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-06-02T15:47:15.426Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "IndexPlayList.js",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\js\\IndexPlayList.js",
+              "RelativeDocumentMoniker": "System_Music\\wwwroot\\js\\IndexPlayList.js",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\js\\IndexPlayList.js",
+              "RelativeToolTip": "System_Music\\wwwroot\\js\\IndexPlayList.js",
+              "ViewState": "AgIAAFUBAAAAAAAAAAAQwL4BAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2025-06-02T15:41:56.809Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "ListenHistory.cs",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Models\\SqlModels\\ListenHistory.cs",
+              "RelativeDocumentMoniker": "System_Music\\Models\\SqlModels\\ListenHistory.cs",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Models\\SqlModels\\ListenHistory.cs",
+              "RelativeToolTip": "System_Music\\Models\\SqlModels\\ListenHistory.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAIBJwAoAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-30T21:09:32.314Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "ListenHistoryController.cs",
+              "DocumentMoniker": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Controllers\\Api\\ListenHistoryController.cs",
+              "RelativeDocumentMoniker": "System_Music\\Controllers\\Api\\ListenHistoryController.cs",
+              "ToolTip": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\Controllers\\Api\\ListenHistoryController.cs",
+              "RelativeToolTip": "System_Music\\Controllers\\Api\\ListenHistoryController.cs",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAkwDwAAABRAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-30T21:08:36.197Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,174 @@
+﻿@model System_Music.Models.SqlModels.Album
+
+@{
+    ViewData["Title"] = $"{Model.Name} - Album Details";
+}
+
+<!-- Inject services -->
+@inject System_Music.Services.Interfaces.IAlbumService AlbumService
+@inject System_Music.Services.Interfaces.ITrackService TrackService
+
+<!-- Link to custom CSS -->
+<link rel="stylesheet" href="~/css/detail-album.css" />
+<link rel="stylesheet" href="~/css/footer.css" />
+
+<!-- Main content -->
+<div class="album-detail-container">
+    <!-- Header Section -->
+    <div class="album-header">
+        <div class="album-image-container">
+            <img src="@(string.IsNullOrEmpty(Model.Image) ? "https://via.placeholder.com/160" : Model.Image)" alt="@Model.Name" class="album-image" />
+        </div>
+        <div class="album-info">
+            <p class="album-type">Album</p>
+            <h1 class="album-title">@Model.Name</h1>
+            <p class="album-details">
+                @{
+                    var artists = Model.AlbumArtists != null && Model.AlbumArtists.Any()
+                    ? Model.AlbumArtists
+                    : new List<AlbumArtist>();
+                    var mainArtist = artists.FirstOrDefault(); // Lấy nghệ sĩ đầu tiên
+                    var artistImage = mainArtist?.Artist?.Image ?? "https://via.placeholder.com/32"; // Ảnh mặc định nếu không có
+                    var artistName = mainArtist?.Artist?.Name ?? "Không có nghệ sĩ";
+                    var tracks = await TrackService.GetTracksByAlbumAsync(Model.AlbumId);
+                    var totalTracks = tracks.Count;
+                    var totalDuration = tracks.Sum(t => t.Duration);
+                    var hours = totalDuration / 3600;
+                    var minutes = (totalDuration % 3600) / 60;
+                    var durationText = hours > 0 ? $"{hours} giờ {minutes} phút" : $"{minutes} phút";
+                    var releaseYear = Model.ReleaseDate.Year.ToString() ?? "N/A";
+                }
+                <img src="@artistImage" alt="@artistName" class="artist-image" />
+                @artistName • @releaseYear • @totalTracks bài hát, khoảng @durationText
+            </p>
+        </div>
+    </div>
+
+    <!-- Action Bar -->
+    <div class="action-bar">
+        <!-- Nút Play lớn -->
+        <button id="play-album-btn" class="play-button" aria-label="Phát Album" data-encore-id="buttonPrimary" data-album-id="@Model.AlbumId">
+            <span class="play-button-icon">
+                <svg data-encore-id="icon" role="img" aria-hidden="true" class="play-icon" viewBox="0 0 24 24">
+                    <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"></path>
+                </svg>
+            </span>
+        </button>
+
+        <!-- Ảnh album nhỏ -->
+        <div class="album-small-image">
+            @if (!string.IsNullOrEmpty(Model.Image))
+            {
+                <img src="@Model.Image" alt="@Model.Name" class="album-small-image-img" />
+            }
+            else
+            {
+                <div class="album-placeholder">
+                    <svg data-encore-id="icon" role="img" aria-hidden="true" class="icon" viewBox="0 0 24 24">
+                        <path d="M6 3h15v15.167a3.5 3.5 0 1 1-3.5-3.5H19V5H8v13.167a3.5 3.5 0 1 1-3.5-3.5H6V3zm0 13.667H4.5a1.5 1.5 0 1 0 1.5 1.5v-1.5zm13 0h-1.5a1.5 1.5 0 1 0 1.5 1.5v-1.5z"></path>
+                    </svg>
+                </div>
+            }
+        </div>
+
+        <!-- Nút Thêm vào Thư viện -->
+        <button aria-checked="false" data-testid="add-button" class="add-button" aria-label="Lưu vào Thư viện" data-encore-id="buttonTertiary">
+            <span aria-hidden="true" class="icon-wrapper">
+                <svg data-encore-id="icon" role="img" aria-hidden="true" class="icon" viewBox="0 0 24 24" style="--encore-icon-height: var(--encore-graphic-size-decorative-larger); --encore-icon-width: var(--encore-graphic-size-decorative-larger);">
+                    <path d="M11.999 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm-11 9c0-6.075 4.925-11 11-11s11 4.925 11 11-4.925 11-11 11-11-4.925-11-11z"></path>
+                    <path d="M17.999 12a1 1 0 0 1-1 1h-4v4a1 1 0 1 1-2 0v-4h-4a1 1 0 1 1 0-2h4V7a1 1 0 1 1 2 0v4h4a1 1 0 0 1 1 1z"></path>
+                </svg>
+            </span>
+        </button>
+
+        <!-- Nút tùy chọn khác -->
+        <button aria-haspopup="menu" data-testid="more-button" class="action-button" aria-label="Các tùy chọn khác cho Album" data-encore-id="buttonTertiary">
+            <span aria-hidden="true" class="icon-wrapper">
+                <svg data-encore-id="icon" role="img" aria-hidden="true" class="icon" viewBox="0 0 24 24">
+                    <path d="M4.5 13.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm15 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-7.5 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"></path>
+                </svg>
+            </span>
+        </button>
+
+        <!-- Spacer to push the sort button to the right -->
+        <div style="flex-grow: 1;"></div>
+
+        <!-- Nút Sort (Combobox) -->
+        <button class="sort-button" type="button" role="combobox" aria-controls="sortboxlist-4918e819-4af0-4084-9992-6a54d37e235c" aria-expanded="false" aria-haspopup="true">
+            <span class="text small" data-encore-id="text" data-sortbox-label="true">Danh Sách</span>
+            <svg data-encore-id="icon" role="img" aria-hidden="true" class="icon" viewBox="0 0 16 16" style="--encore-icon-height: var(--encore-graphic-size-decorative-smaller); --encore-icon-width: var(--encore-graphic-size-decorative-smaller);">
+                <path d="M15.5 13.5H.5V12h15v1.5zm0-4.75H.5v-1.5h15v1.5zm0-4.75H.5V2.5h15V4z"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Track List Section -->
+    <div class="track-list-container">
+        <div class="list-header">
+            <span class="num-col">#</span>
+            <span class="title-col">Tiêu đề</span>
+            <span class="artist-col">Nghệ sĩ</span>
+            <span class="duration-col">
+                <svg data-encore-id="icon" role="img" aria-hidden="true" class="duration-icon" viewBox="0 0 16 16">
+                    <path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM0 8a8 8 0 1 1 16 0 8 8 0 0 1-16 0z"></path>
+                    <path d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.146.354l-2 2a.5.5 0 0 1-.708-.708L7.5 7.793V4a.5.5 0 0 1 .5-.5z"></path>
+                </svg>
+            </span>
+        </div>
+        <div class="song-list">
+            @{
+                var trackList = await TrackService.GetTracksByAlbumAsync(Model.AlbumId);
+                int index = 1;
+                foreach (var track in trackList)
+                {
+                    var trackArtists = track.TrackArtists?.Select(ta => ta.Artist?.Name).Where(name => !string.IsNullOrEmpty(name)).ToList() ?? new List<string>();
+                    string artistNames = trackArtists.Any() ? string.Join(", ", trackArtists) : "Không có nghệ sĩ";
+                    var trackMinutes = track.Duration / 60;
+                    var seconds = track.Duration % 60;
+                    string duration = $"{trackMinutes}:{seconds:D2}";
+                    <div class="song-row @(index == 1 ? "active" : "")" data-track-id="@track.TrackId">
+                        <span class="num-col">
+                            <span class="track-number">@index</span>
+                            <button class="play-btn" aria-label="Play track">
+                                <svg data-encore-id="icon" role="img" aria-hidden="true" class="play-icon" viewBox="0 0 24 24">
+                                    <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"></path>
+                                </svg>
+                            </button>
+                        </span>
+                        <div class="song-info">
+                            <a href="/track/Detail/@track.TrackId" class="title-link" data-track-id="@track.TrackId">@track.Title</a>
+                        </div>
+                        <span class="artist-name">@artistNames</span>
+                        <div class="add-col">
+                            <button class="track-action-button" aria-label="Add to playlist">
+                                <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9890-icon e-9890-baseline" viewBox="0 0 16 16">
+                                    <path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z"></path>
+                                    <path d="M11.75 8a.75.75 0 0 1-.75.75H8.75V11a.75.75 0 0 1-1.5 0V8.75H5a.75.75 0 0 1 0-1.5h2.25V5a.75.75 0 0 1 1.5 0v2.25H11a.75.75 0 0 1 .75.75z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <span class="duration-time">@duration</span>
+                        <div class="actions-col">
+                            <button class="track-action-button" aria-label="More options">
+                                <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9890-icon e-9890-baseline" viewBox="0 0 16 16">
+                                    <path d="M3 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm6.5 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zM16 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    index++;
+                }
+            }
+        </div>
+    </div>
+
+    <!-- Dummy content để kiểm tra cuộn -->
+    <div class="dummy-content"></div>
+</div>
+
+<!-- Include the Footer -->
+@await Html.PartialAsync("_Footer")
+
+<!-- Script xử lý -->
+<script src="/js/vibrant.min.js" onload="window.vibrantLoaded=true;" onerror="console.error('Lỗi tải Vibrant.js từ local');"></script>
+<script src="~/js/detail-album.js"></script>

@@ -1,0 +1,13 @@
+﻿<!-- Sidebar.cshtml -->
+@if (User.Identity?.IsAuthenticated ?? false)
+{
+    <link rel="stylesheet" href="~/css/SidebarLoggedIn1.css" />
+    <script src="~/js/sidebar.js"></script>
+    @await Html.PartialAsync("SidebarLoggedIn")
+}
+else
+{
+    <link rel="stylesheet" href="~/css/SidebarNotLoggedIn.css" />
+    <script src="~/js/sidebar.js"></script>
+    @await Html.PartialAsync("SidebarNotLoggedIn")
+}

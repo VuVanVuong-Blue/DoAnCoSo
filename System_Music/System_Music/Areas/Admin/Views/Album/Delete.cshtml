@@ -1,0 +1,36 @@
+﻿@model System_Music.Models.SqlModels.Album
+
+@{
+    ViewData["Title"] = "Xóa album";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Xóa album</h2>
+    <h3>Bạn có chắc chắn muốn xóa album này?</h3>
+    <dl class="row">
+        <dt class="col-sm-2">Tên album</dt>
+        <dd class="col-sm-10">@Model.Name</dd>
+
+        <dt class="col-sm-2">Tổng số bài hát</dt>
+        <dd class="col-sm-10">@(Model.Tracks?.Count ?? 0)</dd>
+
+        <dt class="col-sm-2">Nghệ sĩ</dt>
+        <dd class="col-sm-10">
+            @if (Model.AlbumArtists != null && Model.AlbumArtists.Any())
+            {
+                @string.Join(", ", Model.AlbumArtists.Select(aa => aa.Artist.Name))
+            }
+            else
+            {
+                <span>Không có nghệ sĩ</span>
+            }
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="AlbumId" />
+        <button type="submit" class="btn btn-danger">Xóa</button>
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </form>
+</div>

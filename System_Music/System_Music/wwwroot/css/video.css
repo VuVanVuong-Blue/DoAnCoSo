@@ -1,0 +1,393 @@
+﻿/* video.css */
+
+/* Base styles */
+* {
+    box-sizing: border-box;
+}
+
+/* Video container */
+.video-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Video header */
+.video-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+}
+
+    .video-header .media {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .video-header .media-left img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .video-header .media-content .title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #fff;
+        line-height: 1.4;
+    }
+
+    .video-header .media-content .subtitle a {
+        font-size: 14px;
+        color: #b3b3b3;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+        .video-header .media-content .subtitle a:hover {
+            color: #00c4b4;
+        }
+
+    .video-header .media-right {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+        .video-header .media-right button {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+            .video-header .media-right button:hover {
+                color: #00c4b4;
+                background-color: #333;
+            }
+
+    .video-header .header-right {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+        .video-header .header-right button {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+            .video-header .header-right button:hover {
+                color: #00c4b4;
+                background-color: #333;
+            }
+
+/* Video player */
+.video-player {
+    position: relative;
+    width: 100%;
+    background-color: #000;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+    .video-player video {
+        width: 100%;
+        max-height: 500px;
+        display: block;
+    }
+
+/* Related videos */
+.related-videos {
+    padding: 16px 0;
+}
+
+    .related-videos.queue-player {
+        margin-bottom: 0;
+    }
+
+.video-queue.is-horizontal {
+    display: flex;
+    flex-direction: column;
+}
+
+.list-playing {
+    width: 100%;
+}
+
+    .list-playing .container {
+        margin-bottom: 24px;
+    }
+
+.list-playing-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+    .list-playing-header h3.title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #fff;
+        margin: 0;
+    }
+
+    .list-playing-header .zm-auto-play-switch {
+        display: flex;
+        align-items: center;
+        width: 160px; /* Chiều rộng cố định */
+        height: 28px; /* Chiều cao cố định */
+        padding: 4px 6px;
+        background-color: #333; /* Nền tối khi tắt */
+        border-radius: 14px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .list-playing-header .zm-auto-play-switch.active {
+            background-color: #00c4b4; /* Nền xanh khi bật */
+        }
+
+        .list-playing-header .zm-auto-play-switch .auto-play-text {
+            flex: 1;
+            font-size: 12px;
+            font-weight: 500;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-right: 6px;
+        }
+
+        .list-playing-header .zm-auto-play-switch .ic-svg-switch {
+            width: 24px;
+            height: 15px;
+            flex-shrink: 0;
+        }
+
+            .list-playing-header .zm-auto-play-switch .ic-svg-switch svg path.st0 {
+                transition: fill 0.3s ease;
+            }
+
+            .list-playing-header .zm-auto-play-switch .ic-svg-switch svg circle.st1 {
+                fill: #fff;
+                transition: cx 0.3s ease;
+                filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+            }
+
+        .list-playing-header .zm-auto-play-switch:hover {
+            background-color: #444; /* Tối hơn khi hover (tắt) */
+        }
+
+        .list-playing-header .zm-auto-play-switch.active:hover {
+            background-color: #00b3a3; /* Xanh đậm hơn khi hover (bật) */
+        }
+
+/* Carousel */
+.zm-carousel-wrapper {
+    position: relative;
+}
+
+.zm-carousel {
+    overflow: hidden;
+}
+
+.zm-carousel__container {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: 10px;
+    scroll-snap-type: x mandatory;
+}
+
+    .zm-carousel__container::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .zm-carousel__container::-webkit-scrollbar-thumb {
+        background: #666;
+        border-radius: 3px;
+    }
+
+    .zm-carousel__container::-webkit-scrollbar-track {
+        background: #222;
+    }
+
+.zm-carousel-item {
+    flex: 0 0 240px;
+    scroll-snap-align: start;
+}
+
+    .zm-carousel-item.is-fullhd-1.2 {
+        flex: 0 0 280px;
+    }
+
+    .zm-carousel-item.is-widescreen-2 {
+        flex: 0 0 240px;
+    }
+
+    .zm-carousel-item.is-desktop-20 {
+        flex: 0 0 220px;
+    }
+
+    .zm-carousel-item.is-tablet-3 {
+        flex: 0 0 200px;
+    }
+
+    .zm-carousel-item.is-touch-3 {
+        flex: 0 0 180px;
+    }
+
+/* Video card */
+.zm-card.video-item {
+    background: #2a2a2a;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+}
+
+    .zm-card.video-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .zm-card.video-item.video-active {
+        border: 2px solid #00c4b4;
+    }
+
+.zm-card-image.video-image {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* Tỷ lệ 16:9 */
+}
+
+    .zm-card-image.video-image img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .zm-card-image.video-image .opacity {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.3);
+        transition: background 0.3s ease;
+    }
+
+    .zm-card-image.video-image:hover .opacity {
+        background: rgba(0, 0, 0, 0.6);
+    }
+
+.zm-box.zm-actions.video-actions {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.zm-card-image.video-image:hover .zm-actions {
+    opacity: 1;
+}
+
+.zm-btn.action-play {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 32px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+    .zm-btn.action-play:hover {
+        color: #00c4b4;
+    }
+
+.zm-brand {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 2px 6px;
+    font-size: 12px;
+    border-radius: 3px;
+    font-family: Arial, sans-serif;
+}
+
+.zm-brand-playing {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: #00c4b4;
+    color: #fff;
+    padding: 2px 6px;
+    font-size: 12px;
+    border-radius: 3px;
+    font-family: Arial, sans-serif;
+}
+
+.zm-card .media {
+    padding: 10px;
+    background: #2a2a2a;
+}
+
+.zm-card .media-content .title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: Arial, sans-serif;
+}
+
+    .zm-card .media-content .title a {
+        color: #fff;
+        text-decoration: none;
+    }
+
+.zm-card .media-content .subtitle {
+    font-size: 12px;
+    color: #b3b3b3;
+    font-family: Arial, sans-serif;
+}
+
+    .zm-card .media-content .subtitle a.is-ghost {
+        color: #b3b3b3;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+        .zm-card .media-content .subtitle a.is-ghost:hover {
+            color: #00c4b4;
+        }

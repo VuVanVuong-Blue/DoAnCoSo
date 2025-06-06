@@ -1,0 +1,73 @@
+﻿#lyrics-container {
+    background: rgba(18, 48, 111, 1);
+    padding: 30px;
+    border-radius: 0;
+    width: 100%;
+    color: #d6eaff;
+    min-height: calc(100vh - 170px);
+    position: relative;
+    margin: 0;
+    z-index: 10;
+    box-shadow: none;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.lyrics-content {
+    font-size: 2.5em;
+    line-height: 1.6;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    max-width: 80%; /* Giới hạn chiều rộng nội dung để căn giữa */
+    margin: 0 auto; /* Căn giữa bằng margin */
+}
+
+.scroll-content {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.item {
+    margin: 25px 0;
+    opacity: 0.7;
+    transition: opacity 0.3s ease, color 0.3s ease;
+    white-space: normal;
+    cursor: default;
+    display: block;
+}
+    .item:hover {
+        opacity: 0.9; /* Hiệu ứng hover nhẹ nhàng */
+        color: #e0e0e0;
+    }
+
+    .item.is-over {
+        opacity: 0.5; /* Dòng đã phát qua mờ hơn */
+        color: #a0a0a0;
+    }
+
+    .item.is-active {
+        opacity: 1; /* Dòng đang phát sáng nhất */
+        color: #ffffff;
+        font-size: 1.1em; /* Giữ cùng kích thước với .lyrics-content để không làm chữ quá lớn */
+        text-shadow: 0 0 4px rgba(255, 255, 255, 0.2), 0 0 6px rgba(150, 200, 255, 0.3);
+    }
+
+    .item.error {
+        color: #ff5555;
+        font-style: italic;
+        opacity: 0.9;
+    }
+@media (max-width: 768px) {
+    #lyrics-container {
+        padding: 20px;
+    }
+
+    .lyrics-content {
+        font-size: 1.8em;
+    }
+
+    .item.is-active {
+        font-size: 1.1em;
+    }
+}

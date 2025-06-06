@@ -1,0 +1,16 @@
+﻿@using System_Music.Models.SqlModels
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+<link rel="stylesheet" href="~/css/global-nav.css" />
+
+<!-- _GlobalNav.cshtml -->
+@if (SignInManager.IsSignedIn(User))
+{
+    @await Html.PartialAsync("_GlobalNavLoggedIn")
+}
+else
+{
+    @await Html.PartialAsync("_GlobalNavLoggedOut")
+}

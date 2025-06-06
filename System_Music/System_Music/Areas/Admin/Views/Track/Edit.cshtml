@@ -1,0 +1,121 @@
+﻿@model System_Music.Models.SqlModels.Track
+
+@{
+    ViewData["Title"] = "Chỉnh sửa bài hát";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Chỉnh sửa bài hát</h2>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="TrackId" />
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Title" class="form-label"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Duration" class="form-label"></label>
+            <input asp-for="Duration" class="form-control" type="number" />
+            <span asp-validation-for="Duration" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label class="form-label">File nhạc</label>
+            <input type="file" name="audioFile" class="form-control" />
+            <small class="form-text text-muted">File hiện tại: @Model.AudioUrl (Để trống nếu không muốn thay đổi)</small>
+        </div>
+
+        <div class="form-group mb-3">
+            <label class="form-label">Ảnh bìa</label>
+            <input type="file" name="imageFile" class="form-control" />
+            <small class="form-text text-muted">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    @:Ảnh hiện tại: <img src="@Model.ImageUrl" alt="@Model.Title" style="max-width: 100px; max-height: 100px;" /> (Để trống nếu không muốn thay đổi)
+                }
+                else
+                {
+                    @:Chưa có ảnh bìa
+                }
+            </small>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="AlbumId" class="form-label"></label>
+            <select asp-for="AlbumId" class="form-control">
+                <option value="">-- Chọn album (để trống nếu là single) --</option>
+                @foreach (var album in ViewBag.Albums)
+                {
+                    <option value="@album.AlbumId" selected="@(album.AlbumId == Model.AlbumId ? "selected" : null)">@album.Name</option>
+                }
+            </select>
+            <span asp-validation-for="AlbumId" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="ZingMp3TrackId" class="form-label">ID từ Zing MP3</label>
+            <input asp-for="ZingMp3TrackId" class="form-control" value="@Model.ZingMp3TrackId" />
+            <span asp-validation-for="ZingMp3TrackId" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label class="form-label">Nghệ sĩ</label>
+            @if (ViewBag.Artists != null)
+            {
+                @foreach (var artist in ViewBag.Artists)
+                {
+                    var isChecked = Model.TrackArtists != null && Model.TrackArtists.Any(ta => ta.ArtistId == artist.ArtistId);
+                    <div class="form-check mb-2">
+                        <input type="checkbox" name="artistIds" value="@artist.ArtistId" class="form-check-input" id="artist_@artist.ArtistId" @(isChecked ? "checked" : "") />
+                        <label class="form-check-label" for="artist_@artist.ArtistId">@artist.Name</label>
+                    </div>
+                }
+            }
+            else
+            {
+                <span>Không có nghệ sĩ nào để chọn.</span>
+            }
+            <small class="form-text text-muted">Chọn các nghệ sĩ tham gia bài hát</small>
+        </div>
+
+        <div class="form-group mb-3">
+            <label class="form-label">Thể loại</label>
+            <select name="genreIds" multiple class="form-control">
+                @foreach (var genre in ViewBag.Genres)
+                {
+                    <option value="@genre.GenreId" selected="@(Model.TrackGenres != null && Model.TrackGenres.Any(tg => tg.GenreId == genre.GenreId) ? "selected" : null)">@genre.Name</option>
+                }
+            </select>
+            <small class="form-text text-muted">Giữ Ctrl để chọn nhiều thể loại</small>
+        </div>
+
+        <div class="form-group mt-4">
+            <button type="submit" class="btn btn-primary">Cập nhật</button>
+            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

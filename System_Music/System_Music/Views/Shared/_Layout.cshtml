@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - VSound</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/2.10.0/overlayscrollbars.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    @RenderSection("Styles", required: false)
+    <div class="container">
+        <!-- Thanh điều hướng trên cùng -->
+        <div class="global-nav">
+            @await Html.PartialAsync("_GlobalNav")
+        </div>
+
+        <!-- Thanh bên trái -->
+        <div class="left-sidebar">
+            @await Html.PartialAsync("Sidebar")
+        </div>
+
+        <!-- Khu vực chính -->
+        <div class="main-view">
+            @RenderBody()
+        </div>
+
+        <!-- Thanh phát nhạc -->
+        <div class="now-playing">
+            @await Html.PartialAsync("_NowPlaying")
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/2.10.0/overlayscrollbars.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

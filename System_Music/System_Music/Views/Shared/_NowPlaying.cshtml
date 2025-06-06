@@ -1,0 +1,14 @@
+﻿@{
+    // Assuming Layout or CSS linking is handled elsewhere, we'll add a reference to the CSS
+}
+<link rel="stylesheet" href="~/css/now-playing.css" />
+
+<!-- _NowPlaying.cshtml -->
+@if (!User.Identity.IsAuthenticated)
+{
+    @await Html.PartialAsync("_SignupBar")
+}
+else
+{
+    @await Html.PartialAsync("_NowPlayingBar")
+}

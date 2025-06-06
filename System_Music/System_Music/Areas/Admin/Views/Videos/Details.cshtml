@@ -1,0 +1,105 @@
+﻿@model System_Music.Models.SqlModels.Video
+
+@{
+    ViewData["Title"] = "Chi tiết MV";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="mb-4">Chi tiết MV: @Model.Title</h2>
+
+<div class="card">
+    <div class="card-header">
+        <h4>Thông tin MV</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-8">
+          
+                @if (!string.IsNullOrEmpty(Model.Hls))
+                {
+                    <button id="playButton" class="btn btn-primary mb-2">Phát video</button>
+                    <video id="video" controls class="w-100" style="max-height: 360px;"></video>
+                }
+                else
+                {
+                    <div class="alert alert-warning">Không có link streaming HLS để phát video.</div>
+                }
+            </div>
+            <div class="col-md-4">
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>ID:</strong> @Model.EncodeId</li>
+                    <li class="list-group-item"><strong>Tiêu đề:</strong> @Model.Title</li>
+                    <li class="list-group-item"><strong>Thời lượng:</strong> @Model.Duration giây</li>
+                    <li class="list-group-item"><strong>Nghệ sĩ:</strong>
+                        @if (Model.ArtistsNames != null && Model.ArtistsNames.Any())
+                        {
+                            @string.Join(", ", Model.ArtistsNames)
+                        }
+                        else
+                        {
+                            <span>Không có thông tin nghệ sĩ.</span>
+                        }
+                    </li>
+                    <li class="list-group-item"><strong>Link:</strong> <a href="@Model.Link" target="_blank">@Model.Link</a></li>
+                    <li class="list-group-item">
+                        <strong>ThumbnailM:</strong>
+                        @if (!string.IsNullOrEmpty(Model.ThumbnailM))
+                        {
+                            <br />
+                            <img src="@Model.ThumbnailM" alt="ThumbnailM" style="max-width: 100%; height: auto; border-radius: 4px;" />
+                        }
+                        else
+                        {
+                            <span>Không có ảnh thumbnail.</span>
+                        }
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer text-right">
+        <a asp-action="Index" class="btn btn-secondary mr-2">Quay lại</a>
+        <a asp-action="Edit" asp-route-id="@Model.EncodeId" class="btn btn-warning">Sửa</a>
+    </div>
+</div>
+
+@section Scripts {
+    @if (!string.IsNullOrEmpty(Model.Hls))
+    {
+        <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const video = document.getElementById("video");
+                const playButton = document.getElementById("playButton");
+                const videoSrc = "@Html.Raw(Model.Hls)";
+
+                console.log("HLS URL:", videoSrc);
+
+                playButton.addEventListener("click", function () {
+                    if (Hls.isSupported()) {
+                        const hls = new Hls({
+                            maxBufferLength: 30,
+                            maxMaxBufferLength: 60,
+                            autoStartLoad: true
+                        });
+                        hls.loadSource(videoSrc);
+                        hls.attachMedia(video);
+                        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                            video.play().catch(error => {
+                                console.error("Auto-play failed:", error);
+                            });
+                        });
+                        hls.on(Hls.Events.ERROR, (event, data) => {
+                            console.error("HLS error:", data);
+                        });
+                    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+                        video.src = videoSrc;
+                        video.play().catch(error => {
+                            console.error("Native HLS auto-play failed:", error);
+                        });
+                    }
+                });
+            });
+        </script>
+    }
+}

@@ -1,0 +1,270 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SmartMusic Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <style>
+        body {
+            background: #fbfcfe;
+            font-family: 'Poppins', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Hiệu ứng chuyển đổi mượt mà */
+        }
+
+        .iq-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            height: 100%;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            z-index: 1000; /* Đảm bảo sidebar nằm trên content-page */
+        }
+
+        .iq-sidebar-logo {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .iq-menu li {
+            list-style: none;
+            padding: 10px 20px;
+        }
+
+            .iq-menu li a {
+                color: #4a525f;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                transition: color 0.3s ease;
+            }
+
+                .iq-menu li a i {
+                    margin-right: 10px;
+                    font-size: 20px;
+                }
+
+            .iq-menu li.active a {
+                color: #ff4545;
+                font-weight: bold;
+            }
+
+        .iq-top-navbar {
+            position: fixed;
+            top: 0;
+            left: 260px;
+            right: 0;
+            background: #fff;
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            z-index: 1100; /* Tăng z-index để đè lên content-page */
+        }
+
+        .content-page {
+            margin-left: 260px;
+            padding: 110px 20px 20px 20px; /* tăng top nếu header cao hơn */
+            min-height: 100vh;
+            position: relative;
+            z-index: 900;
+        }
+
+        .iq-footer {
+            margin-left: 260px;
+            padding: 20px;
+            background: #fff;
+            border-top: 1px solid #eee;
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            position: relative;
+            z-index: 900; /* Đảm bảo footer nằm dưới top navbar */
+        }
+
+        /* Style cho nút chuyển đổi sáng/tối */
+        .theme-toggle-btn {
+            background: none;
+            border: none;
+            color: #4a525f;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0 10px;
+            transition: color 0.3s ease;
+        }
+
+            .theme-toggle-btn:hover {
+                color: #ff4545;
+            }
+
+        /* Dark mode styles */
+        body.dark-mode {
+            background: #1a1a1a;
+            color: #d3d3d3;
+        }
+
+        .dark-mode .iq-sidebar {
+            background: #2a2a2a;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .dark-mode .iq-sidebar-logo {
+            border-bottom: 1px solid #444;
+        }
+
+        .dark-mode .iq-menu li a {
+            color: #d3d3d3;
+        }
+
+        .dark-mode .iq-menu li.active a {
+            color: #ff4545;
+        }
+
+        .dark-mode .iq-top-navbar {
+            background: #2a2a2a;
+            box-shadow: 0 2px 10px rgba(255, 255, 255, 0.05);
+        }
+
+        .dark-mode .content-page {
+            background: #1a1a1a;
+        }
+
+        .dark-mode .iq-footer {
+            background: #2a2a2a;
+            border-top: 1px solid #444;
+            color: #d3d3d3;
+        }
+
+        .dark-mode .theme-toggle-btn {
+            color: #d3d3d3;
+        }
+
+            .dark-mode .theme-toggle-btn:hover {
+                color: #ff4545;
+            }
+    </style>
+
+</head>
+<body>
+    <div class="wrapper">
+        <div class="iq-sidebar sidebar-default">
+            <div class="iq-sidebar-logo d-flex align-items-center justify-content-between">
+                <a href="@Url.Action("Index", "Dashboard", new { area = "Admin" })" class="header-logo">
+                    <h5 class="logo-title">SmartMusic</h5>
+                </a>
+                <div class="sidebar-toggle">
+                    <i class="las la-arrow-right"></i>
+                </div>
+            </div>
+            <div class="iq-sidebar-menu">
+                <ul class="iq-menu">
+                    <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Dashboard" ? "active" : "")">
+                        <a href="@Url.Action("Index", "Dashboard", new { area = "Admin" })"><i class="las la-tachometer-alt"></i><span>Dashboard</span></a>
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "User" ? "active" : "")">
+                        <a href="@Url.Action("Index", "User", new { area = "Admin" })"><i class="las la-users"></i><span>Users</span></a>
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Artist" ? "active" : "")">
+                        <a href="@Url.Action("Index", "Artist", new { area = "Admin" })"><i class="las la-user-tie"></i><span>Artists</span></a>
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Album" ? "active" : "")">
+                        <a href="@Url.Action("Index", "Album", new { area = "Admin" })"><i class="las la-compact-disc"></i><span>Albums</span></a>
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Track" ? "active" : "")">
+                        <a href="@Url.Action("Index", "Track", new { area = "Admin" })"><i class="las la-music"></i><span>Tracks</span></a>
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Video" ? "active" : "")">
+                        <a href="@Url.Action("Index", "Videos", new { area = "Admin" })"><i class="las la-video"></i><span>Videos MV</span></a>
+                    </li>
+                    <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Genre" ? "active" : "")">
+                        <a href="@Url.Action("Index", "Genre", new { area = "Admin" })"><i class="las la-record-vinyl"></i><span>Genre</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="iq-top-navbar">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="iq-navbar-logo d-flex align-items-center">
+                    <i class="ri-menu-line wrapper-menu" onclick="toggleSidebar()"></i>
+                    <a href="@Url.Action("Index", "Dashboard", new { area = "Admin" })" class="ms-3"><h5>SmartMusic Admin</h5></a>
+                </div>
+                <ul class="navbar-nav ms-auto d-flex align-items-center">
+                    <!-- Nút chuyển đổi sáng/tối -->
+                    <li class="nav-item">
+                        <button class="theme-toggle-btn" onclick="toggleTheme()">
+                            <i class="las la-sun"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link logout-btn" href="@Url.Action("Index", "Home", new { area = "" })">
+                            <i class="las la-sign-out-alt"></i> Quay về trang chủ
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="content-page">
+            <div class="container-fluid">
+                @RenderBody()
+            </div>
+        </div>
+        <footer class="iq-footer">
+            <p>© @DateTime.Now.Year - SmartMusic Admin</p>
+        </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Chuyển đổi sidebar
+        function toggleSidebar() {
+            var sidebar = document.querySelector('.iq-sidebar');
+            if (sidebar.style.left === '0px') {
+                sidebar.style.left = '-260px';
+            } else {
+                sidebar.style.left = '0px';
+            }
+        }
+
+        // Chuyển đổi sáng/tối
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.querySelector('.theme-toggle-btn i');
+            body.classList.toggle('dark-mode');
+
+            // Cập nhật biểu tượng (mặt trời/mặt trăng)
+            if (body.classList.contains('dark-mode')) {
+                themeIcon.classList.remove('la-sun');
+                themeIcon.classList.add('la-moon');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.classList.remove('la-moon');
+                themeIcon.classList.add('la-sun');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Khôi phục chế độ khi tải trang
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            const body = document.body;
+            const themeIcon = document.querySelector('.theme-toggle-btn i');
+
+            if (savedTheme === 'dark') {
+                body.classList.add('dark-mode');
+                themeIcon.classList.remove('la-sun');
+                themeIcon.classList.add('la-moon');
+            } else {
+                body.classList.remove('dark-mode');
+                themeIcon.classList.remove('la-moon');
+                themeIcon.classList.add('la-sun');
+            }
+        });
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

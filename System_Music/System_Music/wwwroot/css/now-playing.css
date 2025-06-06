@@ -1,0 +1,451 @@
+﻿/* CSS cho signup-bar */
+.signup-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to right, #ae2896, #509bf5);
+    padding: 16px;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.signup-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: #FFFFFF;
+}
+
+.signup-title {
+    font-size: 12px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.signup-description {
+    font-size: 14px;
+    margin: 0;
+    max-width: 600px;
+}
+
+.signup-btn {
+    background-color: #FFFFFF;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 24px;
+    color: #000000;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+    .signup-btn:hover {
+        background-color: #F0F0F0;
+    }
+
+/* CSS cho now-playing-bar */
+.now-playing-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #000000;
+    padding: 8px 16px;
+    height: 90px;
+    box-sizing: border-box;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
+    color: #b3b3b3;
+}
+
+/* Track Info */
+.track-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.track-cover {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border-radius: 4px;
+}
+
+.track-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+}
+
+.now-playing-track-title { /* Kích thước nhỏ cho now-playing-bar */
+    font-size: 14px;
+    color: #FFFFFF;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+.track-title { /* Giữ nguyên kiểu mặc định, áp dụng cho track-details */
+    font-size: 14px;
+    color: #FFFFFF;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+.track-artist {
+    font-size: 12px;
+    color: #b3b3b3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+/* Playback Controls */
+.playback-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+    max-width: 600px;
+}
+
+.control-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.control-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon {
+    width: 16px;
+    height: 16px;
+    fill: #b3b3b3;
+    transition: fill 0.2s ease;
+}
+
+.play-pause-btn .icon {
+    width: 24px;
+    height: 24px;
+}
+
+.control-btn:hover .icon {
+    fill: #FFFFFF;
+}
+
+.progress-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.current-time,
+.total-time {
+    font-size: 11px;
+    color: #b3b3b3;
+}
+
+.progress-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: #535353;
+    outline: none;
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+}
+
+    .progress-slider::-webkit-slider-runnable-track {
+        height: 4px;
+        background: #535353;
+        border-radius: 2px;
+    }
+
+    .progress-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 12px;
+        height: 12px;
+        background: #FFFFFF;
+        border-radius: 50%;
+        margin-top: -4px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+    .progress-slider::-webkit-slider-thumb {
+        transition: opacity 0.2s ease, left 0.1s linear;
+    }
+
+    .progress-slider::-moz-range-thumb {
+        transition: opacity 0.2s ease, left 0.1s linear;
+    }
+    .progress-slider::-webkit-slider-runnable-track {
+        background: linear-gradient(to right, #FFFFFF 0%, #FFFFFF var(--progress, 0%), #535353 var(--progress, 0%), #535353 100%);
+    }
+
+    .progress-slider:hover::-webkit-slider-runnable-track {
+        background: linear-gradient(to right, #1DB954 0%, #1DB954 var(--progress, 0%), #535353 var(--progress, 0%), #535353 100%);
+    }
+
+    .progress-slider:hover::-webkit-slider-thumb {
+        opacity: 1;
+    }
+
+    .progress-slider::-moz-range-track {
+        height: 4px;
+        background: #535353;
+        border-radius: 2px;
+    }
+
+    .progress-slider::-moz-range-thumb {
+        width: 12px;
+        height: 12px;
+        background: #FFFFFF;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    .progress-slider::-moz-range-progress {
+        background: #FFFFFF;
+        height: 4px;
+        border-radius: 2px;
+    }
+
+    .progress-slider:hover::-moz-range-progress {
+        background: #1DB954;
+    }
+
+    .progress-slider:hover::-moz-range-thumb {
+        opacity: 1;
+    }
+    .progress-slider:active::-webkit-slider-thumb,
+    .progress-slider:active::-moz-range-thumb {
+        opacity: 1;
+    }
+/* Extra Controls */
+.extra-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+    justify-content: flex-end;
+}
+
+/* New Volume Control Styles */
+.volume-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.volume-mute-btn.control-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    width: var(--button-size, 32px);
+    height: var(--button-size, 32px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+    .volume-mute-btn.control-button:hover {
+        transform: scale(1.1);
+    }
+
+    .volume-mute-btn.control-button svg {
+        width: 16px;
+        height: 16px;
+        fill: #b3b3b3;
+        transition: fill 0.2s ease;
+    }
+
+    .volume-mute-btn.control-button:hover svg {
+        fill: #FFFFFF;
+    }
+
+.volume-bar-container {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.volume-bar-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 100px;
+    position: relative;
+}
+
+.volume-label {
+    font-size: 12px;
+    color: #b3b3b3;
+    white-space: nowrap;
+}
+
+.volume-progress-bar {
+    position: relative;
+    width: 100px;
+    height: 4px;
+    background: #535353;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+    .volume-progress-bar:hover .progress-bar-fill {
+        background: #1DB954;
+    }
+
+.progress-bar-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #535353;
+    border-radius: 2px;
+}
+
+.progress-bar-fill-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    width: var(--progress-bar-transform, 0%);
+    height: 100%;
+    background: #FFFFFF;
+    border-radius: 2px;
+    transition: width 0.2s ease, background 0.2s ease;
+}
+
+.progress-bar-thumb {
+    position: absolute;
+    top: 50%;
+    left: calc(var(--progress-bar-transform, 0%) - 6px);
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    background: #FFFFFF;
+    border-radius: 50%;
+    opacity: 0; /* Ẩn khi không hover */
+    transition: transform 0.2s ease;
+    z-index: 2; /* Đảm bảo không bị che */
+}
+
+.volume-progress-bar:hover .progress-bar-thumb {
+    transform: translateY(-50%) scale(1.2);
+    opacity: 1; /* Đảm bảo luôn hiển thị */
+}
+
+.volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: transparent;
+    outline: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+    opacity: 0;
+}
+
+    .volume-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 12px;
+        height: 12px;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .volume-slider::-moz-range-thumb {
+        width: 12px;
+        height: 12px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+.hidden-visually {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+/* Đảm bảo tất cả các nút trong .extra-controls có cùng chiều cao và căn chỉnh */
+.extra-controls .control-btn {
+    padding: 4px; /* Đồng nhất với các nút khác */
+    height: 32px; /* Đặt chiều cao cố định để đồng bộ */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    /* Đảm bảo SVG được căn giữa và có kích thước đồng nhất */
+    .extra-controls .control-btn .icon {
+        width: 16px;
+        height: 16px;
+        fill: #b3b3b3;
+        transition: fill 0.2s ease;
+    }
+
+    /* Điều chỉnh khi hover */
+    .extra-controls .control-btn:hover .icon {
+        fill: #FFFFFF;
+    }
+
+/* Đảm bảo nút active có màu tương tự các nút khác (nếu cần) */
+button[data-testid="control-button-npv"][data-active="true"] .icon {
+    fill: #1DB954;
+}

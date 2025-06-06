@@ -1,0 +1,65 @@
+﻿@model IEnumerable<System_Music.Models.SqlModels.Album>
+
+@{
+    ViewData["Title"] = "Danh sách album";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Danh sách album</h2>
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Tạo album mới</a>
+        <a asp-action="SyncFromZingMp3" class="btn btn-info">Đồng bộ album từ Zing MP3</a>
+    </p>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên album</th>
+                <th>Ảnh bìa</th>
+                <th>Tổng số bài hát</th>
+                <th>Nghệ sĩ</th>
+                <th>Ngày phát hành</th>
+                <th>Zing MP3 Album ID</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var album in Model)
+            {
+                <tr>
+                    <td>@album.AlbumId</td>
+                    <td>@album.Name</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(album.Image))
+                        {
+                            <img src="@album.Image" alt="@album.Name" style="width: 100px; height: auto;" />
+                        }
+                        else
+                        {
+                            <span>Không có ảnh</span>
+                        }
+                    </td>
+                    <td>@(album.Tracks?.Count ?? 0)</td>
+                    <td>
+                        @if (album.AlbumArtists != null && album.AlbumArtists.Any())
+                        {
+                            @string.Join(", ", album.AlbumArtists.Select(aa => aa.Artist.Name))
+                        }
+                        else
+                        {
+                            <span>Không có nghệ sĩ</span>
+                        }
+                    </td>
+                    <td>@album.ReleaseDate.ToString("dd/MM/yyyy")</td>
+                    <td>@(album.ZingMp3AlbumId ?? "N/A")</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@album.AlbumId" class="btn btn-warning btn-sm">Sửa</a>
+                        <a asp-action="Details" asp-route-id="@album.AlbumId" class="btn btn-info btn-sm">Chi tiết</a>
+                        <a asp-action="Delete" asp-route-id="@album.AlbumId" class="btn btn-danger btn-sm">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

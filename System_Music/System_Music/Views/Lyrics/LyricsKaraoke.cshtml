@@ -1,0 +1,226 @@
+﻿@model System_Music.Models.SqlModels.Track
+@using System_Music.Services.Interfaces
+@inject System_Music.Services.Interfaces.IAlbumService AlbumService
+@inject System_Music.Services.Interfaces.ITrackService TrackService
+@inject System_Music.Services.Interfaces.IArtistService ArtistService
+@inject SmartMusicDbContext Context
+@using System_Music.Models.SqlModels
+@using System_Music.Models.ViewModels
+@using System.Text.Json
+@using Microsoft.EntityFrameworkCore
+@using System
+@using System.Linq
+
+@{
+    ViewData["Title"] = "Lời Bài Hát - " + (Model?.Title ?? "Không Tìm Thấy");
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var audioUrl = ViewData["AudioUrl"] as string ?? "";
+    var trackTitle = Model?.Title ?? "";
+    var artistNames = (Model?.TrackArtists != null && Model.TrackArtists.Any(ta => ta.Artist != null))
+            ? Model.TrackArtists.Where(ta => ta.Artist != null).Select(ta => ta.Artist.Name).ToList()
+            : new List<string> { "Không có nghệ sĩ" };
+
+    // Tạo danh sách trackArtists dưới dạng object
+    var trackArtists = artistNames.Select(name => new { artist = new { name } }).ToList();
+
+    var trackImageUrl = Model?.ImageUrl ?? "https://via.placeholder.com/56";
+}
+
+<link rel="stylesheet" href="~/css/LyricsKaraoke.css" />
+<audio id="audio-player" src="@audioUrl" preload="auto"></audio>
+
+<div id="lyrics-container" class="lyrics-container">
+    <div class="lyrics-content" id="lyricsContent">
+        @if (Model != null)
+        {
+            try
+            {
+                var lyricsList = ViewData["LyricsList"] as List<LyricsTiming> ?? new List<LyricsTiming>();
+                if (lyricsList.Any())
+                {
+                    <h2>Lời Bài Hát: @Model.Title</h2>
+                    <ul class="scroll-content">
+                        @{
+                            var orderedLyrics = lyricsList.OrderBy(l => l.StartTime).ToList();
+                            if (!orderedLyrics.Any())
+                            {
+                                <li class="item error">Không có dữ liệu lời bài hát.</li>
+                            }
+                            else
+                            {
+                                // Nhóm lại các dòng dựa trên thời gian gần nhau (tùy chọn)
+                                var groupedLines = new List<(int Start, int End, string Text)>();
+                                var currentLineWords = new List<string>();
+                                var currentLineStart = 0;
+                                var currentLineEnd = 0;
+
+                                for (int i = 0; i < orderedLyrics.Count; i++)
+                                {
+                                    var lyric = orderedLyrics[i];
+                                    var wordCount = lyric.LyricText.Split(' ').Length;
+
+                                    if (currentLineWords.Count == 0)
+                                    {
+                                        currentLineWords.Add(lyric.LyricText);
+                                        currentLineStart = lyric.StartTime;
+                                        currentLineEnd = lyric.EndTime;
+                                    }
+                                    else
+                                    {
+                                        var totalWords = string.Join(" ", currentLineWords).Split(' ').Length + wordCount;
+                                        var timeGap = i < orderedLyrics.Count - 1
+                                        ? orderedLyrics[i + 1].StartTime - lyric.EndTime
+                                        : 6000;
+
+                                        if (totalWords <= 7 && timeGap < 6000)
+                                        {
+                                            currentLineWords.Add(lyric.LyricText);
+                                            currentLineEnd = lyric.EndTime;
+                                        }
+                                        else
+                                        {
+                                            groupedLines.Add((currentLineStart, currentLineEnd, string.Join(" ", currentLineWords)));
+                                            currentLineWords = new List<string> { lyric.LyricText };
+                                            currentLineStart = lyric.StartTime;
+                                            currentLineEnd = lyric.EndTime;
+                                        }
+                                    }
+                                }
+
+                                if (currentLineWords.Any())
+                                {
+                                    groupedLines.Add((currentLineStart, currentLineEnd, string.Join(" ", currentLineWords)));
+                                }
+
+                                // Hiển thị các dòng đã nhóm
+                                foreach (var (Start, End, Text) in groupedLines)
+                                {
+                                    <li class="item" data-start="@Start" data-end="@End">
+                                        @Text
+                                    </li>
+                                }
+                            }
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="item error">Không có lời bài hát cho bài "@Model.Title".</p>
+                }
+            }
+            catch (Exception ex)
+            {
+                <p class="item error">Lỗi khi tải lời bài hát: @ex.Message</p>
+            }
+        }
+        else
+        {
+            <p class="item error">Không tìm thấy bài hát.</p>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        window.currentTrackInfo = {
+            title: @Html.Raw(Json.Serialize(trackTitle)),
+            trackArtists: @Html.Raw(Json.Serialize(trackArtists)),
+            imageUrl: @Html.Raw(Json.Serialize(trackImageUrl)),
+            audioUrl: @Html.Raw(Json.Serialize(audioUrl))
+        };
+        console.log('Track info stored in window.currentTrackInfo:', window.currentTrackInfo);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const audio = document.getElementById('audio-player');
+            const lyricsContainer = document.getElementById('lyrics-container');
+            const lyricItems = lyricsContainer.querySelectorAll('.item:not(.error)');
+            let currentLineIndex = -1;
+
+            if (!audio || !audio.src || audio.src === "null") {
+                console.error('Audio player or source not found or invalid:', audio, audio.src);
+                return;
+            }
+
+            window.playerState = window.playerState || {};
+            window.playerState.audio = audio;
+            window.playerState.isPlaying = false;
+            window.playerState.currentTrack = {
+                title: '@trackTitle',
+                audioUrl: '@audioUrl'
+            };
+
+            function updateLyrics() {
+                const currentTime = audio.currentTime * 1000; // Convert to milliseconds
+                let foundActiveLine = false;
+
+                lyricItems.forEach((item, index) => {
+                    const startTime = parseFloat(item.getAttribute('data-start'));
+                    const endTime = parseFloat(item.getAttribute('data-end'));
+
+                    if (!isNaN(startTime) && !isNaN(endTime)) {
+                        if (currentTime >= startTime && currentTime < endTime) {
+                            foundActiveLine = true;
+                            if (index !== currentLineIndex) {
+                                if (currentLineIndex >= 0) {
+                                    lyricItems[currentLineIndex].classList.remove('is-active');
+                                    lyricItems[currentLineIndex].classList.add('is-over');
+                                }
+                                item.classList.remove('is-over');
+                                item.classList.add('is-active');
+                                currentLineIndex = index;
+                                item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        } else if (currentTime >= endTime && index === currentLineIndex) {
+                            item.classList.remove('is-active');
+                            item.classList.add('is-over');
+                            currentLineIndex = -1;
+                        } else if (currentTime < startTime && index === currentLineIndex) {
+                            item.classList.remove('is-active');
+                            currentLineIndex = -1;
+                        }
+                    }
+                });
+
+                if (!foundActiveLine && currentLineIndex >= 0) {
+                    lyricItems[currentLineIndex].classList.remove('is-active');
+                    lyricItems[currentLineIndex].classList.add('is-over');
+                    currentLineIndex = -1;
+                }
+            }
+
+            audio.addEventListener('timeupdate', updateLyrics);
+            audio.addEventListener('play', () => {
+                window.playerState.isPlaying = true;
+                updateLyrics();
+            });
+            audio.addEventListener('pause', () => {
+                window.playerState.isPlaying = false;
+                if (currentLineIndex >= 0) {
+                    lyricItems[currentLineIndex].classList.remove('is-active');
+                    lyricItems[currentLineIndex].classList.add('is-over');
+                    currentLineIndex = -1;
+                }
+            });
+            audio.addEventListener('seeked', updateLyrics);
+            audio.addEventListener('error', (e) => {
+                console.error('Audio error:', e);
+                alert('Không thể tải tệp âm thanh. Vui lòng kiểm tra lại nguồn.');
+            });
+
+            audio.addEventListener('canplay', () => {
+                audio.play().catch(error => {
+                    console.warn('Auto-play blocked:', error);
+                    alert('Vui lòng nhấn play để bắt đầu bài hát.');
+                });
+            });
+
+            if (window.updateNowPlayingBar) {
+                window.updateNowPlayingBar(window.currentTrackInfo);
+            } else {
+                document.addEventListener('NowPlayingBarReady', function() {
+                    window.updateNowPlayingBar(window.currentTrackInfo);
+                });
+            }
+        });
+    </script>
+}

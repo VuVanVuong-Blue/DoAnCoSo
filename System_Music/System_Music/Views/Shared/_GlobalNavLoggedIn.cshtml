@@ -1,0 +1,260 @@
+﻿<!-- _GlobalNavLoggedIn.cshtml -->
+@using System_Music.Models.SqlModels
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+<div class="global-nav logged-in">
+    <!-- Bên trái -->
+    <div class="left-section">
+        <!-- Logo Spotify -->
+        <div class="logo-vsuond">
+            <img src="~/images/LogoVSuond.png" alt="Logo" class="logo-img">
+            <span class="logo-text">VSuond</span>
+        </div>
+        <!-- Container cho nút Home và thanh tìm kiếm -->
+        <div class="center-container">
+            <!-- Nút Home -->
+            <a href="@Url.Action("Index", "Home", new { area = "" })" class="home-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13.5 1.515a3 3 0 0 0-3 0L3 5.845a2 2 0 0 0-1 1.732V21a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-6h4v6a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V7.577a2 2 0 0 0-1-1.732l-7.5-4.33z" fill="#B3B3B3" />
+                </svg>
+            </a>
+            <!-- Thanh tìm kiếm -->
+            <div class="search-bar">
+                <form class="text-element text-medium text-common" role="search">
+                    <div class="search-icon-container">
+                        <button class="search-button" aria-label="Tìm kiếm">
+                            <svg class="search-icon-svg" viewBox="0 0 24 24">
+                                <path d="M10.533 1.279c-5.18 0-9.407 4.14-9.407 9.279s4.226 9.279 9.407 9.279c2.234 0 4.29-.77 5.907-2.058l4.353 4.353a1 1 0 1 0 1.414-1.414l-4.344-4.344a9.157 9.157 0 0 0 2.077-5.816c0-5.14-4.226-9.279-9.407-9.279zm-7.407 9.279c0-4.006 3.302-7.279 7.407-7.279s7.407 3.273 7.407 7.279-3.302 7.279-7.407 7.279-7.407-3.273-7.407-7.279z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <input type="text" class="text-element search-input text-common" placeholder="Bạn muốn phát nội dung gì?" role="combobox" aria-label="Bạn muốn phát nội dung gì?" />
+                    <div class="action-buttons">
+                        <button class="clear-button" aria-label="Xóa trường tìm kiếm">
+                            <svg class="clear-icon-svg" viewBox="0 0 24 24">
+                                <path d="M3.293 3.293a1 1 0 0 1 1.414 0L12 10.586l7.293-7.293a1 1 0 1 1 1.414 1.414L13.414 12l7.293 7.293a1 1 0 0 1-1.414 1.414L12 13.414l-7.293 7.293a1 1 0 0 1-1.414-1.414L10.586 12 3.293 4.707a1 1 0 0 1 0-1.414z" />
+                            </svg>
+                        </button>
+                        <button class="browse-button" aria-label="Duyệt tìm">
+                            <svg class="browse-icon-svg" viewBox="0 0 24 24">
+                                <path d="M15 15.5c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" />
+                                <path d="M1.513 9.37A1 1 0 0 1 2.291 9h19.418a1 1 0 0 1 .979 1.208l-2.339 11a1 1 0 0 1-.978.792H4.63a1 1 0 0 1-.978-.792l-2.339-11a1 1 0 0 1 .201-.837zM3.525 11l1.913 9h13.123l1.913-9H3.525zM4 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v4h-2V3H6v3H4V2z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="search-dropdown" id="recent-searches-dropdown" role="listbox">
+                        <div class="dropdown-content">
+                            <p class="text-element text-bold">Các tìm kiếm gần đây</p>
+                            <ul class="search-results">
+                                <!-- Các mục tìm kiếm gần đây sẽ được thêm động bằng JavaScript -->
+                            </ul>
+                            <button class="text-element text-medium clear-recent">Xóa các tìm kiếm gần đây</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bên phải -->
+    <div class="right-section">
+        @if (User.IsInRole("Admin"))
+        {
+            <a class="nav-link" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+        }
+        <div class="gap-support">
+            <a href="@Url.Action("Premium", "Home", new { area = "" })" class="premium-btn">Premium</a>
+        </div>
+        <div class="divider"></div>
+        <button class="settings-btn">
+            <img src="https://img.icons8.com/?size=100&id=PrNXztVQSsms&format=png&color=ffffff" alt="Settings Icon" style="width: 24px; height: 24px;">
+            <span class="settings-text">Cài đặt ứng dụng</span>
+        </button>
+        @{
+            var user = await UserManager.GetUserAsync(User);
+            var profileImage = user?.AvatarMedia?.MediaPath ?? "https://img.icons8.com/ios-filled/50/ffffff/user.png";
+        }
+        <div class="user-profile">
+            <button class="user-profile-btn" onclick="toggleDropdown()">
+                <img src="@profileImage" alt="User Avatar" class="user-avatar">
+            </button>
+            <ul class="dropdown-menu" id="userDropdown">
+                <li class="dropdown-item-wrapper"><a class="dropdown-item" href="#">Account</a></li>
+                <li class="dropdown-item-wrapper"><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Profile</a></li>
+                <li class="dropdown-item-wrapper"><a class="dropdown-item" href="#">Upgrade to Premium</a></li>
+                <li class="dropdown-item-wrapper"><a class="dropdown-item" href="#">Support</a></li>
+                <li class="dropdown-item-wrapper"><a class="dropdown-item" href="#">Download</a></li>
+                <li class="dropdown-item-wrapper"><a class="dropdown-item" href="#">Settings</a></li>
+                <li class="dropdown-item-wrapper"><hr class="dropdown-divider"></li>
+                <li class="dropdown-item-wrapper">
+                    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <button type="submit" class="dropdown-item">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Loại bỏ nút "X" mặc định của trình duyệt trên input type=search */
+    .text-element.search-input.text-common::-webkit-search-cancel-button {
+        -webkit-appearance: none;
+        appearance: none;
+    }
+</style>
+
+<script>
+    function toggleDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        dropdown.classList.toggle('show');
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.closest('.user-profile')) {
+            const dropdowns = document.getElementsByClassName('dropdown-menu');
+            for (let i = 0; i < dropdowns.length; i++) {
+                const openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+
+    // JavaScript để xử lý thanh tìm kiếm
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.querySelector('.text-element.search-input.text-common');
+        const searchResultsDropdown = document.querySelector('.search-dropdown');
+        const clearBtn = document.querySelector('.clear-button');
+
+        // Hàm xử lý click vào kết quả tìm kiếm
+        function handleResultClick(item) {
+            if (item.type === 'track') {
+                window.location.href = `/Track/Detail/${item.id}`;
+            } else if (item.type === 'artist') {
+                window.location.href = `/Artist/Detail/${item.id}`;
+            } else if (item.type === 'album') {
+                window.location.href = `/Album/Detail/${item.id}`;
+            }
+        }
+
+        // Hàm gọi API và hiển thị kết quả tìm kiếm
+        async function fetchSearchResults(query) {
+            if (!query) {
+                searchResultsDropdown.innerHTML = '';
+                searchResultsDropdown.classList.remove('show');
+                return;
+            }
+
+            console.log('Fetching search results for query:', query);
+            try {
+                const response = await fetch(`/Track/Search?query=${encodeURIComponent(query)}`);
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log('Response data:', data);
+
+                // Xóa nội dung cũ
+                searchResultsDropdown.innerHTML = '<div class="dropdown-content"></div>';
+
+                const results = [
+                    ...(data.tracks || []).map(t => ({ ...t, type: 'track' })),
+                    ...(data.artists || []).map(a => ({ ...a, type: 'artist' })),
+                    ...(data.albums || []).map(a => ({ ...a, type: 'album' }))
+                ];
+                console.log('Combined results:', results);
+
+                if (results.length > 0) {
+                    const topResult = results[0];
+                    const topResultHtml = `
+                        <div class="top-result" data-type="${topResult.type}" data-id="${topResult.id}" role="button" tabindex="0">
+                            <img src="${topResult.image || '/images/default-avatar.png'}" alt="${topResult.title}" class="top-result-image" style="width: 100px; height: 100px; float: left; margin-right: 10px;">
+                            <div>
+                                <p class="top-result-label">Top result</p>
+                                <h3 class="top-result-title">${topResult.title}</h3>
+                                <p class="top-result-subtitle">${topResult.subtitle}</p>
+                            </div>
+                        </div>
+                    `;
+                    searchResultsDropdown.querySelector('.dropdown-content').innerHTML = topResultHtml;
+
+                    // Thêm sự kiện click cho top result
+                    const topResultElement = searchResultsDropdown.querySelector('.top-result');
+                    topResultElement.addEventListener('click', () => handleResultClick(topResult));
+                    topResultElement.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            handleResultClick(topResult);
+                        }
+                    });
+
+                    if (results.length > 1) {
+                        const otherResultsList = document.createElement('ul');
+                        otherResultsList.className = 'search-results';
+                        results.slice(1).forEach((item, index) => {
+                            const li = document.createElement('li');
+                            li.className = 'search-item';
+                            li.setAttribute('role', 'button');
+                            li.setAttribute('tabindex', '0');
+                            li.innerHTML = `
+                                <div class="search-item-image">
+                                    <img src="${item.image || '/images/default-avatar.png'}" alt="${item.title}" style="width: 40px; height: 40px;" />
+                                </div>
+                                <div class="search-item-content">
+                                    <span class="search-item-title">${item.title}</span>
+                                    <p class="search-item-subtitle">${item.subtitle}</p>
+                                </div>
+                            `;
+
+                            // Thêm sự kiện click cho mỗi kết quả
+                            li.addEventListener('click', () => handleResultClick(item));
+                            li.addEventListener('keydown', (e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    handleResultClick(item);
+                                }
+                            });
+
+                            otherResultsList.appendChild(li);
+                        });
+                        searchResultsDropdown.querySelector('.dropdown-content').appendChild(otherResultsList);
+                    }
+
+                    searchResultsDropdown.classList.add('show');
+                } else {
+                    searchResultsDropdown.innerHTML = '<div class="dropdown-content"><p>Không có kết quả</p></div>';
+                    searchResultsDropdown.classList.add('show');
+                }
+            } catch (error) {
+                console.error('Error fetching search results:', error.message);
+                searchResultsDropdown.innerHTML = '<div class="dropdown-content"><p>Lỗi khi tìm kiếm: ' + error.message + '</p></div>';
+                searchResultsDropdown.classList.add('show');
+            }
+        }
+
+        // Sự kiện khi người dùng nhập từ khóa
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.trim();
+            fetchSearchResults(query);
+        });
+
+        // Ẩn dropdown khi click ra ngoài
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-bar')) {
+                searchResultsDropdown.classList.remove('show');
+            }
+        });
+
+        // Xóa nội dung input và kết quả tìm kiếm
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            searchResultsDropdown.innerHTML = '';
+            searchResultsDropdown.classList.remove('show');
+        });
+    });
+</script>

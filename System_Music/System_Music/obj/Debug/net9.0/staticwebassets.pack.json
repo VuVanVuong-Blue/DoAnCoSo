@@ -1,0 +1,529 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\obj\\Debug\\net9.0\\scopedcss\\projectbundle\\System_Music.bundle.scp.css",
+      "PackagePath": "staticwebassets\\System_Music.jyo2p9t4n6.bundle.scp.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\IndexPlayList.css",
+      "PackagePath": "staticwebassets\\css\\IndexPlayList.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\LyricsKaraoke.css",
+      "PackagePath": "staticwebassets\\css\\LyricsKaraoke.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\SidebarLoggedIn1.css",
+      "PackagePath": "staticwebassets\\css\\SidebarLoggedIn1.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\SidebarNotLoggedIn.css",
+      "PackagePath": "staticwebassets\\css\\SidebarNotLoggedIn.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\TrackDetail.css",
+      "PackagePath": "staticwebassets\\css\\TrackDetail.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\artist-profile.css",
+      "PackagePath": "staticwebassets\\css\\artist-profile.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\auth.css",
+      "PackagePath": "staticwebassets\\css\\auth.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\detail-album.css",
+      "PackagePath": "staticwebassets\\css\\detail-album.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\footer.css",
+      "PackagePath": "staticwebassets\\css\\footer.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\global-nav.css",
+      "PackagePath": "staticwebassets\\css\\global-nav.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\index.css",
+      "PackagePath": "staticwebassets\\css\\index.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\now-playing.css",
+      "PackagePath": "staticwebassets\\css\\now-playing.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\playlist.css",
+      "PackagePath": "staticwebassets\\css\\playlist.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\site.css",
+      "PackagePath": "staticwebassets\\css\\site.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\css\\video.css",
+      "PackagePath": "staticwebassets\\css\\video.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\favicon.ico",
+      "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\images\\LogoVSuond.png",
+      "PackagePath": "staticwebassets\\images\\LogoVSuond.png"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\images\\album1.webp",
+      "PackagePath": "staticwebassets\\images\\album1.webp"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\images\\album10.webp",
+      "PackagePath": "staticwebassets\\images\\album10.webp"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\images\\album2.webp",
+      "PackagePath": "staticwebassets\\images\\album2.webp"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\images\\album3.webp",
+      "PackagePath": "staticwebassets\\images\\album3.webp"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\images\\album4.webp",
+      "PackagePath": "staticwebassets\\images\\album4.webp"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\images\\album5.webp",
+      "PackagePath": "staticwebassets\\images\\album5.webp"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\images\\album6.webp",
+      "PackagePath": "staticwebassets\\images\\album6.webp"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\images\\album7.webp",
+      "PackagePath": "staticwebassets\\images\\album7.webp"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\images\\album9.webp",
+      "PackagePath": "staticwebassets\\images\\album9.webp"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\images\\logo.png",
+      "PackagePath": "staticwebassets\\images\\logo.png"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\images\\payment-methods\\mastercard.webp",
+      "PackagePath": "staticwebassets\\images\\payment-methods\\mastercard.webp"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\images\\payment-methods\\momo.webp",
+      "PackagePath": "staticwebassets\\images\\payment-methods\\momo.webp"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\images\\payment-methods\\visa.webp",
+      "PackagePath": "staticwebassets\\images\\payment-methods\\visa.webp"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\images\\spotify-icon.webp",
+      "PackagePath": "staticwebassets\\images\\spotify-icon.webp"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\images\\tracks\\d9586238-b9d1-4205-9b35-e3d19fc5f81c.jpg",
+      "PackagePath": "staticwebassets\\images\\tracks\\d9586238-b9d1-4205-9b35-e3d19fc5f81c.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\js\\IndexPlayList.js",
+      "PackagePath": "staticwebassets\\js\\IndexPlayList.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\js\\Vibrant.min.js",
+      "PackagePath": "staticwebassets\\js\\Vibrant.min.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\js\\auth.js",
+      "PackagePath": "staticwebassets\\js\\auth.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\js\\detail-album.js",
+      "PackagePath": "staticwebassets\\js\\detail-album.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\js\\sidebar.js",
+      "PackagePath": "staticwebassets\\js\\sidebar.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\js\\site.js",
+      "PackagePath": "staticwebassets\\js\\site.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\js\\track-detail.js",
+      "PackagePath": "staticwebassets\\js\\track-detail.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\LICENSE",
+      "PackagePath": "staticwebassets\\lib\\bootstrap"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.css.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.js.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.min.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\jquery-validation-unobtrusive\\dist\\jquery.validate.unobtrusive.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\dist\\jquery.validate.unobtrusive.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\jquery-validation-unobtrusive\\dist\\jquery.validate.unobtrusive.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\dist\\jquery.validate.unobtrusive.min.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\jquery-validation\\LICENSE.md",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\LICENSE.md"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\additional-methods.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\additional-methods.min.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\jquery.validate.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\jquery.validate.min.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\jquery\\LICENSE.txt",
+      "PackagePath": "staticwebassets\\lib\\jquery\\LICENSE.txt"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\jquery\\dist\\jquery.js",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\jquery\\dist\\jquery.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\jquery\\dist\\jquery.slim.js",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.slim.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\jquery\\dist\\jquery.slim.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.slim.min.js"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\lib\\jquery\\dist\\jquery.slim.min.map",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.slim.min.map"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\tracks\\2610cdc5-0633-4940-9057-f3dd47be411c_8 Letters - Why Don't We [Official Music Video]-yt.savetube.me.mp3",
+      "PackagePath": "staticwebassets\\tracks\\2610cdc5-0633-4940-9057-f3dd47be411c_8 Letters - Why Don't We [Official Music Video]-yt.savetube.me.mp3"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\1_02263026-57c5-43c7-bc4a-fabf87226ffe.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1_02263026-57c5-43c7-bc4a-fabf87226ffe.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\1_05abf3ff-6a74-495c-a5bd-a19249dc8c78.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1_05abf3ff-6a74-495c-a5bd-a19249dc8c78.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\1_070b2363-3b5c-42d2-8bf7-06ad7b84230f.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1_070b2363-3b5c-42d2-8bf7-06ad7b84230f.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\1_0f107685-4d6a-4530-9682-cd04ecf78a48.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1_0f107685-4d6a-4530-9682-cd04ecf78a48.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\1_4e735ae4-6191-4261-908f-8bba8d35eaca.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1_4e735ae4-6191-4261-908f-8bba8d35eaca.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\1_4ec6da0e-ddba-4fbe-8838-8ffb98b23599.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1_4ec6da0e-ddba-4fbe-8838-8ffb98b23599.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\1_4f02effb-4b76-4478-bc67-d328893be384.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1_4f02effb-4b76-4478-bc67-d328893be384.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\1_553102a2-43c2-435d-b224-9492e5637ca6.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1_553102a2-43c2-435d-b224-9492e5637ca6.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\1_614c14f6-c0cf-45fc-8f25-cb621eb47fed.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1_614c14f6-c0cf-45fc-8f25-cb621eb47fed.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\1_6357ac54-8516-4096-97b6-9ee095fee623.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1_6357ac54-8516-4096-97b6-9ee095fee623.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\1_72f48cfa-9f0c-497c-9522-622f9dcbe036.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1_72f48cfa-9f0c-497c-9522-622f9dcbe036.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\1_98033c91-603c-42db-9635-0feb872dbf61.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1_98033c91-603c-42db-9635-0feb872dbf61.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\1_9d4aa0b4-41d1-469c-956e-37794f7f4722.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1_9d4aa0b4-41d1-469c-956e-37794f7f4722.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\1_9d875b98-ec24-43f8-8ed6-b3730621f5df.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1_9d875b98-ec24-43f8-8ed6-b3730621f5df.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\1_a00a03b0-f505-4e7d-9e0f-49eca731c12c.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1_a00a03b0-f505-4e7d-9e0f-49eca731c12c.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\1_b0962285-05f9-4f46-88b1-78c2568c063e.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1_b0962285-05f9-4f46-88b1-78c2568c063e.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\1_b2d3515c-5a3c-42af-8863-fca40f318ad2.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1_b2d3515c-5a3c-42af-8863-fca40f318ad2.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\1_c6cbce0c-91c9-42d8-9900-ee78fb1583c3.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1_c6cbce0c-91c9-42d8-9900-ee78fb1583c3.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\1_fb5dc012-ca4d-4b5d-8765-0a49627d57f3.jpg",
+      "PackagePath": "staticwebassets\\uploads\\1_fb5dc012-ca4d-4b5d-8765-0a49627d57f3.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\23_954387cc-984f-4e88-96be-481eb77574d6.jpg",
+      "PackagePath": "staticwebassets\\uploads\\23_954387cc-984f-4e88-96be-481eb77574d6.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\23_f50f6dae-81e2-4394-9656-5908703174d9.jpg",
+      "PackagePath": "staticwebassets\\uploads\\23_f50f6dae-81e2-4394-9656-5908703174d9.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\24_bea2092f-2b6f-4d23-8ebc-d6a1937b8fa4.jpg",
+      "PackagePath": "staticwebassets\\uploads\\24_bea2092f-2b6f-4d23-8ebc-d6a1937b8fa4.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\25_26386092-dbcc-4091-9ccf-06402ea9e2d7.jpg",
+      "PackagePath": "staticwebassets\\uploads\\25_26386092-dbcc-4091-9ccf-06402ea9e2d7.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\2_3a8384fc-c2b1-47f4-be30-2a1f571107f1.jpg",
+      "PackagePath": "staticwebassets\\uploads\\2_3a8384fc-c2b1-47f4-be30-2a1f571107f1.jpg"
+    },
+    {
+      "Id": "C:\\Users\\seven\\source\\repos\\System_Music\\System_Music\\wwwroot\\uploads\\2_5236d676-7a62-4892-97e3-f6bfe6a80f59.jpg",
+      "PackagePath": "staticwebassets\\uploads\\2_5236d676-7a62-4892-97e3-f6bfe6a80f59.jpg"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.System_Music.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.System_Music.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.build.System_Music.props",
+      "PackagePath": "build\\System_Music.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.buildMultiTargeting.System_Music.props",
+      "PackagePath": "buildMultiTargeting\\System_Music.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.buildTransitive.System_Music.props",
+      "PackagePath": "buildTransitive\\System_Music.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

@@ -1,0 +1,199 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<System_Music.Models.SqlModels.Artist>
+@{
+    ViewData["Title"] = "Tất Cả Nghệ Sĩ Phổ Biến";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/index.css" />
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            background-color: #121212;
+            font-family: Arial, sans-serif;
+            color: #FFFFFF;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-view {
+            flex: 1;
+            overflow-y: auto;
+            background: #121212;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .content-spacing {
+            padding: 16px;
+        }
+
+        .shelf {
+            margin-bottom: 32px;
+        }
+
+        .shelf-header {
+            margin-bottom: 16px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .shelf-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin: 0;
+        }
+
+            .shelf-title a {
+                color: #FFFFFF;
+                text-decoration: none;
+            }
+
+                .shelf-title a:hover {
+                    text-decoration: underline;
+                }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: #181818;
+            border-radius: 8px;
+            padding: 16px;
+            transition: background 0.2s ease;
+        }
+
+            .card:hover {
+                background: #282828;
+            }
+
+        .card-image-container {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .card-image {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 50%; /* Hình tròn cho nghệ sĩ */
+            box-shadow: 0 4px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .play-button-container {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .card:hover .play-button-container {
+            opacity: 1;
+        }
+
+        .play-button {
+            background: #1DB954;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .play-icon {
+            width: 24px;
+            height: 24px;
+            fill: #000000;
+        }
+
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+
+            .card-title:hover {
+                text-decoration: underline;
+            }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: #B3B3B3;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-view">
+        <div class="content-spacing">
+            <section class="shelf" aria-label="Tất Cả Nghệ Sĩ Phổ Biến">
+                <div class="shelf-header">
+                    <div class="header-content">
+                        <div class="title-wrapper">
+                            <h2 class="shelf-title">Tất Cả Nghệ Sĩ Phổ Biến</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-container">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var artist in Model)
+                        {
+                            string imageUrl = string.IsNullOrEmpty(artist.Image) ? "https://via.placeholder.com/160" : artist.Image;
+                            string artistUrl = $"/artist/{artist.ArtistId}";
+                            <div class="card" role="group">
+                                <div class="card-image-container">
+                                    <img src="@imageUrl" alt="@artist.Name" class="card-image">
+                                    <div class="play-button-container">
+                                        <button class="play-button" aria-label="Phát nhạc của @artist.Name">
+                                            <svg data-encore-id="icon" role="img" aria-hidden="true" class="play-icon" viewBox="0 0 24 24">
+                                                <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-content">
+                                    <a href="@artistUrl" class="card-title">@artist.Name</a>
+                                    <div class="card-subtitle">Nghệ sĩ</div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p>Không có nghệ sĩ nào để hiển thị.</p>
+                    }
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+</html>

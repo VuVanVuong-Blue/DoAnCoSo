@@ -1,0 +1,58 @@
+﻿@model IEnumerable<System_Music.Models.SqlModels.Track>
+
+@{
+    ViewData["Title"] = "Tracks";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Tracks</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Create New Track
+    </a>
+    <a asp-action="SyncFromZingMp3" class="btn btn-success">
+        <i class="bi bi-cloud-download"></i> Sync from Zing MP3
+    </a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Title</th>
+            <th>Zing MP3 Track ID</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var track in Model)
+        {
+            <tr>
+                <td>
+                    @if (!string.IsNullOrEmpty(track.ImageUrl))
+                    {
+                        <img src="@track.ImageUrl" alt="@track.Title" style="max-width: 50px; max-height: 50px;" class="rounded-circle" />
+                    }
+                    else
+                    {
+                        <span>No Image</span>
+                    }
+                </td>
+                <td>@track.Title</td>
+                <td>@track.ZingMp3TrackId</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@track.TrackId" class="btn btn-info btn-sm">
+                        <i class="bi bi-eye"></i> Details
+                    </a>
+                    <a asp-action="Edit" asp-route-id="@track.TrackId" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@track.TrackId" class="btn btn-danger btn-sm">
+                        <i class="bi bi-trash"></i> Delete
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

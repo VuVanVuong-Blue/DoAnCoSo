@@ -1,0 +1,633 @@
+﻿@* Index.cshtml *@
+@{
+    ViewData["Title"] = "Home Page";
+}
+@using System_Music.Models.SqlModels
+@using System.Security.Claims
+<link rel="stylesheet" href="~/css/index.css" />
+<link rel="stylesheet" href="~/css/footer.css" />
+
+@inject System_Music.Services.Interfaces.IAlbumService AlbumService
+@inject System_Music.Services.Interfaces.IArtistService ArtistService
+@inject System_Music.Services.Interfaces.IListenHistoryService ListenHistoryService
+@inject System_Music.Interfaces.IVideoService VideoService
+
+@inject IHttpContextAccessor HttpContextAccessor
+
+<div class="main-view">
+    <div id="main-content" class="content-spacing">
+        <!-- Khu vực "Lựa chọn từ VSuond" -->
+        <section class="shelf" aria-label="Lựa chọn từ VSuond">
+            <div class="shelf-header">
+                <div class="header-content">
+                    <div class="title-wrapper">
+                        <h2 class="shelf-title">
+                            <a href="#" data-section="VSuond-picks">Lựa chọn từ VSuond</a>
+                        </h2>
+                    </div>
+                    <div class="show-all-wrapper">
+                        <a href="#" class="show-all-link" data-section="VSuond-picks">Hiện tất cả</a>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-container" id="VSuond-picks">
+                @{
+                    var playlists = new List<(string title, string subtitle, string imageUrl, string playlistUrl)>
+                {
+                ("Hot Hits Vietnam", "Đông tới Tây, đây là những ca khúc thịnh hành nhất ở Việt Nam. Ảnh bìa: Hoà Minzy", "https://i.scdn.co/image/ab67706f000000029f0562292246908506b6564c", "/playlist/37i9dQZF1DX0F4i7Q9pshJ"),
+                ("V-Pop Không Thể Thiếu", "V-Pop nở hoa trên những khúc ca này. Ảnh bìa: buitruonglinh", "https://i.scdn.co/image/ab67706f00000002e25ddc53ee7080d2e51b15c8", "/playlist/37i9dQZF1DX4g8Gs5nUhpp"),
+                ("Thiên Hạ Nghe Gì", "Những gì người bên cạnh đang nghe. Ảnh bìa: HIEUTHUHAI", "https://i.scdn.co/image/ab67706f0000000200402fb26339b07f4fe17a07", "/playlist/37i9dQZF1DWVOaOWiVD1Lf"),
+                ("Inđậm Indie", "Những ca khúc hay nhất từ dòng nhạc rất đa dạng. Ảnh bìa: TRANG", "https://i.scdn.co/image/ab67706f00000002d3f27ea02b74740873c8b41a", "/playlist/37i9dQZF1DWT2oR9BciC32"),
+                ("Hip-hop Việt", "Dòng chảy rap Việt luôn cuồn cuộn. Ảnh bìa: HIEUTHUHAI", "https://i.scdn.co/image/ab67706f00000002d785b51e0ef2f8d5604ca157", "/playlist/37i9dQZF1DWYLMi9ZNZUaz"),
+                ("Big in Vietnam", "Những ca khúc quốc tế thịnh hành nhất tại Việt Nam. Ảnh bìa: Ed Sheeran", "https://i.scdn.co/image/ab67706f00000002b77697339f9d22178e166f9e", "/playlist/37i9dQZF1DXa2nn7lGnkjR"),
+                ("K-Pop Ngay Lúc Này", "Fan K-Pop còn cần gì hơn lúc này? Ảnh bìa: JENNIE", "https://i.scdn.co/image/ab67706f00000002d5e701b21e6d86b03d2667fa", "/playlist/37i9dQZF1DWZZpneIA1A5T"),
+                ("Buổi Diễn", "Những phần diễn sống động trên sân khấu. Ảnh bìa: HIEUTHUHAI, HURRYKNG, MANBO", "https://i.scdn.co/image/ab67706f000000020330867b20ad20e66fd19702", "/playlist/37i9dQZF1DWYXdFGkgrNCC"),
+                ("Anh Hào Nhạc Việt", "Các nam thần của làng nhạc Việt. Ảnh bìa: SOOBIN", "https://i.scdn.co/image/ab67706f00000002e7148fc9ade2efd59ee94a62", "/playlist/37i9dQZF1DX3e9b2XMiQ6I"),
+                ("Đóa Hồng Nhạc Việt", "Một nửa mềm mại của nhạc Việt. Ảnh bìa: J.ADE", "https://i.scdn.co/image/ab67706f000000026f3994f3e2a662983dec0c11", "/playlist/37i9dQZF1DX5UMwGFV95IS"),
+                };
+                    for (int i = 0; i < playlists.Count; i++)
+                    {
+                        var playlist = playlists[i];
+                        <div class="card @(i >= 5 ? "hidden" : "")" role="group" style="min-width: 160px; max-width: 160px;">
+                            <div class="card-image-container">
+                                <img src="@playlist.imageUrl" alt="@playlist.title" class="card-image" style="width: 100%; height: 100%;">
+                                <div class="play-button-container">
+                                    <button class="play-button" data-playlist-id="@i" aria-label="Phát @playlist.title">
+                                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="play-icon" viewBox="0 0 24 24">
+                                            <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <a href="@playlist.playlistUrl" class="card-title" style="max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">@playlist.title</a>
+                                <div class="card-subtitle" style="max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">@playlist.subtitle</div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </section>
+
+        <!-- Khu vực "Album Phổ Biến" -->
+        <section class="shelf" aria-label="Album Phổ Biến">
+            <div class="shelf-header">
+                <div class="header-content">
+                    <div class="title-wrapper">
+                        <h2 class="shelf-title">
+                            <a href="#" data-section="albums">Album</a>
+                        </h2>
+                    </div>
+                    <div class="show-all-wrapper">
+                        <a href="#" class="show-all-link" data-section="albums">Hiện tất cả</a>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-container" id="albums">
+                @{
+                    var albums = await AlbumService.GetAllAlbumsAsync();
+                    for (int i = 0; i < albums.Count; i++)
+                    {
+                        var album = albums[i];
+                        var albumArtists = album.AlbumArtists?.Select(aa => aa.Artist?.Name).Where(name => !string.IsNullOrEmpty(name)).ToList() ?? new List<string>();
+                        string artistNames = albumArtists.Any() ? string.Join(", ", albumArtists) : "Không có nghệ sĩ";
+                        string imageUrl = string.IsNullOrEmpty(album.Image) ? "https://via.placeholder.com/160" : album.Image;
+                        string albumUrl = $"/Home/DetailAlbum/{album.AlbumId}";
+                        string playLabel = $"Phát {album.Name} Album";
+                        string subtitle = $"{artistNames}";
+                        <div class="card @(i >= 5 ? "hidden" : "")" role="group" style="min-width: 160px; max-width: 160px;">
+                            <div class="card-image-container">
+                                <img src="@imageUrl" alt="@album.Name" class="card-image" style="width: 100%; height: 100%;">
+                                <div class="play-button-container">
+                                    <button class="play-button" data-album-id="@album.AlbumId" aria-label="@playLabel">
+                                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="play-icon" viewBox="0 0 24 24">
+                                            <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <a href="@albumUrl" class="card-title" style="max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">@album.Name</a>
+                                <div class="card-subtitle" style="max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">@subtitle</div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </section>
+
+        <!-- Khu vực "Nghệ sĩ Phổ Biến" -->
+        <section class="shelf" aria-label="Nghệ sĩ Phổ Biến">
+            <div class="shelf-header">
+                <div class="header-content">
+                    <div class="title-wrapper">
+                        <h2 class="shelf-title">
+                            <a href="#" data-section="artists">Nghệ sĩ Phổ Biến</a>
+                        </h2>
+                    </div>
+                    <div class="show-all-wrapper">
+                        <a href="#" class="show-all-link" data-section="artists">Hiện tất cả</a>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-container" id="artists">
+                @{
+                    var artists = await ArtistService.GetAllArtistsAsync();
+                    for (int i = 0; i < artists.Count; i++)
+                    {
+                        var artist = artists[i];
+                        string imageUrl = string.IsNullOrEmpty(artist.Image) ? "https://via.placeholder.com/160" : artist.Image;
+                        string artistUrl = $"/artist/{artist.ArtistId}";
+                        <div class="card @(i >= 5 ? "hidden" : "")" role="group" style="min-width: 160px; max-width: 160px;">
+                            <div class="card-image-container">
+                                <img src="@imageUrl" alt="@artist.Name" class="card-image artist-image" style="width: 100%; height: 100%;">
+                                <div class="play-button-container">
+                                    <button class="play-button" data-artist-id="@artist.ArtistId" aria-label="Phát nhạc của @artist.Name">
+                                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="play-icon" viewBox="0 0 24 24">
+                                            <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <a href="@artistUrl" class="card-title" style="max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">@artist.Name</a>
+                                <div class="card-subtitle" style="max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Nghệ sĩ</div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </section>
+        <!-- Khu vực "Nội Dung Gần Đây" -->
+        @if (User.Identity.IsAuthenticated)
+        {
+            <section class="shelf" aria-label="Nội Dung Gần Đây">
+                <div class="shelf-header">
+                    <div class="header-content">
+                        <div class="title-wrapper">
+                            <h2 class="shelf-title">
+                                <a href="#" data-section="recent-content">Nội Dung Gần Đây</a>
+                            </h2>
+                        </div>
+                        <div class="show-all-wrapper">
+                            <a href="#" class="show-all-link" data-section="recent-content">Hiện tất cả</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-container" id="recent-content">
+                    @{
+                        string userId = HttpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? "currentUserId";
+                        var listenHistories = await ListenHistoryService.GetListenHistoriesByUserAsync(userId);
+                        var recentItems = listenHistories
+                        .OrderByDescending(lh => lh.ListenDate)
+                        .GroupBy(lh => lh.EntityType)
+                        .SelectMany(g => g.Take(2))
+                        .DistinctBy(lh => lh.EntityType switch
+                        {
+                            EntityType.Track => lh.TrackId.ToString(),
+                            EntityType.Album => lh.AlbumId.ToString(),
+                            EntityType.Artist => lh.ArtistId.ToString(),
+                            EntityType.Playlist => lh.PlaylistId.ToString(),
+                            _ => lh.Id.ToString()
+                        })
+                        .Take(5)
+                        .ToList();
+
+                        if (!recentItems.Any())
+                        {
+                            <p>Không có nội dung nào để hiển thị.</p>
+                        }
+                        else
+                        {
+                            for (int i = 0; i < recentItems.Count(); i++)
+                            {
+                                var item = recentItems[i];
+                                string title = "";
+                                string subtitle = "";
+                                string imageUrl = "https://via.placeholder.com/160";
+                                string url = "#";
+                                string playLabel = "";
+                                string dataAttribute = "";
+                                string dataValue = "";
+
+                                switch (item.EntityType)
+                                {
+                                    case EntityType.Track:
+                                        if (item.Track != null)
+                                        {
+                                            title = item.Track.Title;
+                                            subtitle = item.Track.TrackArtists.Any() ? string.Join(", ", item.Track.TrackArtists.Select(ta => ta.Artist?.Name)) : "Không có nghệ sĩ";
+                                            imageUrl = string.IsNullOrEmpty(item.Track.ImageUrl) ? imageUrl : item.Track.ImageUrl;
+                                            url = Url.Action("Detail", "Track", new { id = item.TrackId });
+                                            playLabel = $"Phát {item.Track.Title}";
+                                            dataAttribute = "data-track-id";
+                                            dataValue = item.TrackId.ToString();
+                                        }
+                                        break;
+                                    case EntityType.Album:
+                                        if (item.Album != null)
+                                        {
+                                            title = item.Album.Name;
+                                            subtitle = item.Album.AlbumArtists.Any() ? string.Join(", ", item.Album.AlbumArtists.Select(aa => aa.Artist?.Name)) : "Không có nghệ sĩ";
+                                            imageUrl = string.IsNullOrEmpty(item.Album.Image) ? imageUrl : item.Album.Image;
+                                            url = $"/album/{item.AlbumId}";
+                                            playLabel = $"Phát {item.Album.Name} Album";
+                                            dataAttribute = "data-album-id";
+                                            dataValue = item.AlbumId.ToString();
+                                        }
+                                        break;
+                                    case EntityType.Artist:
+                                        if (item.Artist != null)
+                                        {
+                                            title = item.Artist.Name;
+                                            subtitle = "Nghệ sĩ";
+                                            imageUrl = string.IsNullOrEmpty(item.Artist.Image) ? imageUrl : item.Artist.Image;
+                                            url = $"/artist/{item.ArtistId}";
+                                            playLabel = $"Phát nhạc của {item.Artist.Name}";
+                                            dataAttribute = "data-artist-id";
+                                            dataValue = item.ArtistId.ToString();
+                                        }
+                                        break;
+                                    case EntityType.Playlist:
+                                        if (item.Playlist != null)
+                                        {
+                                            title = item.Playlist.Name ?? "Danh sách phát";
+                                            subtitle = item.Playlist.Description;
+                                            imageUrl = item.Playlist.ImageMedia != null ? item.Playlist.ImageMedia.MediaPath : imageUrl;
+                                            url = $"/playlist/{item.PlaylistId}";
+                                            playLabel = $"Phát {item.Playlist.Name}";
+                                            dataAttribute = "data-playlist-id";
+                                            dataValue = item.PlaylistId.ToString();
+                                        }
+                                        break;
+                                }
+
+                                if (!string.IsNullOrEmpty(title))
+                                {
+                                    <div class="card @(i >= 5 ? "hidden" : "")" role="group" style="min-width: 160px; max-width: 160px;">
+                                        <div class="card-image-container">
+                                            <img src="@imageUrl" alt="@title" class="card-image @(item.EntityType == EntityType.Artist ? "artist-image" : "")" style="width: 100%; height: 100%;">
+                                            <div class="play-button-container">
+                                                <button class="play-button" @dataAttribute ="@dataValue" aria-label="@playLabel">
+                                                    <svg data-encore-id="icon" role="img" aria-hidden="true" class="play-icon" viewBox="0 0 24 24">
+                                                        <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="card-content">
+                                            <a href="@url" class="card-title" style="max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">@title</a>
+                                            <div class="card-subtitle" style="max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">@subtitle</div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        }
+                    }
+                </div>
+            </section>
+        }
+
+        <!-- Khu vực "Video MV Phổ Biến" -->
+        <section class="shelf" aria-label="Video MV Phổ Biến">
+            <div class="shelf-header">
+                <div class="header-content">
+                    <div class="title-wrapper">
+                        <h2 class="shelf-title">
+                            <a href="#" data-section="videos">Video MV Phổ Biến</a>
+                        </h2>
+                    </div>
+                    <div class="show-all-wrapper">
+                        <a href="#" class="show-all-link" data-section="videos">Hiện tất cả</a>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-container" id="videos">
+                @{
+                    var videos = await VideoService.GetAllVideosAsync();
+                    Console.WriteLine($"Total videos fetched: {videos.Count()}"); // Log số lượng video
+                    for (int i = 0; i < videos.Count(); i++)
+                    {
+                        var video = videos.ElementAt(i);
+                        string imageUrl = string.IsNullOrEmpty(video.ThumbnailM)
+                        ? "https://photo-resize-zmp3.zmdcdn.me/w240_r16x9_jpeg/placeholders/default_song.jpg"
+                        : video.ThumbnailM;
+                        string videoUrl = $"/Video/VideoMV?videoId={video.EncodeId}";
+                        string artistNames = string.IsNullOrEmpty(video.ArtistsNames) ? "Không có nghệ sĩ" : video.ArtistsNames;
+                        string duration = TimeSpan.FromSeconds(video.Duration).ToString(@"mm\:ss");
+
+                        var artistImage = video.VideoArtists?.FirstOrDefault()?.Artist?.Image;
+                        string artistImageUrl = string.IsNullOrEmpty(artistImage)
+                        ? "https://photo-resize-zmp3.zmdcdn.me/w40_r1x1_jpeg/avatars/default.jpg"
+                        : artistImage;
+
+                        Console.WriteLine($"Video {i}: ID={video.EncodeId}, Title={video.Title}, Hidden={i >= 3}");
+
+                        <div class="list-border column mar-b-30 is-3 card @(i >= 3 ? "hidden" : "")" role="group">
+                            <div class="zm-card video-item">
+                                <div class="zm-card-image video-image">
+                                    <div>
+                                        <figure class="image is-16x9">
+                                            <a href="@videoUrl">
+                                                <img src="@imageUrl" alt="@video.Title" class="card-image">
+                                            </a>
+                                        </figure>
+                                        <div class="opacity"></div>
+                                        <div class="zm-box zm-actions video-actions">
+                                            <button class="zm-btn action-play button" data-video-id="@video.EncodeId" aria-label="Phát @video.Title">
+                                                <svg data-encore-id="icon" role="img" aria-hidden="true" class="play-icon ic-svg-play-circle" viewBox="0 0 24 24">
+                                                    <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div class="zm-brand">@duration</div>
+                                    </div>
+                                </div>
+                                <div class="media">
+                                    <div class="media-left">
+                                        <a href="@videoUrl" title="@video.Title">
+                                            <figure class="image is-40x40 is-rounded">
+                                                <img src="@artistImageUrl" alt="@artistNames">
+                                            </figure>
+                                        </a>
+                                    </div>
+                                    <div class="media-content">
+                                        <div class="title">
+                                            <a href="@videoUrl" title="[MV] @video.Title">
+                                                <span>[MV] @video.Title</span>
+                                            </a>
+                                        </div>
+                                        <div class="subtitle is-one-line">
+                                            <a class="is-ghost" href="@videoUrl">@artistNames</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </section>
+    </div>
+
+    <!-- Khu vực "Hiện tất cả" cho Video MV (ẩn ban đầu) -->
+    <div id="show-all-videos" class="content-spacing" style="display: none;">
+        <div class="shelf-header">
+            <div class="header-content">
+                <div class="title-wrapper">
+                    <h2 id="show-all-videos-title" class="shelf-title">
+                        <a href="#" class="back-to-main">Video MV Phổ Biến</a>
+                    </h2>
+                </div>
+            </div>
+        </div>
+        <div class="grid-container-show-all" id="show-all-videos-grid">
+            @if (!videos.Any())
+            {
+                <p>Không có video nào để hiển thị.</p>
+            }
+            else
+            {
+                foreach (var video in videos)
+                {
+                    string imageUrl = string.IsNullOrEmpty(video.ThumbnailM)
+                    ? "https://photo-resize-zmp3.zmdcdn.me/w240_r16x9_jpeg/placeholders/default_song.jpg"
+                    : video.ThumbnailM;
+                    string videoUrl = $"/video/{video.EncodeId}";
+                    string artistNames = string.IsNullOrEmpty(video.ArtistsNames) ? "Không có nghệ sĩ" : video.ArtistsNames;
+                    string duration = TimeSpan.FromSeconds(video.Duration).ToString(@"mm\:ss");
+
+                    var artistImage = video.VideoArtists?.FirstOrDefault()?.Artist?.Image;
+                    string artistImageUrl = string.IsNullOrEmpty(artistImage)
+                    ? "https://photo-resize-zmp3.zmdcdn.me/w40_r1x1_jpeg/avatars/default.jpg"
+                    : artistImage;
+
+                    Console.WriteLine($"Show-all video: ID={video.EncodeId}, Title={video.Title}");
+
+                    <div class="list-border column mar-b-30 is-3" role="group">
+                        <div class="zm-card video-item">
+                            <div class="zm-card-image video-image">
+                                <div>
+                                    <figure class="image is-16x9">
+                                        <img src="@imageUrl" alt="@video.Title" class="card-image">
+                                    </figure>
+                                    <div class="opacity"></div>
+                                    <div class="zm-box zm-actions video-actions">
+                                        <button class="zm-btn action-play button" data-video-id="@video.EncodeId" aria-label="Phát @video.Title">
+                                            <svg data-encore-id="icon" role="img" aria-hidden="true" class="play-icon ic-svg-play-circle" viewBox="0 0 24 24">
+                                                <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="zm-brand">@duration</div>
+                                </div>
+                            </div>
+                            <div class="media">
+                                <div class="media-left">
+                                    <a href="@videoUrl" title="@video.Title">
+                                        <figure class="image is-40x40 is-rounded">
+                                            <img src="@artistImageUrl" alt="@artistNames">
+                                        </figure>
+                                    </a>
+                                </div>
+                                <div class="media-content">
+                                    <div class="title">
+                                        <a href="@videoUrl" title="[MV] @video.Title">
+                                            <span>[MV] @video.Title</span>
+                                        </a>
+                                    </div>
+                                    <div class="subtitle is-one-line">
+                                        <a class="is-ghost" href="@videoUrl">@artistNames</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <!-- Khu vực "Hiện tất cả" chung cho các section khác -->
+    <div id="show-all-content" class="content-spacing" style="display: none;">
+        <div class="shelf-header">
+            <div class="header-content">
+                <div class="title-wrapper">
+                    <h2 id="show-all-title" class="shelf-title">
+                        <a href="#" class="back-to-main"></a>
+                    </h2>
+                </div>
+            </div>
+        </div>
+        <div id="show-all-grid" class="grid-container-show-all"></div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const mainContent = document.getElementById('main-content');
+        const showAllContent = document.getElementById('show-all-content');
+        const showAllTitle = document.getElementById('show-all-title');
+        const showAllVideos = document.getElementById('show-all-videos');
+        const showAllVideosTitle = document.getElementById('show-all-videos-title');
+        const showAllLinks = document.querySelectorAll('.show-all-link');
+
+        if (!mainContent || !showAllContent || !showAllTitle || !showAllVideos || !showAllVideosTitle) {
+            console.error('Thiếu một số phần tử cần thiết cho chức năng "Hiện tất cả"');
+            return;
+        }
+
+        showAllLinks.forEach(link => {
+            link.addEventListener("click", function (e) {
+                e.preventDefault();
+                const sectionId = this.getAttribute("data-section");
+                const sectionTitle = this.parentElement.parentElement.querySelector(".shelf-title a")?.textContent || 'Không có tiêu đề';
+
+                console.log(`Show all clicked - Section: ${sectionId}, Title: ${sectionTitle}`);
+
+                if (sectionId === "videos") {
+                    console.log("Toggling show-all-videos");
+                    mainContent.style.display = "none";
+                    showAllContent.style.display = "none";
+                    showAllVideos.style.display = "block";
+                    showAllVideosTitle.textContent = sectionTitle;
+                    console.log("showAllVideos display:", showAllVideos.style.display);
+                    console.log("showAllVideos children:", showAllVideos.querySelector('#show-all-videos-grid').children.length);
+                } else {
+                    console.log("Toggling show-all-content");
+                    mainContent.style.display = "none";
+                    showAllVideos.style.display = "none";
+                    showAllContent.style.display = "block";
+                    showAllTitle.textContent = sectionTitle;
+
+                    const sectionContainer = document.getElementById(sectionId);
+                    const showAllGrid = document.getElementById('show-all-grid');
+                    if (!sectionContainer || !showAllGrid) {
+                        console.error("Section or grid not found:", sectionId);
+                        return;
+                    }
+
+                    showAllGrid.innerHTML = "";
+                    const cards = sectionContainer?.querySelectorAll(".card") || [];
+                    if (cards.length === 0) {
+                        showAllGrid.innerHTML = "<p>Không có dữ liệu để hiển thị.</p>";
+                        return;
+                    }
+
+                    cards.forEach(card => {
+                        const clonedCard = card.cloneNode(true);
+                        clonedCard.classList.remove("hidden");
+                        showAllGrid.appendChild(clonedCard);
+                    });
+                }
+            });
+        });
+
+        // Xử lý quay lại main content khi nhấn vào tiêu đề
+        document.querySelectorAll(".back-to-main").forEach(backLink => {
+            backLink.addEventListener("click", function (e) {
+                e.preventDefault();
+                console.log("Returning to main content");
+                mainContent.style.display = "block";
+                showAllContent.style.display = "none";
+                showAllVideos.style.display = "none";
+            });
+        });
+
+        // Xử lý sự kiện nhấn vào tiêu đề của các section để quay lại main content
+        document.querySelectorAll(".shelf-title a").forEach(titleLink => {
+            titleLink.addEventListener("click", function (e) {
+                e.preventDefault();
+                console.log("Returning to main content");
+                mainContent.style.display = "block";
+                showAllContent.style.display = "none";
+                showAllVideos.style.display = "none";
+            });
+        });
+
+        // Sử dụng event delegation cho play buttons
+        document.addEventListener('click', (e) => {
+            const button = e.target.closest('.play-button, .zm-btn.action-play');
+            if (!button) return;
+
+            e.preventDefault();
+            console.log('Play button clicked:', button);
+
+            const trackId = button.getAttribute('data-track-id');
+            const albumId = button.getAttribute('data-album-id');
+            const artistId = button.getAttribute('data-artist-id');
+            const playlistId = button.getAttribute('data-playlist-id');
+            const videoId = button.getAttribute('data-video-id');
+
+            console.log('Attributes:', { trackId, albumId, artistId, playlistId, videoId });
+
+            if (videoId) {
+                // Trực tiếp chuyển hướng đến VideoMV.cshtml cho video
+                const redirectUrl = `/Video/VideoMV?videoId=${videoId}`;
+                console.log('Redirecting to:', redirectUrl);
+                window.location.href = redirectUrl;
+                return; // Thoát khỏi hàm để không thực hiện fetch
+            }
+
+            // Xử lý các loại khác (Track, Album, Artist, Playlist)
+            let entityType, entityId, redirectUrl;
+            if (trackId) {
+                entityType = 'Track';
+                entityId = trackId;
+                redirectUrl = `/track/Detail/${trackId}`;
+            } else if (albumId) {
+                entityType = 'Album';
+                entityId = albumId;
+                redirectUrl = `/Home/DetailAlbum/${albumId}`;
+            } else if (artistId) {
+                entityType = 'Artist';
+                entityId = artistId;
+                redirectUrl = `/artist/${artistId}`;
+            } else if (playlistId) {
+                entityType = 'Playlist';
+                entityId = playlistId;
+                redirectUrl = `/playlist/${playlistId}`;
+            } else {
+                console.error('No entity ID found for play button:', button);
+                alert('Không tìm thấy ID để xử lý.');
+                return;
+            }
+
+            console.log('Sending save request:', { entityType, entityId });
+
+            fetch('/api/ListenHistory/Add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ entityType, entityId })
+            })
+            .then(response => {
+                console.log('Fetch response status:', response.status);
+                console.log('Fetch response ok:', response.ok);
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`Failed to save history: ${response.statusText} (${text})`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('History saved:', data);
+                if (redirectUrl) {
+                    console.log('Redirecting to:', redirectUrl);
+                    window.location.href = redirectUrl;
+                } else {
+                    console.log('No redirect URL, reloading page...');
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error saving history:', error.message);
+                alert('Lỗi khi lưu lịch sử nghe: ' + error.message);
+            });
+        });
+    });
+</script>
+@await Html.PartialAsync("_Footer")

@@ -1,0 +1,150 @@
+﻿<!-- _GlobalNavLoggedOut.cshtml -->
+@using System_Music.Models.SqlModels
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+<div class="global-nav">
+    <!-- Bên trái -->
+    <div class="left-section">
+        <!-- Logo Spotify -->
+        <div class="logo-vsuond">
+            <img src="~/images/LogoVSuond.png" alt="Logo" class="logo-img">
+            <span class="logo-text">VSuond</span>
+        </div>
+        <!-- Nút Home -->
+        <a href="@Url.Action("Index", "Home", new { area = "" })" class="home-btn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13.5 1.515a3 3 0 0 0-3 0L3 5.845a2 2 0 0 0-1 1.732V21a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-6h4v6a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V7.577a2 2 0 0 0-1-1.732l-7.5-4.33z" fill="#B3B3B3" />
+            </svg>
+        </a>
+        <!-- Thanh tìm kiếm -->
+        <div class="search-bar">
+            <form class="text-element text-medium text-common" role="search">
+                <div class="search-icon-container">
+                    <button class="search-button" aria-label="Tìm kiếm">
+                        <svg class="search-icon-svg" viewBox="0 0 24 24">
+                            <path d="M10.533 1.279c-5.18 0-9.407 4.14-9.407 9.279s4.226 9.279 9.407 9.279c2.234 0 4.29-.77 5.907-2.058l4.353 4.353a1 1 0 1 0 1.414-1.414l-4.344-4.344a9.157 9.157 0 0 0 2.077-5.816c0-5.14-4.226-9.279-9.407-9.279zm-7.407 9.279c0-4.006 3.302-7.279 7.407-7.279s7.407 3.273 7.407 7.279-3.302 7.279-7.407 7.279-7.407-3.273-7.407-7.279z" />
+                        </svg>
+                    </button>
+                </div>
+                <input type="search" class="text-element search-input text-common" placeholder="Bạn muốn phát nội dung gì?" role="combobox" aria-label="Bạn muốn phát nội dung gì?" />
+                <div class="action-buttons">
+                    <button class="clear-button" aria-label="Xóa trường tìm kiếm">
+                        <svg class="clear-icon-svg" viewBox="0 0 24 24">
+                            <path d="M3.293 3.293a1 1 0 0 1 1.414 0L12 10.586l7.293-7.293a1 1 0 1 1 1.414 1.414L13.414 12l7.293 7.293a1 1 0 0 1-1.414 1.414L12 13.414l-7.293 7.293a1 1 0 0 1-1.414-1.414L10.586 12 3.293 4.707a1 1 0 0 1 0-1.414z" />
+                        </svg>
+                    </button>
+                    <button class="browse-button" aria-label="Duyệt tìm">
+                        <svg class="browse-icon-svg" viewBox="0 0 24 24">
+                            <path d="M15 15.5c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" />
+                            <path d="M1.513 9.37A1 1 0 0 1 2.291 9h19.418a1 1 0 0 1 .979 1.208l-2.339 11a1 1 0 0 1-.978.792H4.63a1 1 0 0 1-.978-.792l-2.339-11a1 1 0 0 1 .201-.837zM3.525 11l1.913 9h13.123l1.913-9H3.525zM4 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v4h-2V3H6v3H4V2z" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="search-dropdown" id="recent-searches-dropdown" role="listbox">
+                    <div class="dropdown-content">
+                        <p class="text-element text-bold">Các tìm kiếm gần đây</p>
+                        <ul class="search-results">
+                            <!-- Các mục tìm kiếm gần đây sẽ được thêm động bằng JavaScript -->
+                        </ul>
+                        <button class="text-element text-medium clear-recent">Xóa các tìm kiếm gần đây</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bên phải -->
+    <div class="right-section">
+        <div class="gap-support">
+            <a href="@Url.Action("Premium", "Home", new { area = "" })" class="premium-btn">Premium</a>
+            <button class="support-btn">Hỗ trợ</button>
+            <button class="download-btn">Tải xuống</button>
+        </div>
+        <div class="divider"></div>
+        <button class="settings-btn">
+            <img src="https://img.icons8.com/?size=100&id=PrNXztVQSsms&format=png&color=ffffff" alt="Settings Icon" style="width: 24px; height: 24px;">
+            <span class="settings-text">Cài đặt ứng dụng</span>
+        </button>
+        <a class="nav-link dangKy-btn" asp-area="Identity" asp-page="/Account/Register" asp-route-show="signup">Đăng ký</a>
+        <a class="login-btn" asp-area="Identity" asp-page="/Account/Login" asp-route-show="signin">Đăng nhập</a>
+    </div>
+</div>
+
+<script>
+    // JavaScript để xử lý thanh tìm kiếm
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.querySelector('.text-element.search-input.text-common');
+        const recentSearchesDropdown = document.querySelector('.search-dropdown');
+        const recentSearchesList = document.querySelector('.search-results');
+        const clearRecentBtn = document.querySelector('.text-element.text-medium.clear-recent');
+        const clearBtn = document.querySelector('.clear-button');
+
+        // Mẫu dữ liệu tìm kiếm gần đây (có thể thay bằng dữ liệu động từ backend)
+        const recentSearches = [
+            { title: "Pin Dự Phòng", subtitle: "Dương Domic, Lou Hoàng", image: "https://i.scdn.co/image/ab67616d000011ebaa8b2071efbaa7ec3f41b60b", url: "/track/29Tj2R8sZZ3fzlXZVe1OyY" },
+            { title: "APT.", subtitle: "ROSÉ, Bruno Mars", image: "https://i.scdn.co/image/ab67616d000011eb36032cb4acd9df050bc2e197", url: "/track/5vNRhkKd0yEAg8suGBpjeY" },
+            { title: "99%", subtitle: "RPT MCK", image: "https://i.scdn.co/image/ab67616d000011ebb315e8bb7ef5e57e9a25bb0f", url: "/album/1vi1WySkgPGkbR8NnQzlXu" },
+            { title: "Mất Kết Nối", subtitle: "Dương Domic", image: "https://i.scdn.co/image/ab67616d000011ebaa8b2071efbaa7ec3f41b60b", url: "/track/3CmacJj7VC4W6daC8BWd0h" },
+            { title: "Việt Nam Kỷ Nguyên Vươn Mình", subtitle: "Radio Music Ai", image: "https://i.scdn.co/image/ab67616d000011eb8f44c229d781670f767d08f8", url: "/album/1zfzKFuY1Zf1sgKjunSNyi" },
+            { title: "Sơn Tùng M-TP", subtitle: "Nghệ sĩ", image: "https://i.scdn.co/image/ab6761610000101f5a79a6ca8c60e4ec1440be53", url: "/artist/5dfZ5uSmzR7VQK0udbAVpf" },
+            { title: "MIN", subtitle: "Nghệ sĩ", image: "https://i.scdn.co/image/ab6761610000101f9fbf4d041c3512612974d7e8", url: "/artist/0IdAjS2LRieBR3gzoazdAw" },
+            { title: "Dương Domic", subtitle: "Nghệ sĩ", image: "https://i.scdn.co/image/ab6761610000101f352d5672d70464e67c3ae963", url: "/artist/4KPyQxL1zqEiBcTwW6c9HE" }
+        ];
+
+        // Hiển thị danh sách tìm kiếm gần đây
+        function populateRecentSearches() {
+            recentSearchesList.innerHTML = '';
+            recentSearches.forEach((search, index) => {
+                const li = document.createElement('li');
+                li.classList.add('search-item');
+                li.innerHTML = `
+                    <div class="search-item-image">
+                        <img src="${search.image}" alt="${search.title}" />
+                        <button class="play-btn" aria-label="Phát ${search.title}">
+                            <svg viewBox="0 0 24 24">
+                                <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="search-item-content">
+                        <a href="${search.url}" class="search-item-title">${search.title}</a>
+                        <p class="search-item-subtitle">${search.subtitle}</p>
+                    </div>
+                    <button class="remove-btn" aria-label="Xóa">
+                        <svg viewBox="0 0 16 16">
+                            <path d="M2.47 2.47a.75.75 0 0 1 1.06 0L8 6.94l4.47-4.47a.75.75 0 1 1 1.06 1.06L9.06 8l4.47 4.47a.75.75 0 1 1-1.06 1.06L8 9.06l-4.47 4.47a.75.75 0 0 1-1.06-1.06L6.94 8 2.47 3.53a.75.75 0 0 1 0-1.06Z"/>
+                        </svg>
+                    </button>
+                `;
+                recentSearchesList.appendChild(li);
+            });
+        }
+
+        // Hiển thị/ẩn dropdown khi focus vào input
+        searchInput.addEventListener('focus', () => {
+            populateRecentSearches();
+            recentSearchesDropdown.classList.add('show');
+        });
+
+        // Ẩn dropdown khi click ra ngoài
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-bar')) {
+                recentSearchesDropdown.classList.remove('show');
+            }
+        });
+
+        // Xóa các tìm kiếm gần đây
+        clearRecentBtn.addEventListener('click', () => {
+            recentSearches.length = 0;
+            populateRecentSearches();
+            recentSearchesDropdown.classList.remove('show');
+        });
+
+        // Xóa nội dung input
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+        });
+    });
+</script>

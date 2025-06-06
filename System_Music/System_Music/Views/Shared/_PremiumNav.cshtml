@@ -1,0 +1,58 @@
+﻿<!-- Thanh điều hướng trên cùng cho trang Premium -->
+<style>
+    .premium-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        background-color: #000000;
+        height: 50px;
+    }
+
+    .premium-nav-logo {
+        display: flex;
+        align-items: center;
+    }
+
+        .premium-nav-logo img {
+            height: 40px;
+        }
+
+    .premium-nav-links {
+        display: flex;
+        gap: 20px;
+    }
+
+        .premium-nav-links a {
+            color: #FFFFFF;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+            .premium-nav-links a:hover {
+                color: #1DB954;
+            }
+
+            .premium-nav-links a.active {
+                font-weight: bold;
+                color: #FFFFFF;
+            }
+</style>
+
+<div class="premium-nav">
+    <!-- Logo Spotify -->
+    <div class="premium-nav-logo">
+        <a href="@Url.Action("Index", "Home")">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg" alt="Spotify Logo" style="width: 80px; height: 24px;" />
+        </a>
+    </div>
+
+    <!-- Các liên kết -->
+    <div class="premium-nav-links">
+        <a href="@Url.Action("Premium", "Home")" class="active">Premium</a>
+        <a href="#">Hỗ trợ</a>
+        <a href="#">Tải xuống</a>
+    </div>
+</div>

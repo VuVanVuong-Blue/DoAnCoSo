@@ -1,0 +1,575 @@
+﻿/* Container chính của trang chi tiết album */
+.album-detail-container {
+    padding: 0;
+    margin: 0;
+    background: linear-gradient(to bottom, #5a1a1a 0%, #181818 30%);
+    min-height: 100vh;
+    color: #FFFFFF;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    overflow-x: hidden;
+    padding-bottom: 90px; /* Dành chỗ cho now-playing-bar */
+}
+
+/* Phần header của album */
+.album-header {
+    padding: 32px;
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    margin-bottom: 24px;
+    width: 100%;
+    box-sizing: border-box;
+}
+.album-header {
+    background: none; /* Đặt mặc định là none để gradient từ JS áp dụng */
+    transition: background 0.3s ease; /* Hiệu ứng mượt mà */
+}
+/* Container chứa ảnh album */
+.album-image-container {
+    width: 232px;
+    height: 232px;
+    background-color: #282828;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    box-shadow: 0 4px 60px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+/* Ảnh album */
+.album-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* Thông tin album */
+.album-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.album-type {
+    font-size: 12px;
+    font-weight: 700;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.album-title {
+    font-size: 48px;
+    font-weight: 900;
+    line-height: 1.2;
+    margin: 8px 0;
+    word-break: break-word;
+}
+
+.album-details {
+    font-size: 14px;
+    color: #b3b3b3;
+    margin: 8px 0;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Khoảng cách giữa ảnh và text */
+}
+
+/* Ảnh nghệ sĩ tròn nhỏ */
+.artist-image {
+    width: 32px; /* Kích thước giống Spotify */
+    height: 32px;
+    border-radius: 50%; /* Hình tròn */
+    object-fit: cover;
+    border: 2px solid #fff; /* Viền trắng như Spotify */
+}
+
+/* Action Bar */
+.action-bar {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 16px;
+    align-items: center;
+    padding: 0 32px;
+    margin-bottom: 16px;
+}
+
+/* Ảnh album nhỏ */
+.album-small-image {
+    width: 56px;
+    height: 56px;
+    margin-left: 6px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.album-small-image-img {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+/* Placeholder cho ảnh album */
+.album-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #282828;
+}
+
+    .album-placeholder .icon {
+        width: 24px;
+        height: 24px;
+        fill: #b3b3b3;
+    }
+
+/* Nút Play lớn */
+.play-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background-color: #1ed760;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+    .play-button:hover {
+        background-color: #1ed760;
+        transform: scale(1.05);
+    }
+
+    .play-button:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.5);
+    }
+
+.play-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    fill: #000;
+}
+
+/* Nút Thêm vào Thư viện */
+.add-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+    .add-button .icon {
+        width: 24px;
+        height: 24px;
+        fill: #b3b3b3;
+        transition: fill 0.2s ease;
+    }
+
+    .add-button:hover .icon {
+        fill: #FFFFFF;
+    }
+
+/* Nút hành động (Tùy chọn khác) */
+.action-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.action-icon {
+    width: 24px;
+    height: 24px;
+    fill: #b3b3b3;
+    transition: fill 0.2s ease;
+}
+
+.action-button:hover .action-icon {
+    fill: #FFFFFF;
+}
+
+/* Nút Sort (Rút gọn) */
+.sort-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 16px;
+    transition: background 0.2s ease;
+}
+
+    .sort-button:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .sort-button .text {
+        color: #b3b3b3;
+        font-size: 14px;
+        font-weight: 400;
+        transition: color 0.2s ease;
+    }
+
+    .sort-button:hover .text {
+        color: #FFFFFF;
+    }
+
+    .sort-button .icon {
+        width: 16px;
+        height: 16px;
+        fill: #b3b3b3;
+        transition: fill 0.2s ease;
+    }
+
+    .sort-button:hover .icon {
+        fill: #FFFFFF;
+    }
+
+/* Container chứa danh sách bài hát */
+.track-list-container {
+    background: #181818;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    overflow-x: visible;
+}
+
+/* Header của danh sách bài hát */
+.list-header {
+    display: grid;
+    grid-template-columns: [index] 80px [title] 3fr [artist] 2fr [duration] 56px [actions] 32px;
+    padding: 8px 16px;
+    margin: 0;
+    font-size: 12px;
+    color: #b3b3b3;
+    border-bottom: 1px solid #2A2A2A;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    box-sizing: border-box;
+    align-items: center;
+    gap: 16px;
+}
+
+    .list-header .num-col {
+        grid-column: index;
+        width: 80px;
+        text-align: center;
+        position: relative;
+    }
+
+    .list-header .title-col {
+        grid-column: title;
+        text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .list-header .artist-col {
+        grid-column: artist;
+        text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-left: -16px; /* Dịch sang trái 16px */
+    }
+
+    .list-header .duration-col {
+        grid-column: duration;
+        width: 56px;
+        text-align: right;
+        display: flex;
+        justify-content: flex-end;
+        margin-left: -16px; /* Dịch sang trái 16px */
+    }
+
+        .list-header .duration-col .duration-icon {
+            width: 16px;
+            height: 16px;
+            fill: #b3b3b3;
+            transition: fill 0.2s ease;
+            margin-left: 4px;
+        }
+
+/* Danh sách bài hát */
+.song-list {
+    margin-top: 0;
+    width: 100%;
+}
+
+/* Một bài hát trong danh sách */
+.song-row {
+    display: grid;
+    grid-template-columns: [index] 80px [title] 3fr [artist] 2fr [add] 24px [duration] 56px [actions] 32px;
+    align-items: center;
+    padding: 8px 16px;
+    transition: background 0.2s ease;
+    box-sizing: border-box;
+    gap: 16px;
+    width: 100%;
+}
+
+    .song-row:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+        .song-row:hover .track-number {
+            display: none;
+        }
+
+        .song-row:hover .play-btn {
+            display: block;
+        }
+
+    .song-row.active .title-link {
+        color: #FFFFFF !important;
+    }
+
+    .song-row .track-action-button {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    .song-row:hover .track-action-button {
+        display: block;
+        opacity: 1;
+    }
+
+/* Số thứ tự bài hát */
+.num-col {
+    grid-column: index;
+    width: 80px;
+    font-size: 16px;
+    color: #b3b3b3;
+    text-align: center;
+    position: relative;
+}
+
+    .num-col .track-number {
+        display: block;
+    }
+
+    .num-col .play-btn {
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+    }
+
+        .num-col .play-btn .play-icon {
+            width: 20px;
+            height: 20px;
+            fill: #FFFFFF;
+        }
+
+/* Thông tin bài hát (tiêu đề và nghệ sĩ) */
+.song-info {
+    grid-column: title;
+    overflow: hidden;
+}
+
+    .song-info .title-link {
+        font-size: 16px;
+        color: #FFFFFF;
+        text-decoration: none;
+        transition: color 0.2s ease;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+        line-height: 1.5;
+    }
+
+        .song-info .title-link:hover {
+            color: #FFFFFF;
+            text-decoration: underline;
+        }
+
+/* Tên nghệ sĩ (cột riêng) */
+.artist-name {
+    grid-column: artist;
+    font-size: 14px;
+    color: #b3b3b3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+    margin-left: 10px; /* Dịch sang trái 16px */
+}
+
+/* Nút dấu cộng (Add button) */
+.add-col {
+    grid-column: add;
+    display: flex;
+    justify-content: center;
+}
+
+/* Thời lượng bài hát */
+.duration-time {
+    grid-column: duration;
+    width: 56px;
+    font-size: 14px;
+    color: #b3b3b3;
+    text-align: right;
+    flex-shrink: 0;
+    margin-left: -10px; /* Dịch sang trái 16px */
+}
+
+/* Nút hành động (ba chấm) */
+.actions-col {
+    grid-column: actions;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.track-action-button svg {
+    width: 16px;
+    height: 16px;
+    fill: #b3b3b3;
+    transition: fill 0.2s ease;
+}
+
+.track-action-button:hover svg {
+    fill: #fff;
+}
+
+/* Dummy content để kiểm tra cuộn */
+.dummy-content {
+    height: 200px; /* Giúp kiểm tra cuộn */
+    background: #181818;
+}
+
+/* Override cho now-playing-bar trong footer */
+.now-playing-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #181818;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    box-sizing: border-box;
+}
+
+.progress-slider::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: #FFFFFF;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+}
+
+.progress-slider:hover::-webkit-slider-thumb {
+    background: #FFFFFF;
+}
+
+.progress-slider:hover::-moz-range-thumb {
+    background: #FFFFFF;
+}
+
+
+.custom-menu {
+    display: block;
+    background-color: #282828;
+    border-radius: 4px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); /* Bóng đổ giống Spotify */
+    padding: 4px 0;
+    min-width: 220px; /* Đảm bảo đủ rộng để chứa nội dung */
+    border: 1px solid rgba(255, 255, 255, 0.05); /* Viền nhẹ */
+}
+
+    .custom-menu.hidden {
+        display: none;
+    }
+
+.menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu-item {
+    padding: 2px 0;
+}
+
+.menu-button,
+.menu-link {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 8px 16px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 13px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+    .menu-button:hover,
+    .menu-link:hover {
+        background-color: #3e3e3e;
+    }
+
+.menu-link {
+    color: #1db954;
+}
+
+.menu-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 12px;
+    fill: #b3b3b3;
+}
+
+.menu-button:hover .menu-icon,
+.menu-link:hover .menu-icon {
+    fill: #fff;
+}

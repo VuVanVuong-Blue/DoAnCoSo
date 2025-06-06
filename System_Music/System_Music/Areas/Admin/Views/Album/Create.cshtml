@@ -1,0 +1,75 @@
+﻿@model System_Music.Models.SqlModels.Album
+
+@{
+    ViewData["Title"] = "Tạo album mới";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Tạo album mới</h2>
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="ReleaseDate" class="form-label"></label>
+            <input asp-for="ReleaseDate" class="form-control" type="date" />
+            <span asp-validation-for="ReleaseDate" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label class="form-label">Ảnh bìa</label>
+            <input type="file" name="imageFile" class="form-control" />
+            <small class="form-text text-muted">Ảnh sẽ được lưu vào /wwwroot/images/albums/</small>
+        </div>
+
+        <div class="form-group mb-3">
+            <label class="form-label">Nghệ sĩ</label>
+            @if (ViewBag.Artists != null)
+            {
+                @foreach (var artist in ViewBag.Artists)
+                {
+                    <div class="form-check mb-2">
+                        <input type="checkbox" name="artistIds" value="@artist.ArtistId" class="form-check-input" id="artist_@artist.ArtistId" />
+                        <label class="form-check-label" for="artist_@artist.ArtistId">@artist.Name</label>
+                    </div>
+                }
+            }
+            else
+            {
+                <span>Không có nghệ sĩ nào để chọn.</span>
+            }
+            <small class="form-text text-muted">Chọn các nghệ sĩ tham gia album</small>
+        </div>
+
+        <div class="form-group mb-3">
+            <label class="form-label">Bài hát</label>
+            <select name="trackIds" multiple class="form-control">
+                @if (ViewBag.Tracks != null)
+                {
+                    @foreach (var track in ViewBag.Tracks)
+                    {
+                        <option value="@track.TrackId">@track.Title</option>
+                    }
+                }
+            </select>
+            <small class="form-text text-muted">Giữ Ctrl để chọn nhiều bài hát</small>
+        </div>
+
+        <div class="form-group mt-4">
+            <button type="submit" class="btn btn-primary">Tạo mới</button>
+            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

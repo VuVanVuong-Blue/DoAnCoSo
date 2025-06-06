@@ -1,0 +1,741 @@
+﻿@using System_Music.Models.SqlModels
+@using System_Music.Models.ViewModels
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<User> UserManager
+@inject System_Music.Services.Interfaces.IAlbumService AlbumService
+
+@model PlaylistViewModel
+
+@{
+    Layout = ("_Layout");
+    var user = await UserManager.GetUserAsync(User);
+    if (user == null)
+    {
+        <div class="error-message">
+            <p>Vui lòng đăng nhập để xem playlist!</p>
+        </div>
+        return;
+    }
+
+    var playlist = Model.Playlist;
+    if (playlist == null)
+    {
+        <div class="error-message">
+            <p>Playlist không tồn tại!</p>
+        </div>
+        return;
+    }
+
+    if (!playlist.IsPublic && playlist.UserId != user.Id)
+    {
+        <div class="error-message">
+            <p>Bạn không có quyền xem playlist này!</p>
+        </div>
+        return;
+    }
+
+    var tracks = Model.Tracks;
+    bool hasTracks = tracks != null && tracks.Any();
+    var imageMedia = playlist.ImageMedia;
+    var playlistId = playlist.PlaylistId != 0 ? playlist.PlaylistId : 0;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách phát</title>
+    <link rel="stylesheet" href="~/css/IndexPlayList.css" />
+</head>
+<body>
+    <div class="main-view">
+        <div class="main-view-container">
+            <div class="main-view-container__scroll-node">
+                <div class="main-view-container__scroll-node-child-wrapper">
+                    <div class="main-view-container__scroll-node-child">
+                        <div class="playlist-header">
+                            <div class="header-content">
+                                <button class="header-image-button" id="editImageButton" aria-label="Chỉnh sửa hình ảnh playlist">
+                                    <div class="header-image">
+                                        @if (Model.Playlist.ImageMediaId == null || imageMedia == null)
+                                        {
+                                            <div class="default-icon">
+                                                <svg data-encore-id="icon" role="img" aria-hidden="true" class="icon" viewBox="0 0 24 24">
+                                                    <path d="M6 3h15v15.167a3.5 3.5 0 1 1-3.5-3.5H19V5H8v13.167a3.5 3.5 0 1 1-3.5-3.5H6V3zm0 13.667H4.5a1.5 1.5 0 1 0 1.5 1.5v-1.5zm13 0h-1.5a1.5 1.5 0 1 0 1.5 1.5v-1.5z"></path>
+                                                </svg>
+                                            </div>
+                                            <div class="edit-icon-container">
+                                                <svg data-encore-id="icon" role="img" aria-hidden="true" class="edit-icon" viewBox="0 0 24 24">
+                                                    <path d="M17.318 1.975a3.329 3.329 0 1 1 4.707 4.707L8.451 20.256c-.49.49-1.082.867-1.735 1.103L2.34 22.94a1 1 0 0 1-1.28-1.28l1.581-4.376a4.726 4.726 0 0 1 1.103-1.735L17.318 1.975zm3.293 1.414a1.329 1.329 0 0 0-1.88 0L5.159 16.963c-.283.283-.5.624-.636 1l-.857 2.372 2.371-.857a2.726 2.726 0 0 0 1.001-.636L20.611 5.268a1.329 1.329 0 0 0 0-1.879z"></path>
+                                                </svg>
+                                                <span class="edit-text">Chọn ảnh</span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <img src="@imageMedia.MediaPath" id="playlistImage" alt="@Model.Playlist.Name" />
+                                        }
+                                    </div>
+                                </button>
+
+                                @{
+                                    // Tính tổng thời gian của playlist
+                                    int totalSeconds = tracks?.Sum(track => track.Duration) ?? 0;
+
+                                    // Chuyển đổi tổng thời gian thành "X giờ Y phút Z giây"
+                                    int totalHours = totalSeconds / 3600;
+                                    int totalMinutes = (totalSeconds % 3600) / 60;
+                                    int remainingSeconds = totalSeconds % 60;
+                                    string totalDuration = totalSeconds > 0
+                                    ? $"{(totalHours > 0 ? $"{totalHours} giờ " : "")}{totalMinutes} phút {remainingSeconds} giây"
+                                    : "0 phút 0 giây";
+                                }
+
+                                <div class="header-details">
+                                    <span class="header-privacy">Danh sách phát @(playlist.IsPublic ? "công khai" : "riêng tư")</span>
+                                    <span class="header-title-wrapper">
+                                        <button class="title-edit-btn" id="editTitleButton" aria-label="@(playlist.Name ?? "Danh sách phát không tên") – Chỉnh sửa thông tin chi tiết">
+                                            <h1 class="header-title">@(playlist.Name ?? "Danh sách phát không tên")</h1>
+                                        </button>
+                                    </span>
+                                    @if (!string.IsNullOrEmpty(playlist.Description))
+                                    {
+                                        <p class="header-description">@playlist.Description</p>
+                                    }
+                                    <div class="header-meta">
+                                        <span class="header-creator">
+                                            <a href="/user/@(user.Id)">@(user.FullName ?? "Unknown")</a>
+                                        </span>
+                                        <span class="header-separator">•</span>
+                                        <span class="header-track-count">@(hasTracks ? $"{tracks.Count} bài hát" : "0 bài hát")</span>
+                                        @if (hasTracks && tracks != null && tracks.Count > 0)
+                                        {
+                                            <span class="header-separator">, </span>
+                                            <span class="header-track-time">
+                                                <span>@totalDuration</span>
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Action Bar -->
+                        <div data-overlayscrollbars-initialize="true" class="action-bar-container" data-overlayscrollbars="host">
+                            <div class="" data-overlayscrollbars-viewport="scrollbarHidden overflowXHidden overflowYHidden" tabindex="-1" style="margin-right: 0px; margin-bottom: 0px; margin-left: 0px; top: 0px; right: auto; left: 0px; width: calc(100% + 0px); padding: 0px;">
+                                <div class="action-bar-content content-spacing" data-testid="action-bar">
+                                    <div class="action-bar-row" data-testid="action-bar-row">
+                                        @if (hasTracks)
+                                        {
+                                            <!-- Action Bar khi đã có bài hát -->
+                                            <!-- Nút Play lớn -->
+                                            <button class="play-button" aria-label="Phát Danh sách phát" data-encore-id="buttonPrimary">
+                                                <span class="play-button-icon">
+                                                    <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 24 24">
+                                                        <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"></path>
+                                                    </svg>
+                                                </span>
+                                            </button>
+
+                                            <!-- Nút "Khám phá" -->
+                                            <button class="explore-button" aria-label="Khám phá Danh sách phát">
+                                                <div class="explore-image-container">
+                                                    @if (Model.Playlist.ImageMediaId != null && imageMedia != null)
+                                                    {
+                                                        <img src="@imageMedia.MediaPath" alt="@Model.Playlist.Name" class="explore-image" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="explore-placeholder">
+                                                            <svg data-encore-id="icon" role="img" aria-hidden="true" class="icon" viewBox="0 0 24 24">
+                                                                <path d="M6 3h15v15.167a3.5 3.5 0 1 1-3.5-3.5H19V5H8v13.167a3.5 3.5 0 1 1-3.5-3.5H6V3zm0 13.667H4.5a1.5 1.5 0 1 0 1.5 1.5v-1.5zm13 0h-1.5a1.5 1.5 0 1 0 1.5 1.5v-1.5z"></path>
+                                                            </svg>
+                                                        </div>
+                                                    }
+                                                    <div class="explore-play-overlay">
+                                                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                                                            <path d="M3 1.713a.7.7 0 0 1 1.05-.607l10.89 6.288a.7.7 0 0 1 0 1.212L4.05 14.894A.7.7 0 0 1 3 14.288V1.713z"></path>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            </button>
+
+                                            <!-- Nút mời cộng sự -->
+                                            <div data-encore-id="popoverTrigger" class="popover-trigger">
+                                                <div class="trigger-container">
+                                                    <button class="action-button" aria-label="Mời cộng sự vào Danh sách phát của tôi #1" aria-hidden="true" data-encore-id="buttonTertiary">
+                                                        <span aria-hidden="true" class="e-9812-button__icon-wrapper">
+                                                            <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 24 24">
+                                                                <path d="M4.99 3h2.993v2H4.99v3H2.994V5H0V3h2.994V0h1.995v3zm7.288-.533a5.494 5.494 0 0 1 6.275 1.322 5.467 5.467 0 0 1 1.133 1.953c.18.532.33 1.474.277 2.378-.098 1.659-.8 3.02-1.749 4.156l-.432.52a.5.5 0 0 0 .134.752l3.59 2.077A5.002 5.002 0 0 1 24 19.955V22H4.99v-2.045a5 5 0 0 1 2.494-4.33l3.59-2.077a.5.5 0 0 0 .133-.753l-.43-.518-.002-.001c-.949-1.135-1.65-2.497-1.749-4.156-.053-.904.097-1.846.277-2.378a5.468 5.468 0 0 1 1.133-1.953 5.505 5.505 0 0 1 1.842-1.322zM14.494 4a3.503 3.503 0 0 0-2.586 1.14 3.47 3.47 0 0 0-.715 1.245c-.092.272-.213.954-.174 1.617.066 1.124.536 2.092 1.287 2.99l.001.002.433.52a2.503 2.503 0 0 1-.669 3.767l-3.589 2.076a3.001 3.001 0 0 0-1.497 2.598V20h15.02v-.045a3.002 3.002 0 0 0-1.498-2.598l-3.589-2.076a2.503 2.503 0 0 1-.669-3.766l.433-.52.002-.003c.75-.898 1.22-1.866 1.287-2.99.039-.663-.082-1.345-.174-1.617-.163-.48-.4-.9-.715-1.245A3.51 3.51 0 0 0 14.494 4z"></path>
+                                                            </svg>
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Nút tùy chọn khác -->
+                                            <button aria-haspopup="menu" data-testid="more-button" class="action-button" aria-label="Các tùy chọn khác cho Danh sách phát của tôi #1" data-encore-id="buttonTertiary">
+                                                <span aria-hidden="true" class="e-9812-button__icon-wrapper">
+                                                    <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 24 24">
+                                                        <path d="M4.5 13.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm15 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-7.5 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"></path>
+                                                    </svg>
+                                                </span>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <!-- Action Bar khi chưa có bài hát (theo VSuond) -->
+                                            <!-- Nút mời cộng sự -->
+                                            <div data-encore-id="popoverTrigger" class="popover-trigger">
+                                                <div class="trigger-container">
+                                                    <button class="action-button" aria-label="Mời cộng sự vào Danh sách phát của tôi #1" aria-hidden="true" data-encore-id="buttonTertiary">
+                                                        <span aria-hidden="true" class="e-9812-button__icon-wrapper">
+                                                            <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 24 24">
+                                                                <path d="M4.99 3h2.993v2H4.99v3H2.994V5H0V3h2.994V0h1.995v3zm7.288-.533a5.494 5.494 0 0 1 6.275 1.322 5.467 5.467 0 0 1 1.133 1.953c.18.532.33 1.474.277 2.378-.098 1.659-.8 3.02-1.749 4.156l-.432.52a.5.5 0 0 0 .134.752l3.59 2.077A5.002 5.002 0 0 1 24 19.955V22H4.99v-2.045a5 5 0 0 1 2.494-4.33l3.59-2.077a.5.5 0 0 0 .133-.753l-.43-.518-.002-.001c-.949-1.135-1.65-2.497-1.749-4.156-.053-.904.097-1.846.277-2.378a5.468 5.468 0 0 1 1.133-1.953 5.505 5.505 0 0 1 1.842-1.322zM14.494 4a3.503 3.503 0 0 0-2.586 1.14 3.47 3.47 0 0 0-.715 1.245c-.092.272-.213.954-.174 1.617.066 1.124.536 2.092 1.287 2.99l.001.002.433.52a2.503 2.503 0 0 1-.669 3.767l-3.589 2.076a3.001 3.001 0 0 0-1.497 2.598V20h15.02v-.045a3.002 3.002 0 0 0-1.498-2.598l-3.589-2.076a2.503 2.503 0 0 1-.669-3.766l.433-.52.002-.003c.75-.898 1.22-1.866 1.287-2.99.039-.663-.082-1.345-.174-1.617-.163-.48-.4-.9-.715-1.245A3.51 3.51 0 0 0 14.494 4z"></path>
+                                                            </svg>
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Nút tùy chọn khác -->
+                                            <button aria-haspopup="menu" data-testid="more-button" class="action-button" aria-label="Các tùy chọn khác cho Danh sách phát của tôi #1" data-encore-id="buttonTertiary">
+                                                <span aria-hidden="true" class="e-9812-button__icon-wrapper">
+                                                    <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 24 24">
+                                                        <path d="M4.5 13.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm15 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-7.5 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"></path>
+                                                    </svg>
+                                                </span>
+                                            </button>
+                                        }
+
+                                        <!-- Nút "Rút gọn" (hiển thị trong cả 2 trường hợp) -->
+                                        <div class="sort-button-container">
+                                            <button class="sort-button" type="button" role="combobox" aria-controls="sortboxlist-75fcb90f-b551-4a2c-9dbd-ce0c17b86eca" aria-expanded="false" aria-haspopup="true">
+                                                <span class="sort-label" data-encore-id="text" data-sortbox-label="true">Rút gọn</span>
+                                                <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                                                    <path d="M15.5 13.5H.5V12h15v1.5zm0-4.75H.5v-1.5h15v1.5zm0-4.75H.5V2.5h15V4z"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tracklist (chỉ hiển thị khi có bài hát) -->
+                        @if (hasTracks)
+                        {
+                            <div class="tracklist-container" role="grid" aria-label="Danh sách phát">
+                                <div class="tracklist-header" role="presentation">
+                                    <div class="tracklist-row" role="row">
+                                        <div class="tracklist-col tracklist-col-index" role="columnheader">
+                                            <div>#</div>
+                                        </div>
+                                        <div class="tracklist-col tracklist-col-title" role="columnheader">
+                                            <div>Tiêu đề</div>
+                                        </div>
+                                        <div class="tracklist-col tracklist-col-artist" role="columnheader">
+                                            <div>Nghệ sĩ</div>
+                                        </div>
+                                        <div class="tracklist-col tracklist-col-album" role="columnheader">
+                                            <div>Album</div>
+                                        </div>
+                                        <div class="tracklist-col tracklist-col-date-added" role="columnheader">
+                                            <div>Ngày thêm</div>
+                                        </div>
+                                        <div class="tracklist-col tracklist-col-duration" role="columnheader">
+                                            <div>
+                                                <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                                                    <path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z"></path>
+                                                    <path d="M8 3.25a.75.75 0 0 1 .75.75v3.25H11a.75.75 0 0 1 0 1.5H7.25V4A.75.75 0 0 1 8 3.25z"></path>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tracklist-body" role="presentation">
+                                    @foreach (var playlistTrack in Model.Playlist.PlaylistTracks.OrderBy(pt => pt.AddedDate))
+                                    {
+                                        var track = playlistTrack.Track;
+                                        var index = Model.Playlist.PlaylistTracks.OrderBy(pt => pt.AddedDate).TakeWhile(pt => pt != playlistTrack).Count() + 1;
+                                        var addedAt = playlistTrack.AddedDate;
+                                        var timeDifference = DateTime.Now - addedAt;
+                                        string timeAgo;
+
+                                        if (timeDifference.TotalMinutes < 60)
+                                        {
+                                            timeAgo = $"{(int)timeDifference.TotalMinutes} phút trước";
+                                        }
+                                        else if (timeDifference.TotalHours < 24)
+                                        {
+                                            timeAgo = $"{(int)timeDifference.TotalHours} giờ trước";
+                                        }
+                                        else
+                                        {
+                                            timeAgo = $"{(int)timeDifference.TotalDays} ngày trước";
+                                        }
+
+                                        // Chuyển đổi Duration từ giây sang định dạng phút:giây
+                                        var durationMinutes = track.Duration / 60;
+                                        var durationSeconds = track.Duration % 60;
+                                        var durationFormatted = $"{durationMinutes}:{durationSeconds:D2}";
+
+                                        <div class="tracklist-row" role="row" aria-rowindex="@index">
+                                            <div class="tracklist-col tracklist-col-index" role="gridcell">
+                                                <div class="track-index">
+                                                    <span class="index-number">@index</span>
+                                                    <button class="track-play-button" aria-label="Phát @track.Title" data-track-id="@track.TrackId">
+                                                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 24 24">
+                                                            <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"></path>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="tracklist-col tracklist-col-title" role="gridcell">
+                                                <div class="track-title">
+                                                    <a href="/track/Detail/@track.TrackId" class="track-link">@track.Title</a>
+                                                </div>
+                                            </div>
+                                            <div class="tracklist-col tracklist-col-artist" role="gridcell">
+                                                <span class="track-artist">
+                                                    @if (track.TrackArtists != null && track.TrackArtists.Any())
+                                                    {
+                                                        var artistNames = track.TrackArtists.Select(ta => ta.Artist?.Name ?? "Unknown").ToList();
+                                                        var artistIds = track.TrackArtists.Select(ta => ta.ArtistId).ToList();
+                                                        for (int i = 0; i < artistNames.Count; i++)
+                                                        {
+                                                            <a href="/artist/@artistIds[i]">@artistNames[i]</a>
+                                                            if (i < artistNames.Count - 1)
+                                                            {
+                                                                <span>, </span>
+                                                            }
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>Unknown</span>
+                                                    }
+                                                </span>
+                                            </div>
+                                            <div class="tracklist-col tracklist-col-album" role="gridcell">
+                                                <span class="track-album">
+                                                    @if (track.Album != null && !string.IsNullOrWhiteSpace(track.Album.Name))
+                                                    {
+                                                        <a href="/album/@track.AlbumId">@track.Album.Name</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>Không có album</span>
+                                                    }
+                                                </span>
+                                            </div>
+                                            <div class="tracklist-col tracklist-col-date-added" role="gridcell">
+                                                <span class="track-date-added">@timeAgo</span>
+                                            </div>
+                                            <div class="tracklist-col tracklist-col-duration" role="gridcell">
+                                                <button class="track-action-button track-add-button" aria-label="Thêm vào danh sách phát khác" data-track-id="@track.TrackId">
+                                                    <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                                                        <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5v1h-3v3h-1v-3h-3v-1h3v-3h1v3h3z"></path>
+                                                    </svg>
+                                                </button>
+                                                <span class="track-duration">@durationFormatted</span>
+                                                <button class="track-action-button track-more-button" aria-label="Các tùy chọn khác cho @track.Title" data-track-id="@track.TrackId">
+                                                    <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                                                        <path d="M3 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm6.5 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zM16 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        <!-- Phần tìm kiếm luôn hiển thị -->
+                        <div class="search-section">
+                            <div class="content-spacing">
+                                <section class="search-section-content">
+                                    <div class="search-content-wrapper">
+                                        <h2 class="search-title" data-encore-id="text">Hãy cùng tìm nội dung cho danh sách phát của bạn</h2>
+                                        <div class="search-barPL" role="search">
+                                            <form asp-action="Index" asp-route-id="@Model.Playlist.PlaylistId" method="get">
+                                                <div class="search-section-icon-wrapper">
+                                                    <span class="search-iconPL">
+                                                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                                                            <path d="M7 1.75a5.25 5.25 0 1 0 0 10.5 5.25 5.25 0 0 0 0-10.5zM.25 7a6.75 6.75 0 1 1 12.096 4.12l3.184 3.185a.75.75 0 1 1-1.06 1.06L11.304 12.2A6.75 6.75 0 0 1 .25 7z"></path>
+                                                        </svg>
+                                                    </span>
+                                                </div>
+                                                <input data-encore-id="text" name="searchTerm" maxlength="80" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Tìm bài hát và tập podcast" value="@ViewData["SearchTerm"]">
+                                                <div class="search-section-clear-icon-wrapper">
+                                                    <span class="clear-iconPL">
+                                                        <svg data-encore-id="icon" role="img" aria-label="Xóa trường tìm kiếm" aria-hidden="false" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                                                            <path d="M2.47 2.47a.75.75 0 0 1 1.06 0L8 6.94l4.47-4.47a.75.75 0 1 1 1.06 1.06L9.06 8l4.47 4.47a.75.75 0 1 1-1.06 1.06L8 9.06l-4.47 4.47a.75.75 0 0 1-1.06-1.06L6.94 8 2.47 3.53a.75.75 0 0 1 0-1.06Z"></path>
+                                                        </svg>
+                                                    </span>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <button class="section-close-btn" aria-label="Đóng">
+                                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 24 24">
+                                            <path d="M3.293 3.293a1 1 0 0 1 1.414 0L12 10.586l7.293-7.293a1 1 0 1 1 1.414 1.414L13.414 12l7.293 7.293a1 1 0 0 1-1.414 1.414L12 13.414l-7.293 7.293a1 1 0 0 1-1.414-1.414L10.586 12 3.293 4.707a1 1 0 0 1 0-1.414z"></path>
+                                        </svg>
+                                    </button>
+                                    <button class="search-show-btn" aria-label="Tìm thêm" style="display: none;">
+                                        Tìm thêm
+                                    </button>
+                                </section>
+                                <div class="curation-results" data-testid="playlist-inline-curation-results">
+                                    <div class="curation-placeholder"></div>
+                                    <div class="search-results" style="display: none;">
+                                        <!-- Khu vực kết quả tìm kiếm -->
+                                        <div class="result-grid top-results">
+                                            <div class="grid-container">
+                                                <div class="grid-rows" id="topResults"></div>
+                                            </div>
+                                        </div>
+                                        <!-- Khu vực "Xem tất cả" -->
+                                        <div class="result-grid see-all-grid">
+                                            <div class="grid-container">
+                                                <div class="grid-rows">
+                                                    <div class="grid-row">
+                                                        <div class="grid-cell">
+                                                            <p class="grid-cell-title">Xem tất cả nghệ sĩ</p>
+                                                            <button class="action-arrow-btn" aria-label="Xem tất cả nghệ sĩ">
+                                                                <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline e-9812-icon--auto-mirror" viewBox="0 0 24 24">
+                                                                    <path d="M8.043 2.793a1 1 0 0 0 0 1.414L15.836 12l-7.793 7.793a1 1 0 1 0 1.414 1.414L18.664 12 9.457 2.793a1 1 0 0 0-1.414 0z"></path>
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="grid-row">
+                                                        <div class="grid-cell">
+                                                            <p class="grid-cell-title">Xem tất cả album</p>
+                                                            <button class="action-arrow-btn" aria-label="Xem tất cả album">
+                                                                <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline e-9812-icon--auto-mirror" viewBox="0 0 24 24">
+                                                                    <path d="M8.043 2.793a1 1 0 0 0 0 1.414L15.836 12l-7.793 7.793a1 1 0 1 0 1.414 1.414L18.664 12 9.457 2.793a1 1 0 0 0-1.414 0z"></path>
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="grid-row">
+                                                        <div class="grid-cell">
+                                                            <p class="grid-cell-title">Xem tất cả bài hát</p>
+                                                            <button class="action-arrow-btn" aria-label="Xem tất cả bài hát">
+                                                                <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline e-9812-icon--auto-mirror" viewBox="0 0 24 24">
+                                                                    <path d="M8.043 2.793a1 1 0 0 0 0 1.414L15.836 12l-7.793 7.793a1 1 0 1 0 1.414 1.414L18.664 12 9.457 2.793a1 1 0 0 0-1.414 0z"></path>
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Khu vực hiển thị danh sách bài hát của album -->
+                                        <div class="album-songs-section" style="display: none;">
+                                            <div class="album-songs-header">
+                                                <button class="album-back-btn" aria-label="Quay lại">
+                                                    <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline e-9812-icon--auto-mirror" viewBox="0 0 24 24">
+                                                        <path d="M15.957 2.793a1 1 0 0 1 0 1.414L8.164 12l7.793 7.793a1 1 0 1 1-1.414 1.414L5.336 12l9.207-9.207a1 1 0 0 1 1.414 0z"></path>
+                                                    </svg>
+                                                </button>
+                                                <h2 class="album-songs-title"></h2>
+                                            </div>
+                                            <div class="result-grid album-songs-grid">
+                                                <div class="grid-container">
+                                                    <div class="grid-rows" id="albumSongs"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="artist-section" style="display: none;">
+                                        <div class="artist-header">
+                                            <button class="artist-back-btn" aria-label="Quay lại">
+                                                <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline e-9812-icon--auto-mirror" viewBox="0 0 24 24">
+                                                    <path d="M15.957 2.793a1 1 0 0 1 0 1.414L8.164 12l7.793 7.793a1 1 0 1 1-1.414 1.414L5.336 12l9.207-9.207a1 1 0 0 1 1.414 0z"></path>
+                                                </svg>
+                                            </button>
+                                            <h2 class="artist-title"></h2>
+                                        </div>
+                                        <!-- Khu vực 1: Những bài hát được ưa chuộng -->
+                                        <div class="artist-songs-section">
+                                            <h3 class="artist-songs-title">Những bài hát được ưa chuộng</h3>
+                                            <div class="result-grid artist-songs-grid" role="grid" aria-label="Những bài hát được ưa chuộng">
+                                                <div class="grid-container">
+                                                    <div class="grid-rows" id="artistSongs"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Khu vực 2: Album -->
+                                        <div class="artist-albums-section">
+                                            <h3 class="artist-albums-title">Album</h3>
+                                            <div class="result-grid artist-albums-grid" role="grid" aria-label="Album">
+                                                <div class="grid-container">
+                                                    <div class="grid-rows" id="artistAlbums"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dummy-content">
+                            <p></p>
+                        </div>
+                    </div>
+                    <footer class="footer">
+                        <div class="footer-container">
+                            <div class="footer-column">
+                                <p class="footer-column-title">Công ty</p>
+                                <ul>
+                                    <li><a href="">Giới thiệu</a></li>
+                                    <li><a href="">Việc làm</a></li>
+                                    <li><a href="">For the Record</a></li>
+                                </ul>
+                            </div>
+                            <div class="footer-column">
+                                <p class="footer-column-title">Cộng đồng</p>
+                                <ul>
+                                    <li><a href="">Dành cho các Nghệ sĩ</a></li>
+                                    <li><a href="">Nhà phát triển</a></li>
+                                    <li><a href="">Quảng cáo</a></li>
+                                    <li><a href="">Nhà đầu tư</a></li>
+                                    <li><a href="">Nhà cung cấp</a></li>
+                                </ul>
+                            </div>
+                            <div class="footer-column">
+                                <p class="footer-column-title">Liên kết hữu ích</p>
+                                <ul>
+                                    <li><a href="">Hỗ trợ</a></li>
+                                    <li><a href="">Ứng dụng Di động Miễn phí</a></li>
+                                </ul>
+                            </div>
+                            <div class="footer-column">
+                                <p class="footer-column-title">Các gói của VSuond</p>
+                                <ul>
+                                    <li><a href="">Premium Individual</a></li>
+                                    <li><a href="">Premium Student</a></li>
+                                    <li><a href="">VSuond Free</a></li>
+                                </ul>
+                            </div>
+                            <div class="footer-social">
+                                <a href="" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                                    <svg role="img" aria-hidden="true" viewBox="0 0 16 16">
+                                        <path d="M8 1.44c2.136 0 2.389.009 3.233.047.78.036 1.203.166 1.485.276.348.128.663.332.921.598.266.258.47.573.599.921.11.282.24.706.275 1.485.039.844.047 1.097.047 3.233s-.008 2.389-.047 3.232c-.035.78-.166 1.204-.275 1.486a2.654 2.654 0 0 1-1.518 1.518c-.282.11-.706.24-1.486.275-.843.039-1.097.047-3.233.047s-2.39-.008-3.232-.047c-.78-.035-1.204-.165-1.486-.275a2.477 2.477 0 0 1-.921-.599 2.477 2.477 0 0 1-.599-.92c-.11-.282-.24-.706-.275-1.486-.038-.844-.047-1.096-.047-3.232s.009-2.39.047-3.233c.036-.78.166-1.203.275-1.485.129-.348.333-.663.599-.921a2.49 2.49 0 0 1 .92-.599c.283-.11.707-.24 1.487-.275.843-.038 1.096-.047 3.232-.047L8 1.441zm.001-1.442c-2.172 0-2.445.01-3.298.048-.854.04-1.435.176-1.943.373a3.928 3.928 0 0 0-1.417.923c-.407.4-.722.883-.923 1.417-.198.508-.333 1.09-.372 1.942C.01 5.552 0 5.826 0 8c0 2.172.01 2.445.048 3.298.04.853.174 1.433.372 1.941.2.534.516 1.017.923 1.417.4.407.883.722 1.417.923.508.198 1.09.333 1.942.372.852.039 1.126.048 3.299.048 2.172 0 2.445-.01 3.298-.048.853-.04 1.433-.174 1.94-.372a4.087 4.087 0 0 0 2.34-2.34c.199-.508.334-1.09.373-1.942.039-.851.048-1.125.048-3.298s-.01-2.445-.048-3.298c-.04-.853-.174-1.433-.372-1.94a3.924 3.924 0 0 0-.923-1.418A3.928 3.928 0 0 0 13.24.42c-.508-.197-1.09-.333-1.942-.371-.851-.041-1.125-.05-3.298-.05l.001-.001z"></path>
+                                        <path d="M8 3.892a4.108 4.108 0 1 0 0 8.216 4.108 4.108 0 0 0 0-8.216zm0 6.775a2.668 2.668 0 1 1 0-5.335 2.668 2.668 0 0 1 0 5.335zm4.27-5.978a.96.96 0 1 0 0-1.92.96.96 0 0 0 0 1.92z"></path>
+                                    </svg>
+                                </a>
+                                <a href="https://twitter.com/VSuond" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+                                    <svg role="img" aria-hidden="true" viewBox="0 0 16 16">
+                                        <path d="M13.54 3.889a2.968 2.968 0 0 0 1.333-1.683 5.937 5.937 0 0 1-1.929.738 2.992 2.992 0 0 0-.996-.706 2.98 2.98 0 0 0-1.218-.254 2.92 2.92 0 0 0-2.143.889 2.929 2.929 0 0 0-.889 2.15c0 .212.027.442.08.691a8.475 8.475 0 0 1-3.484-.932A8.536 8.536 0 0 1 1.532 2.54a2.993 2.993 0 0 0-.413 1.523c0 .519.12 1 .361 1.445.24.445.57.805.988 1.08a2.873 2.873 0 0 1-1.373-.374v.04c0 .725.23 1.365.69 1.92a2.97 2.97 0 0 0 1.739 1.048 2.937 2.937 0 0 1-1.365.056 2.94 2.94 0 0 0 1.063 1.5 2.945 2.945 0 0 0 1.77.603 5.944 5.944 0 0 1-3.77 1.302c-.243 0-.484-.016-.722-.048A8.414 8.414 0 0 0 5.15 14c.905 0 1.763-.12 2.572-.361.81-.24 1.526-.57 2.147-.988a9.044 9.044 0 0 0 1.683-1.46c.5-.556.911-1.155 1.234-1.798a9.532 9.532 0 0 0 .738-1.988 8.417 8.417 0 0 0 .246-2.429 6.177 6.177 0 0 0 1.508-1.563c-.56.249-1.14.407-1.738.476z"></path>
+                                    </svg>
+                                </a>
+                                <a href="https://www.facebook.com/VSuond" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                                    <svg role="img" aria-hidden="true" viewBox="0 0 16 16">
+                                        <path d="M16 8a8 8 0 1 0-9.25 7.903v-5.59H4.719V8H6.75V6.237c0-2.005 1.194-3.112 3.022-3.112.875 0 1.79.156 1.79.156V5.25h-1.008c-.994 0-1.304.617-1.304 1.25V8h2.219l-.355 2.313H9.25v5.59A8.002 8.002 0 0 0 16 8z"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                        <hr class="footer-divider">
+                        <div class="footer-legal">
+                            <div class="footer-legal-links">
+                                <a href="">Pháp lý</a>
+                                <a href="">Trung tâm an toàn và quyền riêng tư</a>
+                                <a href="">Chính sách quyền riêng tư</a>
+                                <a href="">Cookie</a>
+                                <a href="">Giới thiệu Quảng cáo</a>
+                                <a href="">Hỗ trợ tiếp cận</a>
+                            </div>
+                            <div class="footer-copyright">
+                                <p>© 2025 VSuond AB</p>
+                            </div>
+                        </div>
+                    </footer>
+
+                    <!-- Modal chỉnh sửa playlist -->
+                    <div class="modal-overlay" id="editModal">
+                        <div class="modal-container" data-testid="playlist-edit-details-modal">
+                            <div class="modal-content-wrapper">
+                                <div class="modal-header">
+                                    <h2 class="modal-title">Sửa thông tin chi tiết</h2>
+                                    <button class="modal-close-btn" id="closeModalButton">
+                                        <svg role="img" aria-hidden="true" viewBox="0 0 24 24">
+                                            <path d="M3.293 3.293a1 1 0 0 1 1.414 0L12 10.586l7.293-7.293a1 1 0 1 1 1.414 1.414L13.414 12l7.293 7.293a1 1 0 0 1-1.414 1.414L12 13.414l-7.293 7.293a1 1 0 0 1-1.414-1.414L10.586 12 3.293 4.707a1 1 0 0 1 0-1.414z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="modal-content">
+                                    <div class="image-upload-container">
+                                        <input type="file" accept="image/jpeg,image/png" class="image-upload-input" id="imageUploadInput" />
+                                        <div class="image-preview-wrapper">
+                                            <div class="image-preview" id="imagePreview">
+                                                @if (playlist.ImageMediaId == null || imageMedia == null)
+                                                {
+                                                    <svg role="img" aria-hidden="true" viewBox="0 0 24 24">
+                                                        <path d="M6 3h15v15.167a3.5 3.5 0 1 1-3.5-3.5H19V5H8v13.167a3.5 3.5 0 1 1-3.5-3.5H6V3zm0 13.667H4.5a1.5 1.5 0 1 0 1.5 1.5v-1.5zm13 0h-1.5a1.5 1.5 0 1 0 1.5 1.5v-1.5z"></path>
+                                                    </svg>
+                                                }
+                                                else
+                                                {
+                                                    <img src="@imageMedia.MediaPath" alt="@playlist.Name" id="previewImage" />
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="edit-image-overlay">
+                                            <svg class="edit-image-icon" viewBox="0 0 24 24">
+                                                <path d="M17.318 1.975a3.329 3.329 0 1 1 4.707 4.707L8.451 20.256c-.49.49-1.082.867-1.735 1.103L2.34 22.94a1 1 0 0 1-1.28-1.28l1.581-4.376a4.726 4.726 0 0 1 1.103-1.735L17.318 1.975zm3.293 1.414a1.329 1.329 0 0 0-1.88 0L5.159 16.963c-.283.283-.5.624-.636 1l-.857 2.372 2.371-.857a2.726 2.726 0 0 0 1.001-.636L20.611 5.268a1.329 1.329 0 0 0 0-1.879z"></path>
+                                            </svg>
+                                            <span class="edit-image-text">Chọn ảnh</span>
+                                        </div>
+                                    </div>
+                                    <div class="input-container">
+                                        <div class="input-group">
+                                            <label class="input-label" for="playlistNameInput">Tên</label>
+                                            <input type="text" class="modal-input" id="playlistNameInput" value="@(playlist.Name ?? "Danh sách phát không tên")" placeholder="Thêm tên" maxlength="100" />
+                                            <span class="character-counter" id="nameCounter">0/100</span>
+                                        </div>
+                                        <div class="input-group">
+                                            <label class="input-label" for="playlistDescriptionInput">Nội dung mô tả</label>
+                                            <textarea class="modal-textarea" id="playlistDescriptionInput" placeholder="Thêm phần mô tả không bắt buộc" maxlength="500">@(playlist.Description ?? "")</textarea>
+                                            <span class="character-counter" id="descriptionCounter">0/300</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="modal-cancel-btn" id="cancelModalButton">Hủy</button>
+                                    <button class="modal-save-btn" id="saveModalButton">Lưu</button>
+                                </div>
+                                <p class="modal-notice">
+                                    Bằng cách tiếp tục, bạn đồng ý cho phép VSuond truy cập vào hình ảnh bạn đã chọn để tải lên. Vui lòng đảm bảo bạn có quyền tải lên hình ảnh.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Menu context được di chuyển ra ngoài vòng lặp và đặt cố định *@
+    <div id="contextMenuTracks" class="track-context-menu" style="display: none;">
+        <ul>
+            <li>
+                <button class="context-menu-item" data-action="add-to-playlist">
+                    <span class="context-menu-icon">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M15.25 8a.75.75 0 0 1-.75.75H8.75v5.75a.75.75 0 0 1-1.5 0V8.75H1.5a.75.75 0 0 1 0-1.5h5.75V1.5a.75.75 0 0 1 1.5 0v5.75h5.75a.75.75 0 0 1 .75.75z"></path>
+                        </svg>
+                    </span>
+                    <span class="context-menu-text">Thêm vào danh sách phát</span>
+                    <span class="context-menu-arrow">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline e-9812-icon--auto-mirror" viewBox="0 0 24 24">
+                            <path d="M8.043 2.793a1 1 0 0 0 0 1.414L15.836 12l-7.793 7.793a1 1 0 1 0 1.414 1.414L18.664 12 9.457 2.793a1 1 0 0 0-1.414 0z"></path>
+                        </svg>
+                    </span>
+                </button>
+            </li>
+            <li>
+                <button class="context-menu-item" data-action="remove-from-playlist">
+                    <span class="context-menu-icon">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M5.25 3v-.917C5.25.933 6.183 0 7.333 0h1.334c1.15 0 2.083.933 2.083 2.083V3h4.75v1.5h-.972l-1.257 9.544A2.25 2.25 0 0 1 11.041 16H4.96a2.25 2.25 0 0 1-2.23-1.956L1.472 4.5H.5V3h4.75zm1.5-.917V3h2.5v-.917a.583.583 0 0 0-.583-.583H7.333a.583.583 0 0 0-.583.583zM2.986 4.5l1.23 9.348a.75.75 0 0 0 .744.652h6.08a.75.75 0 0 0 .744-.652L13.015 4.5H2.985z"></path>
+                        </svg>
+                    </span>
+                    <span class="context-menu-text">Xóa khỏi danh sách phát này</span>
+                </button>
+            </li>
+            <li>
+                <button class="context-menu-item" data-action="add-to-liked-songs">
+                    <span class="context-menu-icon">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z"></path>
+                            <path d="M11.75 8a.75.75 0 0 1-.75.75H8.75V11a.75.75 0 0 1-1.5 0V8.75H5a.75.75 0 0 1 0-1.5h2.25V5a.75.75 0 0 1 1.5 0v2.25H11a.75.75 0 0 1 .75.75z"></path>
+                        </svg>
+                    </span>
+                    <span class="context-menu-text">Lưu vào Bài hát đã thích của bạn</span>
+                </button>
+            </li>
+            <li>
+                <button class="context-menu-item" data-action="add-to-queue">
+                    <span class="context-menu-icon">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M16 15H2v-1.5h14V15zm0-4.5H2V9h14v1.5zm-8.034-6A5.484 5.484 0 0 1 7.187 6H13.5a2.5 2.5 0 0 0 0-5H7.966c.159.474.255.978.278 1.5H13.5a1 1 0 1 1 0 2H7.966zM2 2V0h1.5v2h2v1.5h-2v2H2v-2H0V2h2z"></path>
+                        </svg>
+                    </span>
+                    <span class="context-menu-text">Thêm vào danh sách chờ</span>
+                </button>
+            </li>
+            <li>
+                <button class="context-menu-item" data-action="go-to-radio">
+                    <span class="context-menu-icon">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M5.624 3.886A4.748 4.748 0 0 0 3.25 8c0 1.758.955 3.293 2.375 4.114l.75-1.3a3.249 3.249 0 0 1 0-5.63l-.75-1.298zm4.001 1.299.75-1.3A4.748 4.748 0 0 1 12.75 8a4.748 4.748 0 0 1-2.375 4.114l-.75-1.3a3.249 3.249 0 0 0 0-5.63zM8 6.545a1.455 1.455 0 1 0 0 2.91 1.455 1.455 0 0 0 0-2.91z"></path>
+                            <path d="M4 1.07A7.997 7.997 0 0 0 0 8a7.997 7.997 0 0 0 4 6.93l.75-1.3A6.497 6.497 0 0 1 1.5 8a6.497 6.497 0 0 1 3.25-5.63L4 1.07zm7.25 1.3.75-1.3A7.997 7.997 0 0 1 16 8a7.997 7.997 0 0 1-3.999 6.93l-.75-1.3A6.497 6.497 0 0 0 14.5 8a6.497 6.497 0 0 0-3.25-5.63z"></path>
+                        </svg>
+                    </span>
+                    <span class="context-menu-text">Chuyển đến radio theo bài hát</span>
+                </button>
+            </li>
+            <li>
+                <button class="context-menu-item" data-action="go-to-artist">
+                    <span class="context-menu-icon">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M11.757 2.987A4.356 4.356 0 0 0 7.618 0a4.362 4.362 0 0 0-4.139 2.987 5.474 5.474 0 0 0-.22 1.894 5.604 5.604 0 0 0 1.4 3.312l.125.152a.748.748 0 0 1-.2 1.128l-2.209 1.275A4.748 4.748 0 0 0 0 14.857v1.142h8.734A5.48 5.48 0 0 1 8.15 14.5H1.517a3.245 3.245 0 0 1 1.6-2.454l2.21-1.275a2.25 2.25 0 0 0 .6-3.386l-.128-.153a4.112 4.112 0 0 1-1.05-2.44A4.053 4.053 0 0 1 4.89 3.47a2.797 2.797 0 0 1 1.555-1.713 2.89 2.89 0 0 1 3.293.691c.265.296.466.644.589 1.022.12.43.169.876.144 1.322a4.12 4.12 0 0 1-1.052 2.44l-.127.153a2.239 2.239 0 0 0-.2 2.58c.338-.45.742-.845 1.2-1.173 0-.162.055-.32.156-.447l.126-.152a5.598 5.598 0 0 0 1.4-3.312 5.499 5.499 0 0 0-.218-1.894zm3.493 3.771a.75.75 0 0 0-.75.75v3.496h-1a2.502 2.502 0 0 0-2.31 1.542 2.497 2.497 0 0 0 1.822 3.406A2.502 2.502 0 0 0 16 13.502V7.508a.75.75 0 0 0-.75-.75zm-.75 6.744a.998.998 0 0 1-1.707.707 1 1 0 0 1 .707-1.706h1v1z"></path>
+                        </svg>
+                    </span>
+                    <span class="context-menu-text">Chuyển tới nghệ sĩ</span>
+                    <span class="context-menu-arrow">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline e-9812-icon--auto-mirror" viewBox="0 0 24 24">
+                            <path d="M8.043 2.793a1 1 0 0 0 0 1.414L15.836 12l-7.793 7.793a1 1 0 1 0 1.414 1.414L18.664 12 9.457 2.793a1 1 0 0 0-1.414 0z"></path>
+                        </svg>
+                    </span>
+                </button>
+            </li>
+            <li>
+                <button class="context-menu-item" data-action="go-to-album">
+                    <span class="context-menu-icon">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z"></path>
+                            <path d="M8 6.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM5 8a3 3 0 1 1 6 0 3 3 0 0 1-6 0z"></path>
+                        </svg>
+                    </span>
+                    <span class="context-menu-text">Chuyển đến album</span>
+                    <span class="context-menu-arrow">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline e-9812-icon--auto-mirror" viewBox="0 0 24 24">
+                            <path d="M8.043 2.793a1 1 0 0 0 0 1.414L15.836 12l-7.793 7.793a1 1 0 1 0 1.414 1.414L18.664 12 9.457 2.793a1 1 0 0 0-1.414 0z"></path>
+                        </svg>
+                    </span>
+                </button>
+            </li>
+            <li>
+                <button class="context-menu-item" data-action="view-credits">
+                    <span class="context-menu-icon">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M16 8.328V1h-1.5v4.828h-1a2.5 2.5 0 1 0 2.5 2.5zm-2.5-1h1v1a1 1 0 1 1-1-1zm-4.5 3V4H7.5v3.828h-1a2.5 2.5 0 1 0 2.5 2.5zm-2.5-1h1v1a1 1 0 1 1-1-1zM0 14.5h16V16H0v-1.5zM2 10H0v1.5h2V10zM0 5.5h4V7H0V5.5zM12 1H0v1.5h12V1z"></path>
+                        </svg>
+                    </span>
+                    <span class="context-menu-text">Xem thông tin ghi công</span>
+                </button>
+            </li>
+            <li>
+                <button class="context-menu-item" data-action="share">
+                    <span class="context-menu-icon">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M1 5.75A.75.75 0 0 1 1.75 5H4v1.5H2.5v8h11v-8H12V5h2.25a.75.75 0 0 1 .75.75v9.5a.75.75 0 0 1-.75.75H1.75a.75.75 0 0 1-.75-.75v-9.5z"></path>
+                            <path d="M8 9.576a.75.75 0 0 0 .75-.75V2.903l1.454 1.454a.75.75 0 0 0 1.06-1.06L8 .03 4.735 3.296a.75.75 0 0 0 1.06 1.061L7.25 2.903v5.923a.75.75 0 0 0 .75.75z"></path>
+                        </svg>
+                    </span>
+                    <span class="context-menu-text">Chia sẻ</span>
+                </button>
+            </li>
+        </ul>
+    </div>
+    <script>
+        window.playlistId = @(Model.Playlist != null ? Model.Playlist.PlaylistId : 0);
+    </script>
+    <script src="~/js/IndexPlayList.js"></script>
+    <script src="/js/vibrant.min.js" onload="window.vibrantLoaded=true;" onerror="console.error('Lỗi tải Vibrant.js từ local');"></script>
+</body>
+</html>

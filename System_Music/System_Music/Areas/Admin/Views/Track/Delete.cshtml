@@ -1,0 +1,39 @@
+﻿@model System_Music.Models.SqlModels.Track
+
+@{
+    ViewData["Title"] = "Xóa bài hát";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Xóa bài hát</h2>
+    <h4>Bạn có chắc chắn muốn xóa bài hát "@Model.Title"?</h4>
+    <dl class="row">
+        <dt class="col-sm-3">Ảnh bìa</dt>
+        <dd class="col-sm-9">
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img src="@Model.ImageUrl" alt="@Model.Title" style="max-width: 100px; max-height: 100px;" />
+            }
+            else
+            {
+                <span>Không có ảnh</span>
+            }
+        </dd>
+
+        <dt class="col-sm-3">Tiêu đề</dt>
+        <dd class="col-sm-9">@Model.Title</dd>
+
+        <dt class="col-sm-3">Thời lượng</dt>
+        <dd class="col-sm-9">@Model.Duration giây</dd>
+
+        <dt class="col-sm-3">Album</dt>
+        <dd class="col-sm-9">@(Model.Album != null ? Model.Album.Name : "Single")</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="TrackId" />
+        <button type="submit" class="btn btn-danger">Xóa</button>
+        <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+    </form>
+</div>

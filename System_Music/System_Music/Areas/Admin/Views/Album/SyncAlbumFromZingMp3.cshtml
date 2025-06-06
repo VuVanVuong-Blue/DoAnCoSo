@@ -1,0 +1,114 @@
+﻿@model IEnumerable<System_Music.Models.SqlModels.Album>
+@{
+    ViewData["Title"] = "Sync Albums from Zing MP3";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h1 class="mt-4">Sync Albums from Zing MP3</h1>
+
+<p>
+    <a asp-action="Index" class="btn btn-secondary">Back to Albums List</a>
+    <a asp-controller="Track" asp-action="SyncFromZingMp3" class="btn btn-info">Sync Tracks from Zing MP3</a>
+</p>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <form asp-action="SyncFromZingMp3" method="get">
+            <div class="form-group">
+                <label for="albumEncodeId">Enter Album Encode ID (e.g., 6BZO0I0O):</label>
+                <input type="text" id="albumEncodeId" name="albumEncodeId" class="form-control" value="@ViewData["AlbumEncodeId"]" />
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Sync Album from Zing MP3</button>
+        </form>
+    </div>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-warning">
+        No albums synced yet. Enter an Album Encode ID and click "Sync" to sync.
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.First().AlbumId)</th>
+                <th>@Html.DisplayNameFor(model => model.First().Name)</th>
+                <th>@Html.DisplayNameFor(model => model.First().Image)</th>
+                <th>Total Tracks</th>
+                <th>Artists</th>
+                <th>Release Date</th>
+                <th>Zing MP3 Album ID</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var album in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => album.AlbumId)</td>
+                    <td>@Html.DisplayFor(modelItem => album.Name)</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(album.Image))
+                        {
+                            <img src="@album.Image" alt="@album.Name" style="width: 100px; height: auto;" />
+                        }
+                        else
+                        {
+                            <span>No Image</span>
+                        }
+                    </td>
+                    <td>@(album.Tracks?.Count ?? 0)</td>
+                    <td>
+                        @if (album.AlbumArtists != null && album.AlbumArtists.Any())
+                        {
+                            @string.Join(", ", album.AlbumArtists.Select(aa => aa.Artist.Name))
+                        }
+                        else
+                        {
+                            <span>No Artists</span>
+                        }
+                    </td>
+                    <td>@album.ReleaseDate.ToString("dd/MM/yyyy")</td>
+                    <td>@Html.DisplayFor(modelItem => album.ZingMp3AlbumId)</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@album.AlbumId" class="btn btn-info btn-sm">Details</a>
+                        <a asp-action="Edit" asp-route-id="@album.AlbumId" class="btn btn-warning btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@album.AlbumId" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $('form').on('submit', function (e) {
+                var albumEncodeId = $('#albumEncodeId').val().trim();
+                if (!albumEncodeId) {
+                    e.preventDefault();
+                    alert('Please enter an Album Encode ID.');
+                }
+            });
+        });
+    </script>
+}

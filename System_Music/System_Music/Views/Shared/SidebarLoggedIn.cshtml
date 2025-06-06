@@ -1,0 +1,1180 @@
+﻿@using System_Music.Models.SqlModels
+@using Microsoft.AspNetCore.Identity
+@using System_Music.Services.Interfaces
+@inject IPlaylistService PlaylistService
+@inject UserManager<User> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var playlists = user != null ? await PlaylistService.GetUserPlaylistsAsync(user.Id) : new List<Playlist>();
+    bool hasPlaylists = playlists != null && playlists.Any();
+}
+<link rel="stylesheet" href="~/css/SidebarLoggedIn1.css" />
+<style>
+    /* Đảm bảo sidebar-container không tạo thanh cuộn dư thừa */
+    .sidebar-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        color: #b3b3b3;
+        font-family: Arial, sans-serif;
+        position: relative;
+        width: 400px;
+        transition: width 0.3s ease;
+        background-color: #181818; /* Màu nền giống Spotify */
+    }
+
+    /* Đảm bảo library-header-container không tạo thanh cuộn */
+    .library-header-container {
+        flex-shrink: 0; /* Ngăn phần header bị co lại */
+        overflow: hidden; /* Ngăn thanh cuộn trong header */
+    }
+
+    /* Đảm bảo sidebar-content-container không tạo thanh cuộn dư thừa */
+    .sidebar-content-container {
+        flex: 1; /* Chiếm toàn bộ không gian còn lại */
+        overflow: hidden; /* Ngăn thanh cuộn trong khu vực nội dung chính */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Đảm bảo playlist-view không tạo thanh cuộn dư thừa */
+    .playlist-view {
+        flex: 1; /* Chiếm toàn bộ không gian còn lại */
+        overflow: hidden; /* Ngăn thanh cuộn trong playlist-view */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Đảm bảo playlist-grid có thanh cuộn dọc khi cần */
+    .playlist-grid {
+        flex: 1; /* Chiếm toàn bộ không gian còn lại */
+        max-height: calc(100vh - 200px); /* Giới hạn chiều cao */
+        overflow-y: auto; /* Hiển thị thanh cuộn dọc khi cần */
+        overflow-x: hidden; /* Ẩn thanh cuộn ngang */
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Đảm bảo playlist-row không gây ra thanh cuộn ngang */
+    .playlist-row {
+        width: 100%; /* Đảm bảo chiều rộng không vượt quá container */
+        box-sizing: border-box; /* Đảm bảo padding/margin không làm vượt kích thước */
+        min-width: 0; /* Ngăn phần tử con làm tràn */
+    }
+
+    .playlist-item {
+        width: 100%; /* Đảm bảo chiều rộng không vượt quá container */
+        box-sizing: border-box; /* Đảm bảo padding/margin không làm vượt kích thước */
+        min-width: 0; /* Ngăn phần tử con làm tràn */
+    }
+
+    .sidebar-container.collapsed {
+        width: 80px !important; /* Chiều rộng khi thu gọn, giống Spotify */
+    }
+
+        /* Ẩn văn bản và nội dung khi thu gọn */
+        .sidebar-container.collapsed .library-title span,
+        .sidebar-container.collapsed .sidebar-header-actions .create-text,
+        .sidebar-container.collapsed .filter-chip-container,
+        .sidebar-container.collapsed .sidebar-search-input,
+        .sidebar-container.collapsed .sort-btn span,
+        .sidebar-container.collapsed .playlist-info,
+        .sidebar-container.collapsed .no-playlist-message,
+        .sidebar-container.collapsed .sidebar-play-button,
+        .sidebar-container.collapsed .suggestion-section {
+            display: none;
+        }
+
+        /* Chỉ hiển thị icon khi thu gọn */
+        .sidebar-container.collapsed .library-title,
+        .sidebar-container.collapsed .sidebar-header-actions,
+        .sidebar-container.collapsed .filter-section {
+            display: flex;
+            justify-content: center;
+        }
+
+        .sidebar-container.collapsed .collapse-btn,
+        .sidebar-container.collapsed .create-btn,
+        .sidebar-container.collapsed .expand-search-btn,
+        .sidebar-container.collapsed .sort-btn {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        /* Đảm bảo playlist-grid hiển thị khi thu gọn */
+        .sidebar-container.collapsed .sidebar-content-container {
+            display: flex;
+        }
+
+        .sidebar-container.collapsed .playlist-view {
+            display: block;
+        }
+        /* Điều chỉnh playlist-row khi thu gọn */
+        .sidebar-container.collapsed .playlist-row {
+            height: 56px;
+        }
+
+        .sidebar-container.collapsed .playlist-item {
+            justify-content: center;
+            padding: 0;
+        }
+
+        .sidebar-container.collapsed .playlist-image {
+            width: 48px;
+            height: 48px;
+        }
+    /* Điều chỉnh layout của container chính */
+    .container {
+        display: grid;
+        grid-template-columns: 420px 1fr 0;
+        transition: grid-template-columns 0.3s ease;
+        height: 100vh;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+        .container.collapsed {
+            grid-template-columns: 80px 1fr 0 !important; /* Thêm !important để ghi đè inline style */
+        }
+
+    /* Đảm bảo sidebar không bị ảnh hưởng bởi resize khi thu gọn */
+    .sidebar-container.collapsed .resize-bar {
+        display: none;
+    }
+
+    /* Điều chỉnh kích thước icon */
+    .icon {
+        width: 24px;
+        height: 24px;
+        fill: #b3b3b3;
+    }
+
+    .sidebar-container.collapsed .icon {
+        width: 28px;
+        height: 28px;
+    }
+</style>
+
+<div class="sidebar-container">
+    <!-- Khu vực chứa header và filter chip -->
+    <div class="library-header-container">
+        <!-- Header -->
+        <header class="sidebar-header">
+            <div class="sidebar-header-content">
+                <div class="library-title">
+                    <button class="collapse-btn" aria-label="Thu gọn Thư viện">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="icon" viewBox="0 0 24 24">
+                            <path d="M3 22a1 1 0 0 1-1-1V3a1 1 0 0 1 2 0v18a1 1 0 0 1-1 1zM15.5 2.134A1 1 0 0 0 14 3v18a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V6.464a1 1 0 0 0-.5-.866l-6-3.464zM9 2a1 1 0 0 0-1 1v18a1 1 0 1 0 2 0V3a1 1 0 0 0-1 1z"></path>
+                        </svg>
+                        <span>Thư viện</span>
+                    </button>
+                </div>
+                <div class="sidebar-header-actions">
+                    <button class="create-btn" aria-label="Tạo danh sách phát hoặc thư mục" onclick="createPlaylist()">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="icon" viewBox="0 0 16 16">
+                            <path d="M15.25 8a.75.75 0 0 1-.75.75H8.75v5.75a.75.75 0 0 1-1.5 0V8.75H1.5a.75.75 0 0 1 0-1.5h5.75V1.5a.75.75 0 0 1 1.5 0v5.75h5.75a.75.75 0 0 1 .75.75z"></path>
+                        </svg>
+                        <span class="create-text">Tạo</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Chế độ xem danh sách playlist -->
+        <div class="playlist-view" style="@(hasPlaylists ? "" : "display: none;")">
+            <div class="filter-chip-container">
+                <button class="filter-chip" role="checkbox" aria-checked="false" onclick="showPlaylistView()">
+                    <span>Danh sách phát</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nội dung chính -->
+    <div class="sidebar-content-container">
+        <!-- Mặc định: Gợi ý tạo playlist -->
+        <div class="default-view" style="@(hasPlaylists ? "display: none;" : "")">
+            <section class="suggestion-section">
+                <div class="suggestion-text">
+                    <span class="suggestion-title">Tạo danh sách phát đầu tiên của bạn</span>
+                    <span class="suggestion-subtitle">Rất dễ! Chúng tôi sẽ giúp bạn</span>
+                </div>
+                <div class="suggestion-action">
+                    <button class="action-btn" onclick="createPlaylist()">Tạo danh sách phát</button>
+                </div>
+            </section>
+            <section class="suggestion-section">
+                <div class="suggestion-text">
+                    <span class="suggestion-title">Hãy cùng tìm và theo dõi một số podcast</span>
+                    <span class="suggestion-subtitle">Chúng tôi sẽ cập nhật cho bạn thông tin về các tập mới</span>
+                </div>
+                <div class="suggestion-action">
+                    <a href="/genre/podcasts-web" class="action-btn">Duyệt xem podcast</a>
+                </div>
+            </section>
+        </div>
+
+        <!-- Chế độ xem danh sách playlist -->
+        <div class="playlist-view" id="playlistView" style="@(hasPlaylists ? "" : "display: none;")">
+            <div class="search-filter-section">
+                <div class="filter-section">
+                    <div class="sidebar-search-bar">
+                        <button class="expand-search-btn" aria-label="Tìm kiếm trong Thư viện">
+                            <div class="search-icon-wrapper">
+                                <svg data-encore-id="icon" role="img" aria-hidden="true" class="icon" viewBox="0 0 16 16">
+                                    <path d="M7 1.75a5.25 5.25 0 1 0 0 10.5 5.25 5.25 0 0 0 0-10.5zM.25 7a6.75 6.75 0 1 1 12.096 4.12l3.184 3.185a.75.75 0 1 1-1.06 1.06L11.304 12.2A6.75 6.75 0 0 1 .25 7z"></path>
+                                </svg>
+                            </div>
+                        </button>
+                        <input type="text" class="sidebar-search-input" placeholder="Tìm kiếm trong Thư viện" maxlength="80" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    </div>
+                    <button class="sort-btn" aria-label="Chế độ xem Gần đây, Danh sách mặc định">
+                        <span>Gần đây</span>
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="icon" viewBox="0 0 16 16">
+                            <path d="M15 14.5H5V13h10v1.5zm0-5.75H5v-1.5h10v1.5zM15 3H5V1.5h10V3zM3 3H1V1.5h2V3zm0 11.5H1V13h2v1.5zm0-5.75H1v-1.5h2v1.5z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Danh sách playlist -->
+            <div class="playlist-grid" role="grid" aria-label="Thư viện" aria-rowcount="@(playlists != null ? playlists.Count : 0)" aria-colcount="1">
+                <!-- Playlist mặc định "Bài hát đã thích" -->
+                <div class="playlist-row" role="row" aria-rowindex="1" aria-selected="false" data-playlist-id="liked-songs">
+                    <div class="playlist-item">
+                        <div class="playlist-image" style="background-image: url('https://misc.scdn.co/liked-songs/liked-songs-64.png'); background-size: cover; background-position: center;">
+                            <img src="https://misc.scdn.co/liked-songs/liked-songs-64.png" alt="Bài hát đã thích" style="opacity: 0; width: 100%; height: 100%;" />
+                            <div class="sidebar-play-button">
+                                <button class="sidebar-play-btn" data-playlist-id="liked-songs" aria-label="Phát Bài hát đã thích">
+                                    <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 24 24">
+                                        <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="playlist-info">
+                            <p class="playlist-title">
+                                <a href="@Url.Action("Index", "LikedSongs")">Bài hát đã thích</a>
+                            </p>
+                            <p class="playlist-subtitle">Danh sách phát • @(user?.FullName ?? "Unknown")</p>
+                        </div>
+                    </div>
+                </div>
+                @if (hasPlaylists)
+                {
+                    int rowIndex = 1;
+                    foreach (var playlist in playlists)
+                    {
+                        <div class="playlist-row" role="row" aria-rowindex="@rowIndex" aria-selected="false" data-playlist-id="@playlist.PlaylistId">
+                            <div class="playlist-item">
+                                <div class="playlist-image">
+                                    @if (playlist.ImageMediaId == null || playlist.ImageMedia == null)
+                                    {
+                                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="icon" viewBox="0 0 24 24">
+                                            <path d="M6 3h15v15.167a3.5 3.5 0 1 1-3.5-3.5H19V5H8v13.167a3.5 3.5 0 1 1-3.5-3.5H6V3zm0 13.667H4.5a1.5 1.5 0 1 0 1.5 1.5v-1.5zm13 0h-1.5a1.5 1.5 0 1 0 1.5 1.5v-1.5z"></path>
+                                        </svg>
+                                    }
+                                    else
+                                    {
+                                        <img src="@playlist.ImageMedia.MediaPath" alt="@playlist.Name" />
+                                    }
+                                    <div class="sidebar-play-button">
+                                        <button class="sidebar-play-btn" data-playlist-id="@playlist.PlaylistId" aria-label="Phát @(playlist.Name ?? "Danh sách phát của tôi")">
+                                            <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 24 24">
+                                                <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="playlist-info">
+                                    <p class="playlist-title">
+                                        <a href="@Url.Action("Index", "Playlist", new { id = playlist.PlaylistId })">@(playlist.Name ?? "Danh sách phát của tôi")</a>
+                                    </p>
+                                    <p class="playlist-subtitle">Danh sách phát • @(user?.FullName ?? "Unknown")</p>
+                                </div>
+                            </div>
+                        </div>
+                        rowIndex++;
+                    }
+                }
+                else
+                {
+                    <p class="no-playlist-message">Chưa có playlist nào. Hãy tạo một playlist mới!</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Thanh điều chỉnh kích thước -->
+    <div class="resize-bar">
+        <label class="hidden-visually">
+            <input type="range" min="280" max="420" step="10" value="420" class="resize-input">
+        </label>
+    </div>
+</div>
+
+<script>
+    // Truyền user.FullName từ Razor sang JavaScript
+    const currentUserName = '@(user?.FullName ?? "Unknown")';
+    let currentPlaylistId = null;
+
+    // Tạo và thêm context menu vào body nếu chưa tồn tại
+    let contextMenu = document.getElementById('contextMenu');
+    if (!contextMenu) {
+        contextMenu = document.createElement('div');
+        contextMenu.id = 'contextMenu';
+        contextMenu.className = 'context-menu sidebar-context-menu';
+        contextMenu.style.display = 'none';
+        contextMenu.innerHTML = `
+            <ul class="context-menu-list">
+                <li class="context-menu-item">
+                    <button onclick="addToQueue()">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M16 15H2v-1.5h14V15zm0-4.5H2V9h14v1.5zm-8.034-6A5.484 5.484 0 0 1 7.187 6H13.5a2.5 2.5 0 0 0 0-5H7.966c.159.474.255.978.278 1.5H13.5a1 1 0 1 1 0 2H7.966zM2 2V0h1.5v2h2v1.5h-2v2H2v-2H0V2h2z"></path>
+                        </svg>
+                        Thêm vào danh sách chờ
+                    </button>
+                </li>
+                <li class="context-menu-item">
+                    <button onclick="removeFromProfile()">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zM1.5 8a6.5 6.5 0 1 1 11.395 4.277 3.504 3.504 0 0 0-1.163-1.088l-1.523-.88a.285.285 0 0 1-.076-.428l.086-.104v-.001c.549-.654.962-1.449 1.02-2.422.03-.526-.055-1.074-.165-1.395a3.23 3.23 0 0 0-.671-1.154 3.259 3.259 0 0 0-4.806 0 3.23 3.23 0 0 0-.672 1.154c-.109.32-.195.87-.163 1.395.057.973.47 1.768 1.018 2.422l.087.105a.285.285 0 0 1-.076.428l-1.523.88a3.506 3.506 0 0 0-1.163 1.088A6.475 6.475 0 0 1 1.5 8zm2.74 5.302c.173-.334.44-.62.778-.814l1.523-.88A1.784 1.784 0 0 0 7.02 8.92l-.088-.105-.002-.002c-.399-.476-.637-.975-.671-1.548a2.71 2.71 0 0 1 .087-.824 1.74 1.74 0 0 1 .357-.623 1.76 1.76 0 0 1 2.594 0c.155.17.274.378.357.623a2.716 2.716 0 0 1 .087.824c-.034.573-.272 1.072-.671 1.548l-.002.002-.088.105c-.709.85-.48 2.135.479 2.688l1.523.88c.338.195.605.48.779.814A6.47 6.47 0 0 1 8 14.5a6.47 6.47 0 0 1-3.760-1.198z"></path>
+                        </svg>
+                        Xóa khỏi hồ sơ
+                    </button>
+                </li>
+                <li class="context-menu-divider"></li>
+                <li class="context-menu-item">
+                    <button onclick="showEditModal()">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M11.838.714a2.438 2.438 0 0 1 3.448 3.448l-9.841 9.841c-.358.358-.79.633-1.267.806l-3.173 1.146a.75.75 0 0 1-.96-.96l1.146-3.173c.173-.476.448-.909.806-1.267l9.84-9.84zm2.387 1.06a.938.938 0 0 0-1.327 0l-9.84 9.842a1.953 1.953 0 0 0-.456.716L2 14.002l1.669-.604a1.95 1.95 0 0 0 .716-.455l9.841-9.841a.938.938 0 0 0 0-1.327z"></path>
+                        </svg>
+                        Sửa thông tin chi tiết
+                    </button>
+                </li>
+                <li class="context-menu-item">
+                    <button onclick="deletePlaylistWrapper()">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z"></path>
+                            <path d="M12 8.75H4v-1.5h8v1.5z"></path>
+                        </svg>
+                        Xóa
+                    </button>
+                </li>
+                <li class="context-menu-divider"></li>
+                <li class="context-menu-item">
+                    <button onclick="createPlaylist()">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M2 0v2H0v1.5h2v2h1.5v-2h2V2h-2V0H2zm11.5 2.5H8.244A5.482 5.482 0 0 0 7.966 1H15v11.75A2.75 2.75 0 1 1 12.25 10h1.25V2.5zm0 9h-1.25a1.25 1.25 0 1 0 1.25 1.25V11.5zM4 8.107a5.465 5.465 0 0 0 1.5-.593v5.236A2.75 2.75 0 1 1 2.75 10H4V8.107zM4 11.5H2.75A1.25 1.25 0 1 0 4 12.75V11.5z"></path>
+                        </svg>
+                        Tạo danh sách phát
+                    </button>
+                </li>
+                <li class="context-menu-item">
+                    <button onclick="createFolder()">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M15.25 8a.75.75 0 0 1-.75.75H8.75v5.75a.75.75 0 0 1-1.5 0V8.75H1.5a.75.75 0 0 1 0-1.5h5.75V1.5a.75.75 0 0 1 1.5 0v5.75h5.75a.75.75 0 0 1 .75.75z"></path>
+                        </svg>
+                        Tạo thư mục
+                    </button>
+                </li>
+                <li class="context-menu-divider"></li>
+                <li class="context-menu-item">
+                    <button onclick="makePrivate()">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M4 4a4 4 0 1 1 8 0v3h1.25c.966 0 1.75.784 1.75 1.75v5.5A1.75 1.75 0 0 1 13.25 16H2.75A1.75 1.75 0 0 1 1 14.25v-5.5C1 7.784 1.784 7 2.75 7H4V4zm1.5 3h5V4a2.5 2.5 0 0 0-5 0v3zM2.75 8.5a.25.25 0 0 0-.25.25v5.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-5.5a.25.25 0 0 0-.25-.25H2.75z"></path>
+                        </svg>
+                        Đặt thành riêng tư
+                    </button>
+                </li>
+                <li class="context-menu-item">
+                    <button onclick="inviteCollaborator()">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M4.765 1.423c-.42.459-.713.992-.903 1.554-.144.421-.264 1.173-.22 1.894.077 1.321.638 2.408 1.399 3.316v.002l.083.098c.611.293 1.16.696 1.621 1.183a2.244 2.244 0 0 0-.426-2.092l-.127-.153-.002-.001c-.612-.73-.997-1.52-1.051-2.442-.032-.54.066-1.097.143-1.323a2.85 2.85 0 0 1 .589-1.022 2.888 2.888 0 0 1 4.258 0c.261.284.456.628.59 1.022.076.226.175.783.143 1.323-.055.921-.44 1.712-1.052 2.442l-.002.001-.127.153a2.25 2.25 0 0 0 .603 3.39l2.209 1.275a3.248 3.248 0 0 1 1.605 2.457h-5.99a5.466 5.466 0 0 1-.594 1.5h8.259l-.184-1.665a4.75 4.75 0 0 0-2.346-3.591l-2.209-1.275a.75.75 0 0 1-.201-1.13l.126-.152h.001c.76-.909 1.32-1.995 1.399-3.316.043-.721-.077-1.473-.220-1.894a4.46 4.46 0 0 0-.644-1.24v-.002h-.002a4.388 4.388 0 0 0-6.728-.312zM2 12.5v-2h1.5v2h2V14h-2v2H2v-2H0v-1.5h2z"></path>
+                        </svg>
+                        Mời cộng sự
+                    </button>
+                </li>
+                <li class="context-menu-item">
+                    <button onclick="removeFromFavorites()">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z"></path>
+                            <path d="M11.005 4.995a.75.75 0 0 1 0 1.06L9.061 8l1.944 1.945a.75.75 0 1 1-1.06 1.06L8 9.061l-1.945 1.944a.75.75 0 1 1-1.06-1.06L6.939 8 4.995 6.055a.75.75 0 1 1 1.06-1.06L8 6.939l1.945-1.944a.75.75 0 0 1 1.06 0z"></path>
+                        </svg>
+                        Loại bỏ khỏi sở thích của bạn
+                    </button>
+                </li>
+                <li class="context-menu-item">
+                    <button onclick="moveToFolder()">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M1.75 1A1.75 1.75 0 0 0 0 2.75v11.5C0 15.216.784 16 1.75 16h12.5A1.75 1.75 0 0 0 16 14.25v-9.5A1.75 1.75 0 0 0 14.25 3H7.82l-.65-1.125A1.75 1.75 0 0 0 5.655 1H1.75zM1.5 2.75a.25.25 0 0 1 .25-.25h3.905a.25.25 0 0 1 .216.125L6.954 4.5h7.296a.25.25 0 0 1 .25.25v9.5a.25.25 0 0 1-.25.25H1.75a.25.25 0 0 1-.25-.25V2.75z"></path>
+                        </svg>
+                        Di chuyển sang thư mục
+                    </button>
+                </li>
+                <li class="context-menu-item">
+                    <button onclick="pinPlaylist()">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M11.609 1.858a1.22 1.22 0 0 0-1.727 0L5.92 5.82l-2.867.768 6.359 6.359.768-2.867 3.962-3.963a1.22 1.22 0 0 0 0-1.726L11.61 1.858zM8.822.797a2.72 2.72 0 0 1 3.847 0l2.534 2.533a2.72 2.72 0 0 1 0 3.848l-3.678 3.678-1.337 4.988-4.486-4.486L1.28 15.78a.75.75 0 0 1-1.06-1.06l4.422-4.422L.156 5.812l4.987-1.337L8.822.797z"></path>
+                        </svg>
+                        Ghim danh sách phát
+                    </button>
+                </li>
+                <li class="context-menu-divider"></li>
+                <li class="context-menu-item">
+                    <button onclick="sharePlaylist()">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 16 16">
+                            <path d="M1 5.75A.75.75 0 0 1 1.75 5H4v1.5H2.5v8h11v-8H12V5h2.25a.75.75 0 0 1 .75.75v9.5a.75.75 0 0 1-.75.75H1.75a.75.75 0 0 1-.75-.75v-9.5z"></path>
+                            <path d="M8 9.576a.75.75 0 0 0 .75-.75V2.903l1.454 1.454a.75.75 0 0 0 1.06-1.06L8 .03 4.735 3.296a.75.75 0 0 0 1.06 1.061L7.25 2.903v5.923c0 .414.336.75.75.75z"></path>
+                        </svg>
+                        Chia sẻ
+                    </button>
+                </li>
+            </ul>
+        `;
+        document.body.appendChild(contextMenu);
+    }
+
+    // Gắn sự kiện oncontextmenu và các sự kiện liên quan cho tất cả playlist-row
+    document.querySelectorAll('.playlist-row').forEach(row => {
+        console.log('Gắn sự kiện contextmenu cho playlist-row:', row);
+
+        // Sự kiện contextmenu trên playlist-row
+        row.addEventListener('contextmenu', function(event) {
+            console.log('Sự kiện oncontextmenu được gọi trên playlist-row!');
+            const playlistId = row.getAttribute('data-playlist-id');
+            console.log('Playlist ID:', playlistId);
+            showContextMenu(event, playlistId);
+        }, { passive: false, capture: true });
+
+        // Gắn sự kiện contextmenu cho thẻ <a> bên trong playlist-row
+        const link = row.querySelector('.playlist-title a');
+        if (link) {
+            link.addEventListener('contextmenu', function(event) {
+                console.log('Sự kiện contextmenu trên thẻ <a>, target:', event.target);
+                event.preventDefault();
+            }, { passive: false, capture: true });
+        }
+
+        // Gắn sự kiện contextmenu cho thẻ <p class="playlist-subtitle">
+        const subtitle = row.querySelector('.playlist-subtitle');
+        if (subtitle) {
+            subtitle.addEventListener('contextmenu', function(event) {
+                console.log('Sự kiện contextmenu trên thẻ <p class="playlist-subtitle">, target:', event.target);
+                event.preventDefault();
+            }, { passive: false, capture: true });
+        }
+    });
+
+    // Gắn sự kiện click cho các nút play trong sidebar
+    document.querySelectorAll('.sidebar-play-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Sidebar play button clicked:', button);
+
+            const playlistId = button.getAttribute('data-playlist-id');
+            console.log('Playlist ID:', playlistId);
+
+            if (!playlistId) {
+                console.error('No playlist ID found for play button:', button);
+                return;
+            }
+
+            let redirectUrl;
+            if (playlistId === 'liked-songs') {
+                redirectUrl = '@Url.Action("Index", "LikedSongs")';
+            } else {
+                redirectUrl = `/Playlist/Index/${playlistId}`;
+            }
+
+            console.log('Sending save request:', { entityType: 'Playlist', entityId: playlistId });
+
+            fetch('/api/ListenHistory/Add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ entityType: 'Playlist', entityId: playlistId })
+            })
+            .then(response => {
+                console.log('Fetch response status:', response.status);
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`Failed to save history: ${response.statusText} (${text})`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('History saved:', data);
+                console.log('Redirecting to:', redirectUrl);
+                window.location.href = redirectUrl;
+            })
+            .catch(error => {
+                console.error('Error saving history:', error.message);
+            });
+        });
+    });
+
+    // Hàm hiển thị menu ngữ cảnh
+    function showContextMenu(event, playlistId) {
+        console.log('showContextMenu được gọi với playlistId:', playlistId);
+        console.log('Vị trí chuột:', event.clientX, event.clientY);
+
+        event.preventDefault();
+        event.stopPropagation();
+        currentPlaylistId = playlistId;
+
+        if (!contextMenu) {
+            console.error('contextMenu không tồn tại!');
+            return;
+        }
+
+        const menuWidth = contextMenu.offsetWidth || 220; // Chiều rộng mặc định nếu chưa tính được
+        const menuHeight = contextMenu.offsetHeight || 400; // Chiều cao ước lượng
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+
+        // Hiển thị menu ngay dưới vị trí chuột
+        let posX = event.clientX;
+        let posY = event.clientY + 5; // Dịch xuống 5px để không đè lên chuột
+
+        // Điều chỉnh nếu menu tràn ra ngoài màn hình
+        if (posX + menuWidth > windowWidth) {
+            posX = windowWidth - menuWidth - 10; // Dịch vào trong để không tràn
+        }
+        if (posY + menuHeight > windowHeight) {
+            posY = event.clientY - menuHeight - 5; // Hiển thị phía trên chuột nếu tràn dưới
+        }
+
+        // Đảm bảo không bị tràn ra ngoài mép trái hoặc trên
+        posX = Math.max(10, posX);
+        posY = Math.max(10, posY);
+
+        console.log('Vị trí hiển thị menu:', posX, posY);
+        contextMenu.style.display = 'block';
+        contextMenu.style.left = posX + 'px';
+        contextMenu.style.top = posY + 'px';
+    }
+
+    // Ẩn menu ngữ cảnh khi click ra ngoài
+    document.addEventListener('click', function(event) {
+        if (!contextMenu.contains(event.target)) {
+            console.log('Ẩn contextMenu vì click ra ngoài');
+            contextMenu.style.display = 'none';
+        }
+    });
+
+    // Ẩn menu ngữ cảnh khi cuộn trang
+    window.addEventListener('scroll', function() {
+        console.log('Ẩn contextMenu vì cuộn trang');
+        contextMenu.style.display = 'none';
+    });
+
+    // Hàm hiển thị modal chỉnh sửa
+    function showEditModal() {
+        console.log("Đang mở modal chỉnh sửa cho playlist ID:", currentPlaylistId);
+        const modal = document.getElementById('editModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            // Cập nhật dữ liệu modal với thông tin playlist
+            fetch(`/Playlist/GetPlaylist/${currentPlaylistId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('playlistNameInput').value = data.name || 'Danh sách phát không tên';
+                    document.getElementById('playlistDescriptionInput').value = data.description || '';
+                    const imagePreview = document.getElementById('imagePreview');
+                    if (data.imageMediaId && data.imageMedia) {
+                        imagePreview.innerHTML = `<img src="${data.imageMedia.mediaPath}" alt="${data.name}" id="previewImage" />`;
+                    } else {
+                        imagePreview.innerHTML = `
+                            <svg role="img" aria-hidden="true" viewBox="0 0 24 24">
+                                <path d="M6 3h15v15.167a3.5 3.5 0 1 1-3.5-3.5H19V5H8v13.167a3.5 3.5 0 1 1-3.5-3.5H6V3zm0 13.667H4.5a1.5 1.5 0 1 0 1.5 1.5v-1.5zm13 0h-1.5a1.5 1.5 0 1 0 1.5 1.5v-1.5z"></path>
+                            </svg>
+                        `;
+                    }
+                    updateCharacterCounter(document.getElementById('playlistNameInput'), document.getElementById('nameCounter'), 100);
+                    updateCharacterCounter(document.getElementById('playlistDescriptionInput'), document.getElementById('descriptionCounter'), 300);
+                })
+                .catch(error => {
+                    console.error('Lỗi khi lấy dữ liệu playlist:', error);
+                });
+        } else {
+            console.error("Không tìm thấy modal chỉnh sửa trong SidebarLoggedIn");
+        }
+        contextMenu.style.display = 'none';
+    }
+
+    // Các hàm placeholder cho các chức năng khác trong menu ngữ cảnh
+    function addToQueue() {
+        alert('Chức năng Thêm vào danh sách chờ sẽ được triển khai sau.');
+        contextMenu.style.display = 'none';
+    }
+
+    function makePublic() {
+        alert('Chức năng Công khai sẽ được triển khai sau.');
+        contextMenu.style.display = 'none';
+    }
+
+    function makePrivate() {
+        alert('Chức năng Riêng tư sẽ được triển khai sau.');
+        contextMenu.style.display = 'none';
+    }
+
+    function createSimilarPlaylist() {
+        alert('Chức năng Tạo danh sách phát tương tự sẽ được triển khai sau.');
+        contextMenu.style.display = 'none';
+    }
+
+    function addToFavorites() {
+        alert('Chức năng Đặt thành mục yêu thích sẽ được triển khai sau.');
+        contextMenu.style.display = 'none';
+    }
+
+    function copyPlaylistLink() {
+        alert('Chức năng Sao chép liên kết đến danh sách phát sẽ được triển khai sau.');
+        contextMenu.style.display = 'none';
+    }
+
+    function moveToFolder() {
+        alert('Chức năng Di chuyển sang thư mục sẽ được triển khai sau.');
+        contextMenu.style.display = 'none';
+    }
+
+    function pinPlaylist() {
+        alert('Chức năng Ghim danh sách phát sẽ được triển khai sau.');
+        contextMenu.style.display = 'none';
+    }
+
+    function sharePlaylist() {
+        alert('Chức năng Chia sẻ sẽ được triển khai sau.');
+        contextMenu.style.display = 'none';
+    }
+
+    function removeFromProfile() {
+        alert('Chức năng Xóa khỏi hồ sơ sẽ được triển khai sau.');
+        contextMenu.style.display = 'none';
+    }
+
+    function deletePlaylistWrapper() {
+        // Gọi hàm deletePlaylist đã có sẵn
+        if (currentPlaylistId) {
+            deletePlaylist(currentPlaylistId);
+        } else {
+            alert('Không tìm thấy playlist để xóa.');
+        }
+        contextMenu.style.display = 'none';
+    }
+
+    function createFolder() {
+        alert('Chức năng Tạo thư mục sẽ được triển khai sau.');
+        contextMenu.style.display = 'none';
+    }
+
+    function inviteCollaborator() {
+        alert('Chức năng Mời cộng sự sẽ được triển khai sau.');
+        contextMenu.style.display = 'none';
+    }
+
+    function removeFromFavorites() {
+        alert('Chức năng Loại bỏ khỏi sở thích của bạn sẽ được triển khai sau.');
+        contextMenu.style.display = 'none';
+    }
+
+    // Hàm chuyển sang chế độ playlist-view
+    function showPlaylistView() {
+        const defaultView = document.querySelector('.default-view');
+        const playlistViews = document.querySelectorAll('.playlist-view');
+
+        if (defaultView) {
+            defaultView.style.display = 'none';
+        }
+
+        if (playlistViews.length > 0) {
+            playlistViews.forEach(view => view.style.display = 'block');
+        } else {
+            console.error('Không tìm thấy playlist-view');
+        }
+    }
+
+    // Hàm tạo playlist
+    async function createPlaylist() {
+        try {
+            const response = await fetch('/Playlist/Create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ name: '' })
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    alert('Vui lòng đăng nhập để tạo playlist!');
+                    window.location.href = '/Identity/Account/Login';
+                    return;
+                }
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Không thể tạo playlist');
+            }
+
+            const data = await response.json();
+            const playlistId = data.playlistId;
+            const playlistName = data.playlistName;
+
+            showPlaylistView();
+
+            const playlistGrid = document.querySelector('.playlist-grid');
+            const newRowButton = document.createElement('div');
+            newRowButton.className = 'playlist-row';
+            newRowButton.setAttribute('role', 'row');
+            newRowButton.setAttribute('aria-rowindex', '1');
+            newRowButton.setAttribute('aria-selected', 'false');
+            newRowButton.setAttribute('data-playlist-id', playlistId);
+            newRowButton.innerHTML = `
+                <div class="playlist-item">
+                    <div class="playlist-image">
+                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="icon" viewBox="0 0 24 24">
+                            <path d="M6 3h15v15.167a3.5 3.5 0 1 1-3.5-3.5H19V5H8v13.167a3.5 3.5 0 1 1-3.5-3.5H6V3zm0 13.667H4.5a1.5 1.5 0 1 0 1.5 1.5v-1.5zm13 0h-1.5a1.5 1.5 0 1 0 1.5 1.5v-1.5z"></path>
+                        </svg>
+                        <div class="sidebar-play-button">
+                            <button class="sidebar-play-btn" data-playlist-id="${playlistId}" aria-label="Phát ${playlistName}">
+                                <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 24 24">
+                                    <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="playlist-info">
+                        <p class="playlist-title">
+                            <a href="/Playlist/Index/${playlistId}">${playlistName}</a>
+                        </p>
+                        <p class="playlist-subtitle">Danh sách phát • ${currentUserName}</p>
+                    </div>
+                </div>
+            `;
+
+            playlistGrid.insertBefore(newRowButton, playlistGrid.firstChild);
+
+            const rows = playlistGrid.querySelectorAll('[role="row"]');
+            rows.forEach((row, index) => {
+                row.setAttribute('aria-rowindex', index + 1);
+            });
+
+            playlistGrid.setAttribute('aria-rowcount', rows.length);
+
+            // Gắn sự kiện contextmenu cho playlist mới
+            newRowButton.addEventListener('contextmenu', function(event) {
+                console.log('Sự kiện oncontextmenu được gọi trên playlist-row mới!');
+                const playlistId = newRowButton.getAttribute('data-playlist-id');
+                showContextMenu(event, playlistId);
+            }, { passive: false, capture: true });
+
+            const newLink = newRowButton.querySelector('.playlist-title a');
+            if (newLink) {
+                newLink.addEventListener('contextmenu', function(event) {
+                    console.log('Sự kiện contextmenu trên thẻ <a> trong playlist mới, target:', event.target);
+                    event.preventDefault();
+                }, { passive: false, capture: true });
+            }
+
+            const newSubtitle = newRowButton.querySelector('.playlist-subtitle');
+            if (newSubtitle) {
+                newSubtitle.addEventListener('contextmenu', function(event) {
+                    console.log('Sự kiện contextmenu trên thẻ <p class="playlist-subtitle"> trong playlist mới, target:', event.target);
+                    event.preventDefault();
+                }, { passive: false, capture: true });
+            }
+
+            // Gắn sự kiện click cho nút play trong playlist mới
+            const newPlayButton = newRowButton.querySelector('.sidebar-play-btn');
+            if (newPlayButton) {
+                newPlayButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log('Sidebar play button clicked (new playlist):', newPlayButton);
+
+                    const playlistId = newPlayButton.getAttribute('data-playlist-id');
+                    console.log('Playlist ID:', playlistId);
+
+                    if (!playlistId) {
+                        console.error('No playlist ID found for play button:', newPlayButton);
+                        return;
+                    }
+
+                    const redirectUrl = `/Playlist/Index/${playlistId}`;
+                    console.log('Sending save request:', { entityType: 'Playlist', entityId: playlistId });
+
+                    fetch('/api/ListenHistory/Add', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ entityType: 'Playlist', entityId: playlistId })
+                    })
+                    .then(response => {
+                        console.log('Fetch response status:', response.status);
+                        if (!response.ok) {
+                            return response.text().then(text => {
+                                throw new Error(`Failed to save history: ${response.statusText} (${text})`);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('History saved:', data);
+                        console.log('Redirecting to:', redirectUrl);
+                        window.location.href = redirectUrl;
+                    })
+                    .catch(error => {
+                        console.error('Error saving history:', error.message);
+                    });
+                });
+            }
+
+            window.location.href = `/Playlist/Index/${playlistId}`;
+        } catch (error) {
+            console.error('Lỗi:', error);
+            alert('Không thể tạo playlist: ' + error.message);
+        }
+    }
+
+    // Hàm xóa playlist
+    async function deletePlaylist(playlistId) {
+        if (confirm('Bạn có chắc muốn xóa playlist này?')) {
+            try {
+                const response = await fetch(`/Playlist/Delete/${playlistId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const row = document.querySelector(`[data-playlist-id="${playlistId}"]`);
+                    if (row) {
+                        row.remove();
+                        const playlistGrid = document.querySelector('.playlist-grid');
+                        const remainingRows = playlistGrid.querySelectorAll('[role="row"]');
+                        remainingRows.forEach((r, index) => {
+                            r.setAttribute('aria-rowindex', index + 1);
+                        });
+                        playlistGrid.setAttribute('aria-rowcount', remainingRows.length);
+
+                        if (remainingRows.length === 0) {
+                            document.querySelector('.default-view').style.display = 'block';
+                            document.querySelectorAll('.playlist-view').forEach(view => view.style.display = 'none');
+                        }
+                    }
+                } else {
+                    throw new Error('Có lỗi khi xóa playlist!');
+                }
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+            }
+        }
+    }
+
+    // Hàm tìm kiếm playlist bằng cách gọi API
+    async function filterPlaylists(searchText) {
+        try {
+            const playlistGrid = document.querySelector('.playlist-grid');
+            const noPlaylistMessage = document.querySelector('.no-playlist-message');
+            const playlistView = document.querySelector('.playlist-view');
+            const defaultView = document.querySelector('.default-view');
+
+            // Gọi API tìm kiếm playlist
+            const response = await fetch(`/Playlist/SearchUserPlaylists?searchText=${encodeURIComponent(searchText)}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Không thể tìm kiếm playlist!');
+            }
+
+            const playlists = await response.json();
+            console.log('Kết quả tìm kiếm playlist:', playlists);
+
+            // Xóa nội dung hiện tại của playlist-grid
+            playlistGrid.innerHTML = '';
+
+            // Nếu không có kết quả
+            if (playlists.length === 0) {
+                if (noPlaylistMessage) {
+                    noPlaylistMessage.textContent = 'Không tìm thấy playlist nào.';
+                    noPlaylistMessage.style.display = 'block';
+                }
+                if (defaultView) defaultView.style.display = 'none';
+                if (playlistView) playlistView.style.display = 'block';
+                playlistGrid.setAttribute('aria-rowcount', 0);
+                return;
+            }
+
+            // Hiển thị kết quả tìm kiếm
+            let rowIndex = 1;
+            playlists.forEach(playlist => {
+                const newRow = document.createElement('div');
+                newRow.className = 'playlist-row';
+                newRow.setAttribute('role', 'row');
+                newRow.setAttribute('aria-rowindex', rowIndex);
+                newRow.setAttribute('aria-selected', 'false');
+                newRow.setAttribute('data-playlist-id', playlist.playlistId);
+                newRow.innerHTML = `
+                    <div class="playlist-item">
+                        <div class="playlist-image">
+                            ${playlist.imagePath ?
+                                `<img src="${playlist.imagePath}" alt="${playlist.name || 'Danh sách phát của tôi'}" />` :
+                                `<svg data-encore-id="icon" role="img" aria-hidden="true" class="icon" viewBox="0 0 24 24">
+                                    <path d="M6 3h15v15.167a3.5 3.5 0 1 1-3.5-3.5H19V5H8v13.167a3.5 3.5 0 1 1-3.5-3.5H6V3zm0 13.667H4.5a1.5 1.5 0 1 0 1.5 1.5v-1.5zm13 0h-1.5a1.5 1.5 0 1 0 1.5 1.5v-1.5z"></path>
+                                </svg>`
+                            }
+                            <div class="sidebar-play-button">
+                                <button class="sidebar-play-btn" data-playlist-id="${playlist.playlistId}" aria-label="Phát ${playlist.name || 'Danh sách phát của tôi'}">
+                                    <svg data-encore-id="icon" role="img" aria-hidden="true" class="e-9812-icon e-9812-baseline" viewBox="0 0 24 24">
+                                        <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="playlist-info">
+                            <p class="playlist-title">
+                                <a href="/Playlist/Index/${playlist.playlistId}">${playlist.name || 'Danh sách phát của tôi'}</a>
+                            </p>
+                            <p class="playlist-subtitle">Danh sách phát • ${currentUserName}</p>
+                        </div>
+                    </div>
+                `;
+                playlistGrid.appendChild(newRow);
+                rowIndex++;
+
+                // Gắn sự kiện contextmenu cho playlist mới
+                newRow.addEventListener('contextmenu', function(event) {
+                    console.log('Sự kiện oncontextmenu được gọi trên playlist-row!');
+                    const playlistId = newRow.getAttribute('data-playlist-id');
+                    showContextMenu(event, playlistId);
+                }, { passive: false, capture: true });
+
+                const newLink = newRow.querySelector('.playlist-title a');
+                if (newLink) {
+                    newLink.addEventListener('contextmenu', function(event) {
+                        console.log('Sự kiện contextmenu trên thẻ <a>, target:', event.target);
+                        event.preventDefault();
+                    }, { passive: false, capture: true });
+                }
+
+                const newSubtitle = newRow.querySelector('.playlist-subtitle');
+                if (newSubtitle) {
+                    newSubtitle.addEventListener('contextmenu', function(event) {
+                        console.log('Sự kiện contextmenu trên thẻ <p class="playlist-subtitle">, target:', event.target);
+                        event.preventDefault();
+                    }, { passive: false, capture: true });
+                }
+
+                // Gắn sự kiện click cho nút play trong playlist tìm kiếm
+                const newPlayButton = newRow.querySelector('.sidebar-play-btn');
+                if (newPlayButton) {
+                    newPlayButton.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        console.log('Sidebar play button clicked (search result):', newPlayButton);
+
+                        const playlistId = newPlayButton.getAttribute('data-playlist-id');
+                        console.log('Playlist ID:', playlistId);
+
+                        if (!playlistId) {
+                            console.error('No playlist ID found for play button:', newPlayButton);
+                            return;
+                        }
+
+                        const redirectUrl = `/Playlist/Index/${playlistId}`;
+                        console.log('Sending save request:', { entityType: 'Playlist', entityId: playlistId });
+
+                        fetch('/api/ListenHistory/Add', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ entityType: 'Playlist', entityId: playlistId })
+                        })
+                        .then(response => {
+                            console.log('Fetch response status:', response.status);
+                            if (!response.ok) {
+                                return response.text().then(text => {
+                                    throw new Error(`Failed to save history: ${response.statusText} (${text})`);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('History saved:', data);
+                            console.log('Redirecting to:', redirectUrl);
+                            window.location.href = redirectUrl;
+                        })
+                        .catch(error => {
+                            console.error('Error saving history:', error.message);
+                        });
+                    });
+                }
+            });
+
+            // Cập nhật aria-rowcount
+            playlistGrid.setAttribute('aria-rowcount', playlists.length);
+            if (noPlaylistMessage) noPlaylistMessage.style.display = 'none';
+            if (defaultView) defaultView.style.display = 'none';
+            if (playlistView) playlistView.style.display = 'block';
+        } catch (error) {
+            console.error('Lỗi khi tìm kiếm playlist:', error);
+            alert('Không thể tìm kiếm playlist: ' + error.message);
+        }
+    }
+
+    // Lưu trữ giá trị width trước khi thu gọn
+    let lastWidthBeforeCollapse = 420; // Giá trị mặc định
+
+    // Toggle trạng thái thu gọn/mở rộng sidebar
+    document.querySelector('.collapse-btn')?.addEventListener('click', function() {
+        const sidebar = document.querySelector('.sidebar-container');
+        const container = document.querySelector('.container');
+        const resizeInput = document.querySelector('.resize-input');
+
+        if (sidebar && container) {
+            const isCollapsed = sidebar.classList.toggle('collapsed');
+            container.classList.toggle('collapsed');
+
+            if (isCollapsed) {
+                // Lưu giá trị width hiện tại trước khi thu gọn
+                lastWidthBeforeCollapse = parseInt(sidebar.style.width || resizeInput.value || 420, 10);
+                // Đặt lại width và vô hiệu hóa resize
+                sidebar.style.width = '80px';
+                container.style.gridTemplateColumns = '80px 1fr 0';
+                resizeInput.disabled = true;
+            } else {
+                // Khôi phục width từ giá trị trước khi thu gọn
+                sidebar.style.width = `${lastWidthBeforeCollapse}px`;
+                container.style.gridTemplateColumns = `${lastWidthBeforeCollapse}px 1fr 0`;
+                resizeInput.disabled = false;
+            }
+        }
+    });
+
+    // Xử lý click mở rộng thanh tìm kiếm
+    document.querySelector('.expand-search-btn')?.addEventListener('click', function() {
+        const sidebar = document.querySelector('.sidebar-container');
+        const searchBar = document.querySelector('.sidebar-search-bar');
+        const searchInput = document.querySelector('.sidebar-search-input');
+
+        // Không cho phép mở rộng thanh tìm kiếm khi sidebar đang thu gọn
+        if (sidebar.classList.contains('collapsed')) {
+            return;
+        }
+
+        if (searchBar && searchInput) {
+            searchBar.classList.add('expanded');
+            searchInput.focus();
+            // Gọi tìm kiếm với giá trị rỗng để hiển thị toàn bộ playlist
+            filterPlaylists('');
+        } else {
+            console.error('Không tìm thấy sidebar-search-bar hoặc sidebar-search-input');
+        }
+    });
+
+    // Xử lý khi input thay đổi
+    document.querySelector('.sidebar-search-input')?.addEventListener('input', function() {
+        const searchText = this.value;
+        filterPlaylists(searchText);
+    });
+
+    // Xử lý khi input mất focus
+    document.querySelector('.sidebar-search-input')?.addEventListener('blur', function() {
+        const searchBar = document.querySelector('.sidebar-search-bar');
+        const searchInput = this;
+        // Chỉ thu lại nếu ô input trống
+        if (searchBar && searchInput.value.trim() === '') {
+            searchBar.classList.remove('expanded');
+        }
+    });
+
+    // Xử lý click vào khu vực khác để thu lại thanh tìm kiếm
+    document.addEventListener('click', function(e) {
+        const searchBar = document.querySelector('.sidebar-search-bar');
+        const searchInput = document.querySelector('.sidebar-search-input');
+        if (searchBar && searchInput && !searchBar.contains(e.target)) {
+            // Chỉ thu lại nếu ô input trống
+            if (searchInput.value.trim() === '') {
+                searchBar.classList.remove('expanded');
+            }
+        }
+    });
+
+    // Xử lý khi nhấn Enter trong ô tìm kiếm
+    document.querySelector('.sidebar-search-input')?.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            filterPlaylists(this.value);
+        }
+    });
+
+    // Xử lý kéo dãn sidebar
+    const sidebar = document.querySelector('.sidebar-container');
+    const resizeBar = document.querySelector('.resize-bar');
+    const resizeInput = document.querySelector('.resize-input');
+    const minWidth = 280; // Giá trị tối thiểu (px)
+    const maxWidth = 420; // Giá trị tối đa (px)
+
+    let isResizing = false;
+
+    resizeBar.addEventListener('mousedown', (e) => {
+        if (sidebar.classList.contains('collapsed')) {
+            return;
+        }
+
+        isResizing = true;
+        document.body.style.cursor = 'ew-resize';
+        e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isResizing || sidebar.classList.contains('collapsed')) return;
+
+        let newWidth = e.clientX;
+
+        if (newWidth < minWidth) newWidth = minWidth;
+        if (newWidth > maxWidth) newWidth = maxWidth;
+
+        sidebar.style.width = `${newWidth}px`;
+        resizeInput.value = newWidth;
+
+        const container = document.querySelector('.container');
+        if (container) {
+            container.style.gridTemplateColumns = `${newWidth}px 1fr 0`;
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (isResizing) {
+            isResizing = false;
+            document.body.style.cursor = 'default';
+        }
+    });
+
+    // Xử lý thay đổi giá trị của input range
+    resizeInput.addEventListener('input', (e) => {
+        if (sidebar.classList.contains('collapsed')) {
+            return;
+        }
+
+        const newWidth = parseInt(e.target.value, 10);
+        sidebar.style.width = `${newWidth}px`;
+        const container = document.querySelector('.container');
+        if (container) {
+            container.style.gridTemplateColumns = `${newWidth}px 1fr 0`;
+        }
+    });
+</script>

@@ -1,0 +1,51 @@
+﻿@model IEnumerable<System_Music.Models.SqlModels.Video>
+
+@{
+    ViewData["Title"] = "Danh sách MV";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Danh sách MV</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Thêm mới</a>
+    <form asp-action="FetchFromZingMp3" method="get" class="d-inline">
+        <input type="text" name="id" placeholder="Nhập Zing MP3 ID" class="form-control d-inline" style="width: 200px;" />
+        <button type="submit" class="btn btn-info">Lấy MV từ Zing MP3</button>
+    </form>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tiêu đề</th>
+            <th>Thời lượng</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.EncodeId</td>
+                    <td>@item.Title</td>
+                    <td>@item.Duration giây</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.EncodeId" class="btn btn-info">Chi tiết</a>
+                        <a asp-action="Edit" asp-route-id="@item.EncodeId" class="btn btn-warning">Sửa</a>
+                        <a asp-action="Delete" asp-route-id="@item.EncodeId" class="btn btn-danger">Xóa</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4">Không có video nào để hiển thị.</td>
+            </tr>
+        }
+    </tbody>
+</table>
