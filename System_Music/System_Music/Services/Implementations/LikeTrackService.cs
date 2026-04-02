@@ -1,56 +1,73 @@
-﻿using System_Music.Models.SqlModels;
+using AutoMapper;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System_Music.Models.DTOs;
+using System_Music.Models.SqlModels;
 using System_Music.Repositories.Interfaces;
 using System_Music.Services.Interfaces;
 
-public class LikeTrackService : ILikeTrackService
+namespace System_Music.Services.Implementations
 {
-    private readonly ILikeTrackRepository _likeTrackRepository;
-    private readonly SmartMusicDbContext _context;
-
-    public LikeTrackService(SmartMusicDbContext context, ILikeTrackRepository likeTrackRepository)
+    public class LikeTrackService : ILikeTrackService
     {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
-        _likeTrackRepository = likeTrackRepository ?? throw new ArgumentNullException(nameof(likeTrackRepository));
-    }
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-    public async Task<LikeTrack> GetLikeByUserAndTrackAsync(string userId, int trackId)
-    {
-        var likes = await _likeTrackRepository.GetLikesByUserAsync(userId);
-        return likes.FirstOrDefault(lt => lt.TrackId == trackId);
-    }
+        public LikeTrackService(IUnitOfWork unitOfWork, IMapper mapper)
+        {
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+        }
 
-    public async Task<List<LikeTrack>> GetAllLikesAsync()
-    {
-        return await _likeTrackRepository.GetAllAsync();
-    }
+        public async Task<LikeTrackDto> GetLikeByUserAndTrackAsync(string userId, int trackId)
+        {
+            var likes = await _unitOfWork.LikeTracks.GetLikesByUserAsync(userId);
+            var likeTrack = likes.FirstOrDefault(lt => lt.TrackId == trackId);
+            return _mapper.Map<LikeTrackDto>(likeTrack);
+        }
 
-    public async Task<LikeTrack> GetLikeByIdAsync(int id)
-    {
-        return await _likeTrackRepository.GetByIdAsync(id);
-    }
+        public async Task<List<LikeTrackDto>> GetAllLikesAsync()
+        {
+            var likes = await _unitOfWork.LikeTracks.GetAllAsync();
+            return _mapper.Map<List<LikeTrackDto>>(likes);
+        }
 
-    public async Task AddLikeAsync(LikeTrack likeTrack)
-    {
-        await _likeTrackRepository.AddAsync(likeTrack);
-    }
+        public async Task<LikeTrackDto> GetLikeByIdAsync(int id)
+        {
+            var like = await _unitOfWork.LikeTracks.GetByIdAsync(id);
+            return _mapper.Map<LikeTrackDto>(like);
+        }
 
-    public async Task DeleteLikeAsync(int id)
-    {
-        await _likeTrackRepository.DeleteAsync(id);
-    }
+        public async Task AddLikeAsync(LikeTrackDto likeTrackDto)
+        {
+            var likeTrack = _mapper.Map<LikeTrack>(likeTrackDto);
+            await _unitOfWork.LikeTracks.AddAsync(likeTrack);
+            await _unitOfWork.CompleteAsync();
+            likeTrackDto.LikeTrackId = likeTrack.LikeTrackId;
+        }
 
-    public async Task<List<LikeTrack>> GetLikesByUserAsync(string userId)
-    {
-        return await _likeTrackRepository.GetLikesByUserAsync(userId);
-    }
+        public async Task DeleteLikeAsync(int id)
+        {
+            await _unitOfWork.LikeTracks.DeleteAsync(id);
+            await _unitOfWork.CompleteAsync();
+        }
 
-    public async Task<List<LikeTrack>> GetLikesByTrackAsync(int trackId)
-    {
-        return await _likeTrackRepository.GetLikesByTrackAsync(trackId);
-    }
+        public async Task<List<LikeTrackDto>> GetLikesByUserAsync(string userId)
+        {
+            var likes = await _unitOfWork.LikeTracks.GetLikesByUserAsync(userId);
+            return _mapper.Map<List<LikeTrackDto>>(likes);
+        }
 
-    public async Task<bool> HasLikedTrackAsync(string userId, int trackId)
-    {
-        return await _likeTrackRepository.HasUserLikedTrackAsync(userId, trackId);
+        public async Task<List<LikeTrackDto>> GetLikesByTrackAsync(int trackId)
+        {
+            var likes = await _unitOfWork.LikeTracks.GetLikesByTrackAsync(trackId);
+            return _mapper.Map<List<LikeTrackDto>>(likes);
+        }
+
+        public async Task<bool> HasLikedTrackAsync(string userId, int trackId)
+        {
+            return await _unitOfWork.LikeTracks.HasUserLikedTrackAsync(userId, trackId);
+        }
     }
 }

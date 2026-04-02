@@ -1,76 +1,30 @@
-﻿@* Thêm using namespace mới *@
-@using System_Music.Services.Implementations
+@using System_Music.Models.DTOs
+@using System_Music.Models.ViewModels
 @using System_Music.Services.Interfaces
-@using Microsoft.EntityFrameworkCore
-@using System
-@using System.Linq
+@model TrackDetailViewModel
 
-@* Tiêm dịch vụ LyricsTimingService *@
 @inject ILyricsTimingService LyricsTimingService
 @inject IArtistService ArtistService
-@inject SmartMusicDbContext Context
-@using System_Music.Models.SqlModels
-@using System_Music.Models.ViewModels
-@model TrackDetailViewModel
 
 @{
     Layout = "_Layout";
-    var track = Model?.Track ?? new Track();
+    var track = Model?.Track ?? new TrackDto();
+    var recommendedTracks = Model?.RecommendedTracks ?? new List<TrackDto>();
     <link rel="stylesheet" href="~/css/TrackDetail.css" />
     <link rel="stylesheet" href="~/css/footer.css" />
 
-    // Định nghĩa trackArtistsData với kiểu nhất quán
-    var trackArtistsData = track.TrackArtists != null && track.TrackArtists.Any()
-            ? track.TrackArtists.Select(ta => (dynamic)new { artist = new { name = ta.Artist?.Name ?? "Unknown" } }).ToList()
-            : new List<dynamic> { new { artist = new { name = "Unknown" } } };
-
-    // Lấy lyrics từ dịch vụ
+    // Lyrics
     var lyricsList = await LyricsTimingService.GetLyricsByTrackAsync(track.TrackId);
     var lyricsText = string.Join("\n", lyricsList.Select(l => l.LyricText));
 
-    // Lấy danh sách nghệ sĩ từ TrackId
-    var artists = await Context.TrackArtists
-        .Include(ta => ta.Artist)
-        .Where(ta => ta.TrackId == track.TrackId)
-        .Select(ta => ta.Artist)
-        .ToListAsync();
-
-    // Lấy danh sách genre của bài hát hiện tại
-    var trackGenres = await Context.TrackGenres
-        .Where(tg => tg.TrackId == track.TrackId)
-        .Select(tg => tg.GenreId)
-        .ToListAsync();
-
-    // Lấy danh sách bài hát đề xuất ngẫu nhiên dựa trên genre
-    var recommendedTracks = new List<Track>();
-    var random = new Random();
-    if (trackGenres.Any())
-    {
-        var tracksQuery = Context.TrackGenres
-            .Where(tg => trackGenres.Contains(tg.GenreId) && tg.TrackId != track.TrackId)
-            .Include(tg => tg.Track)
-                .ThenInclude(t => t.TrackArtists)
-                .ThenInclude(ta => ta.Artist)
-            .Include(tg => tg.Track)
-                .ThenInclude(t => t.Album)
-            .Select(tg => tg.Track)
-            .AsNoTracking();
-
-        var allTracks = await tracksQuery.ToListAsync(); // Lấy toàn bộ danh sách từ DB
-        recommendedTracks = allTracks
-            .OrderBy(t => random.Next()) // Xáo trộn ngẫu nhiên trên client
-            .Take(5) // Lấy 5 bài ngẫu nhiên
-            .ToList();
-    }
-
-    // Serialize dữ liệu
+    // Data for JS
     var trackData = new
     {
         trackId = track.TrackId,
         title = track.Title,
-        trackArtists = trackArtistsData,
+        trackArtists = track.Artists.Select(a => new { artist = new { name = a.Name } }).ToList(),
         audioUrl = track.AudioUrl ?? "",
-        imageUrl = track.ImageUrl ?? (track.Album?.Image ?? "/images/default-track.png"),
+        imageUrl = track.ImageUrl ?? "/images/default-track.png",
         duration = track.Duration
     };
 }
@@ -80,35 +34,19 @@
     <div class="track-header">
         <div class="track-image-container">
             <div class="track-image">
-                @if (!string.IsNullOrEmpty(track.ImageUrl))
-                {
-                    <img src="@track.ImageUrl" alt="@track.Title" />
-                }
-                else if (!string.IsNullOrEmpty(track.Album?.Image))
-                {
-                    <img src="@track.Album.Image" alt="@track.Title" />
-                }
-                else
-                {
-                    <div class="track-placeholder">
-                        <svg data-encore-id="icon" role="img" aria-hidden="true" class="icon" viewBox="0 0 24 24">
-                            <path d="M6 3h15v15.167a3.5 3.5 0 1 1-3.5-3.5H19V5H8v13.167a3.5 3.5 0 1 1-3.5-3.5H6V3zm0 13.667H4.5a1.5 1.5 0 1 0 1.5 1.5v-1.5zm13 0h-1.5a1.5 1.5 0 1 0 1.5 1.5v-1.5z"></path>
-                        </svg>
-                    </div>
-                }
+                <img src="@(string.IsNullOrEmpty(track.ImageUrl) ? "/images/default-track.png" : track.ImageUrl)" alt="@track.Title" />
             </div>
         </div>
         <div class="track-details">
             <h1 class="track-Name">@track.Title</h1>
             <p class="track-artists">
-                @if (track.TrackArtists != null && track.TrackArtists.Any())
+                @if (track.Artists.Any())
                 {
-                    var artistNames = track.TrackArtists.Select(ta => ta.Artist?.Name ?? "Unknown").ToList();
-                    var artistIds = track.TrackArtists.Select(ta => ta.ArtistId).ToList();
-                    for (int i = 0; i < artistNames.Count; i++)
+                    for (int i = 0; i < track.Artists.Count; i++)
                     {
-                        <a href="/artist/Detail/@artistIds[i]">@artistNames[i]</a>
-                        if (i < artistNames.Count - 1)
+                        var artist = track.Artists[i];
+                        <a href="/artist/@artist.ArtistId">@artist.Name</a>
+                        if (i < track.Artists.Count - 1)
                         {
                             <span> • </span>
                         }
@@ -120,18 +58,9 @@
                 }
             </p>
             <p class="track-meta">
-                @if (track.Album != null)
-                {
-                    <span>@track.Album.ReleaseDate.Year.ToString()</span>
-                }
-                else
-                {
-                    <span>N/A</span>
-                }
-                <span> • </span>
                 <span>Thời lượng: @($"{track.Duration / 60}:{track.Duration % 60:D2}")</span>
                 <span> • </span>
-                <span>Lượt nghe: @track.PlayCount</span>
+                <span>Lượt nghe: @track.PlayCount.ToString("N0")</span>
             </p>
         </div>
     </div>
@@ -151,11 +80,11 @@
         </button>
     </div>
 
+    <!-- Lyrics Section -->
     <div class="lyrics-section" data-testid="lyrics-container">
         <div class="lyrics-box">
             <h2 class="lyrics-heading">Lời bài hát</h2>
             <div class="lyrics-text" data-full-lyrics="@lyricsText.Replace("\r\n", "\n")">
-                <!-- Nội dung lyrics sẽ được render bằng JavaScript -->
             </div>
             <button class="more-toggle-btn" aria-controls="lyrics-text" aria-owns="lyrics-text">
                 <span class="toggle-text">...Xem thêm</span>
@@ -163,15 +92,15 @@
         </div>
     </div>
 
-    <!-- Khu vực nghệ sĩ -->
+    <!-- Artist Section -->
     <div class="artist-section">
         <h2 class="artist-heading">Nghệ sĩ</h2>
         <div class="artist-list">
-            @foreach (var artist in artists)
+            @foreach (var artist in track.Artists)
             {
                 <div class="artist-card">
                     <div class="artist-image-wrapper">
-                        <img src="@(artist.Image ?? "/images/default-artist.jpg")" alt="@artist.Name" class="artist-image" loading="lazy" />
+                        <img src="@(string.IsNullOrEmpty(artist.ImageUrl) ? "/images/default-artist.jpg" : artist.ImageUrl)" alt="@artist.Name" class="artist-image" loading="lazy" />
                     </div>
                     <div class="artist-info">
                         <span class="artist-label">Nghệ sĩ</span>
@@ -182,7 +111,7 @@
         </div>
     </div>
 
-    <!-- Khu vực đề xuất -->
+    <!-- Recommendation Section -->
     <div class="recommendation-section">
         <div class="recommendation-header">
             <span class="recommendation-title">Đề xuất</span>
@@ -194,7 +123,7 @@
                 <div class="recommendation-row">
                     <div class="track-info">
                         <div class="track-image-wrapper">
-                            <img src="@(recTrack.ImageUrl ?? recTrack.Album?.Image ?? "/images/default-track.png")" alt="@recTrack.Title" class="track-image" />
+                            <img src="@(string.IsNullOrEmpty(recTrack.ImageUrl) ? "/images/default-track.png" : recTrack.ImageUrl)" alt="@recTrack.Title" class="track-image" />
                             <button class="play-button" aria-label="Phát @recTrack.Title">
                                 <svg data-encore-id="icon" role="img" aria-hidden="true" class="play-icon" viewBox="0 0 24 24">
                                     <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"></path>
@@ -202,16 +131,15 @@
                             </button>
                         </div>
                         <div class="track-details">
-                            <a href="/track/Detail/@recTrack.TrackId" class="track-title">@recTrack.Title</a>
+                            <a href="/Track/Detail/@recTrack.TrackId" class="track-title">@recTrack.Title</a>
                             <span class="track-artists">
-                                @if (recTrack.TrackArtists != null && recTrack.TrackArtists.Any())
+                                @if (recTrack.Artists.Any())
                                 {
-                                    var artistNames = recTrack.TrackArtists.Select(ta => ta.Artist?.Name ?? "Unknown").ToList();
-                                    var artistIds = recTrack.TrackArtists.Select(ta => ta.ArtistId).ToList();
-                                    for (int i = 0; i < artistNames.Count; i++)
+                                    for (int i = 0; i < recTrack.Artists.Count; i++)
                                     {
-                                        <a href="/artist/Detail/@artistIds[i]">@artistNames[i]</a>
-                                        if (i < artistNames.Count - 1)
+                                        var artist = recTrack.Artists[i];
+                                        <a href="/artist/@artist.ArtistId">@artist.Name</a>
+                                        if (i < recTrack.Artists.Count - 1)
                                         {
                                             <span>, </span>
                                         }
@@ -235,11 +163,6 @@
                             </svg>
                         </button>
                         <span class="track-duration">@($"{recTrack.Duration / 60}:{recTrack.Duration % 60:D2}")</span>
-                        <button class="more-button" aria-label="Các tùy chọn khác">
-                            <svg data-encore-id="icon" role="img" aria-hidden="true" class="more-icon" viewBox="0 0 16 16">
-                                <path d="M3 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm6.5 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zM16 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"></path>
-                            </svg>
-                        </button>
                     </div>
                 </div>
             }

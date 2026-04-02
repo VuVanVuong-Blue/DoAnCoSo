@@ -1,4 +1,4 @@
-﻿@* Index.cshtml *@
+@* Index.cshtml *@
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -91,7 +91,7 @@
                         var album = albums[i];
                         var albumArtists = album.AlbumArtists?.Select(aa => aa.Artist?.Name).Where(name => !string.IsNullOrEmpty(name)).ToList() ?? new List<string>();
                         string artistNames = albumArtists.Any() ? string.Join(", ", albumArtists) : "Không có nghệ sĩ";
-                        string imageUrl = string.IsNullOrEmpty(album.Image) ? "https://via.placeholder.com/160" : album.Image;
+                        string imageUrl = string.IsNullOrEmpty(album.ImageUrl) ? "https://via.placeholder.com/160" : album.ImageUrl;
                         string albumUrl = $"/Home/DetailAlbum/{album.AlbumId}";
                         string playLabel = $"Phát {album.Name} Album";
                         string subtitle = $"{artistNames}";
@@ -136,7 +136,7 @@
                     for (int i = 0; i < artists.Count; i++)
                     {
                         var artist = artists[i];
-                        string imageUrl = string.IsNullOrEmpty(artist.Image) ? "https://via.placeholder.com/160" : artist.Image;
+                        string imageUrl = string.IsNullOrEmpty(artist.ImageUrl) ? "https://via.placeholder.com/160" : artist.ImageUrl;
                         string artistUrl = $"/artist/{artist.ArtistId}";
                         <div class="card @(i >= 5 ? "hidden" : "")" role="group" style="min-width: 160px; max-width: 160px;">
                             <div class="card-image-container">
@@ -229,7 +229,7 @@
                                         {
                                             title = item.Album.Name;
                                             subtitle = item.Album.AlbumArtists.Any() ? string.Join(", ", item.Album.AlbumArtists.Select(aa => aa.Artist?.Name)) : "Không có nghệ sĩ";
-                                            imageUrl = string.IsNullOrEmpty(item.Album.Image) ? imageUrl : item.Album.Image;
+                                            imageUrl = string.IsNullOrEmpty(item.Album.ImageUrl) ? imageUrl : item.Album.ImageUrl;
                                             url = $"/album/{item.AlbumId}";
                                             playLabel = $"Phát {item.Album.Name} Album";
                                             dataAttribute = "data-album-id";
@@ -241,7 +241,7 @@
                                         {
                                             title = item.Artist.Name;
                                             subtitle = "Nghệ sĩ";
-                                            imageUrl = string.IsNullOrEmpty(item.Artist.Image) ? imageUrl : item.Artist.Image;
+                                            imageUrl = string.IsNullOrEmpty(item.Artist.ImageUrl) ? imageUrl : item.Artist.ImageUrl;
                                             url = $"/artist/{item.ArtistId}";
                                             playLabel = $"Phát nhạc của {item.Artist.Name}";
                                             dataAttribute = "data-artist-id";
@@ -316,7 +316,7 @@
                         string artistNames = string.IsNullOrEmpty(video.ArtistsNames) ? "Không có nghệ sĩ" : video.ArtistsNames;
                         string duration = TimeSpan.FromSeconds(video.Duration).ToString(@"mm\:ss");
 
-                        var artistImage = video.VideoArtists?.FirstOrDefault()?.Artist?.Image;
+                        var artistImage = video.VideoArtists?.FirstOrDefault()?.Artist?.ImageUrl;
                         string artistImageUrl = string.IsNullOrEmpty(artistImage)
                         ? "https://photo-resize-zmp3.zmdcdn.me/w40_r1x1_jpeg/avatars/default.jpg"
                         : artistImage;
@@ -397,7 +397,7 @@
                     string artistNames = string.IsNullOrEmpty(video.ArtistsNames) ? "Không có nghệ sĩ" : video.ArtistsNames;
                     string duration = TimeSpan.FromSeconds(video.Duration).ToString(@"mm\:ss");
 
-                    var artistImage = video.VideoArtists?.FirstOrDefault()?.Artist?.Image;
+                    var artistImage = video.VideoArtists?.FirstOrDefault()?.Artist?.ImageUrl;
                     string artistImageUrl = string.IsNullOrEmpty(artistImage)
                     ? "https://photo-resize-zmp3.zmdcdn.me/w40_r1x1_jpeg/avatars/default.jpg"
                     : artistImage;

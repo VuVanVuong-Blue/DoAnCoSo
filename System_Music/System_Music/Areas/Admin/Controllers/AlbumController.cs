@@ -1,7 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using System_Music.Models.SqlModels;
+using System_Music.Models.DTOs;
 using System_Music.Services.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
+using Microsoft.AspNetCore.Http;
+using System.Linq;
 
 namespace System_Music.Areas.Admin.Controllers
 {
@@ -10,13 +15,19 @@ namespace System_Music.Areas.Admin.Controllers
     {
         private readonly IAlbumService _albumService;
         private readonly IArtistService _artistService;
-        private readonly SmartMusicDbContext _context;
+        private readonly ITrackService _trackService;
+        private readonly IMediaService _mediaService;
 
-        public AlbumController(IAlbumService albumService, IArtistService artistService, SmartMusicDbContext context)
+        public AlbumController(
+            IAlbumService albumService, 
+            IArtistService artistService, 
+            ITrackService trackService,
+            IMediaService mediaService)
         {
             _albumService = albumService;
             _artistService = artistService;
-            _context = context;
+            _trackService = trackService;
+            _mediaService = mediaService;
         }
 
         public async Task<IActionResult> Index()
@@ -27,24 +38,21 @@ namespace System_Music.Areas.Admin.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            var album = await _albumService.GetAlbumByIdWithDetailsAsync(id);
-            if (album == null)
-            {
-                return NotFound();
-            }
-            return View(album);
+            var albumDto = await _albumService.GetAlbumByIdWithDetailsAsync(id);
+            if (albumDto == null) return NotFound();
+            return View(albumDto);
         }
 
         public async Task<IActionResult> Create()
         {
             ViewBag.Artists = await _artistService.GetAllArtistsAsync();
-            ViewBag.Tracks = await _context.Tracks.ToListAsync();
-            return View();
+            ViewBag.Tracks = await _trackService.GetAllTracksAsync();
+            return View(new AlbumDto());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Album album, IFormFile? imageFile, int[] artistIds, int[] trackIds)
+        public async Task<IActionResult> Create(AlbumDto albumDto, IFormFile? imageFile, int[] artistIds, int[] trackIds)
         {
             if (ModelState.IsValid)
             {
@@ -52,62 +60,38 @@ namespace System_Music.Areas.Admin.Controllers
                 {
                     if (imageFile != null && imageFile.Length > 0)
                     {
-                        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/albums");
-                        if (!Directory.Exists(uploadsFolder))
-                        {
-                            Directory.CreateDirectory(uploadsFolder);
-                        }
-
-                        var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(imageFile.FileName)}";
-                        var filePath = Path.Combine(uploadsFolder, fileName);
-
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await imageFile.CopyToAsync(stream);
-                        }
-
-                        album.Image = $"/images/albums/{fileName}";
+                        albumDto.ImageUrl = await _mediaService.UploadFileAsync(imageFile, "images/albums");
                     }
 
-                    await _albumService.AddAlbumAsync(album, artistIds, trackIds);
+                    await _albumService.AddAlbumAsync(albumDto, artistIds, trackIds);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
                     ModelState.AddModelError("", $"Lỗi khi tạo album: {ex.Message}");
-                    if (ex.InnerException != null)
-                    {
-                        ModelState.AddModelError("", $"Chi tiết lỗi: {ex.InnerException.Message}");
-                    }
                 }
             }
 
             ViewBag.Artists = await _artistService.GetAllArtistsAsync();
-            ViewBag.Tracks = await _context.Tracks.ToListAsync();
-            return View(album);
+            ViewBag.Tracks = await _trackService.GetAllTracksAsync();
+            return View(albumDto);
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var album = await _albumService.GetAlbumByIdAsync(id);
-            if (album == null)
-            {
-                return NotFound();
-            }
+            var albumDto = await _albumService.GetAlbumByIdWithDetailsAsync(id);
+            if (albumDto == null) return NotFound();
 
             ViewBag.Artists = await _artistService.GetAllArtistsAsync();
-            ViewBag.Tracks = await _context.Tracks.ToListAsync();
-            return View(album);
+            ViewBag.Tracks = await _trackService.GetAllTracksAsync();
+            return View(albumDto);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Album album, IFormFile? imageFile, int[] artistIds, int[] trackIds)
+        public async Task<IActionResult> Edit(int id, AlbumDto albumDto, IFormFile? imageFile, int[] artistIds, int[] trackIds)
         {
-            if (id != album.AlbumId)
-            {
-                return NotFound();
-            }
+            if (id != albumDto.AlbumId) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -115,55 +99,33 @@ namespace System_Music.Areas.Admin.Controllers
                 {
                     if (imageFile != null && imageFile.Length > 0)
                     {
-                        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/albums");
-                        if (!Directory.Exists(uploadsFolder))
-                        {
-                            Directory.CreateDirectory(uploadsFolder);
-                        }
-
-                        var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(imageFile.FileName)}";
-                        var filePath = Path.Combine(uploadsFolder, fileName);
-
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await imageFile.CopyToAsync(stream);
-                        }
-
-                        album.Image = $"/images/albums/{fileName}";
+                        albumDto.ImageUrl = await _mediaService.UploadFileAsync(imageFile, "images/albums");
                     }
                     else
                     {
                         var existingAlbum = await _albumService.GetAlbumByIdAsync(id);
-                        album.Image = existingAlbum.Image;
+                        albumDto.ImageUrl = existingAlbum.ImageUrl;
                     }
 
-                    await _albumService.UpdateAlbumAsync(album, artistIds, trackIds);
+                    await _albumService.UpdateAlbumAsync(albumDto, artistIds, trackIds);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
                     ModelState.AddModelError("", $"Lỗi khi cập nhật album: {ex.Message}");
-                    if (ex.InnerException != null)
-                    {
-                        ModelState.AddModelError("", $"Chi tiết lỗi: {ex.InnerException.Message}");
-                    }
                 }
             }
 
             ViewBag.Artists = await _artistService.GetAllArtistsAsync();
-            ViewBag.Tracks = await _context.Tracks.ToListAsync();
-            return View(album);
+            ViewBag.Tracks = await _trackService.GetAllTracksAsync();
+            return View(albumDto);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            var album = await _albumService.GetAlbumByIdAsync(id);
-            if (album == null)
-            {
-                return NotFound();
-            }
-
-            return View(album);
+            var albumDto = await _albumService.GetAlbumByIdAsync(id);
+            if (albumDto == null) return NotFound();
+            return View(albumDto);
         }
 
         [HttpPost, ActionName("Delete")]
@@ -178,8 +140,8 @@ namespace System_Music.Areas.Admin.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError("", $"Lỗi khi xóa album: {ex.Message}");
-                var album = await _albumService.GetAlbumByIdAsync(id);
-                return View(album);
+                var albumDto = await _albumService.GetAlbumByIdAsync(id);
+                return View(albumDto);
             }
         }
 
@@ -188,12 +150,12 @@ namespace System_Music.Areas.Admin.Controllers
         {
             try
             {
-                IEnumerable<Album> albums;
+                IEnumerable<AlbumDto> albums;
                 if (!string.IsNullOrEmpty(albumEncodeId))
                 {
                     ViewData["AlbumEncodeId"] = albumEncodeId;
                     albums = await _albumService.SyncAlbumFromZingMp3Async(albumEncodeId);
-                    TempData["Success"] = $"Đã đồng bộ album với encodeId {albumEncodeId}. Tổng số bài hát: {albums.FirstOrDefault()?.Tracks?.Count ?? 0}.";
+                    TempData["Success"] = $"Đã đồng bộ album với encodeId {albumEncodeId}.";
                 }
                 else
                 {
@@ -203,7 +165,6 @@ namespace System_Music.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[ERROR] Error syncing album from Zing MP3: {ex.Message}");
                 TempData["Error"] = $"Lỗi khi đồng bộ album từ Zing MP3: {ex.Message}";
                 return View("SyncAlbumFromZingMp3", await _albumService.GetAllAlbumsAsync());
             }

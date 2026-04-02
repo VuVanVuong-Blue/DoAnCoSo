@@ -1,4 +1,5 @@
-﻿@model System_Music.Models.SqlModels.Artist
+@using System_Music.Models.DTOs
+@model ArtistDto
 
 @{
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
@@ -10,47 +11,47 @@
 <form asp-action="Create" method="post" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <div class="form-group">
+    <div class="form-group mb-3">
         <label asp-for="Name" class="control-label"></label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
 
     <!-- Nhập ảnh từ URL -->
-    <div class="form-group">
+    <div class="form-group mb-3">
         <label class="control-label">Ảnh từ URL</label>
         <input type="text" name="ImageUrl" id="imageUrl" class="form-control" placeholder="https://example.com/image.jpg" />
         <small class="form-text text-muted">Nếu bạn nhập URL, file upload sẽ bị bỏ qua.</small>
     </div>
 
     <!-- Hoặc upload file -->
-    <div class="form-group">
+    <div class="form-group mb-3">
         <label class="control-label">Hoặc chọn ảnh từ máy</label>
         <input type="file" name="ImageFile" id="imageFile" class="form-control" />
-        <small class="form-text text-muted">Ảnh sẽ được lưu vào /wwwroot/images/artists/</small>
+        <small class="form-text text-muted">Ảnh sẽ được lưu thông qua MediaService.</small>
     </div>
 
-    <div class="form-group">
+    <div class="form-group mb-3">
         <label asp-for="Country" class="control-label"></label>
         <input asp-for="Country" class="form-control" />
         <span asp-validation-for="Country" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="Bio" class="control-label"></label>
-        <textarea asp-for="Bio" class="form-control"></textarea>
-        <span asp-validation-for="Bio" class="text-danger"></span>
+    <div class="form-group mb-3">
+        <label asp-for="Biography" class="control-label"></label>
+        <textarea asp-for="Biography" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Biography" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
+    <div class="form-group mb-3">
         <label asp-for="BirthDate" class="control-label"></label>
         <input asp-for="BirthDate" type="date" class="form-control" />
         <span asp-validation-for="BirthDate" class="text-danger"></span>
     </div>
 
-    <div class="form-group form-check">
+    <div class="form-group form-check mb-3">
         <input class="form-check-input" asp-for="IsActive" />
-        <label class="form-check-label">@Html.DisplayNameFor(m => m.IsActive)</label>
+        <label class="form-check-label" asp-for="IsActive">Active</label>
     </div>
 
     <div class="form-group mt-3">
@@ -70,7 +71,7 @@
         imageUrlInput.addEventListener("input", function () {
             if (this.value.trim() !== "") {
                 imageFileInput.disabled = true;
-                imageFileInput.value = ""; // Xóa file nếu đã chọn
+                imageFileInput.value = ""; 
             } else {
                 imageFileInput.disabled = false;
             }
@@ -79,7 +80,7 @@
         imageFileInput.addEventListener("change", function () {
             if (this.files.length > 0) {
                 imageUrlInput.disabled = true;
-                imageUrlInput.value = ""; // Xóa URL nếu đã nhập
+                imageUrlInput.value = ""; 
             } else {
                 imageUrlInput.disabled = false;
             }

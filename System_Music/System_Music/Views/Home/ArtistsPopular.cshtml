@@ -1,5 +1,5 @@
-﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@model IEnumerable<System_Music.Models.SqlModels.Artist>
+@using System_Music.Models.DTOs
+@model IEnumerable<ArtistDto>
 @{
     ViewData["Title"] = "Tất Cả Nghệ Sĩ Phổ Biến";
 }
@@ -167,7 +167,7 @@
                     {
                         foreach (var artist in Model)
                         {
-                            string imageUrl = string.IsNullOrEmpty(artist.Image) ? "https://via.placeholder.com/160" : artist.Image;
+                            string imageUrl = string.IsNullOrEmpty(artist.ImageUrl) ? "https://via.placeholder.com/160" : artist.ImageUrl;
                             string artistUrl = $"/artist/{artist.ArtistId}";
                             <div class="card" role="group">
                                 <div class="card-image-container">

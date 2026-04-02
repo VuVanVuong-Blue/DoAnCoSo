@@ -1,18 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System_Music.Models.SqlModels;
-using System_Music.Models.ViewModels;
 using System.Threading.Tasks;
 
-namespace System_Music.Controllers
+namespace System_Music.Controllers.Web
 {
     public class AlbumController : Controller
     {
-        private readonly SmartMusicDbContext _context;
-
-        public AlbumController(SmartMusicDbContext context)
+        public AlbumController()
         {
-            _context = context;
         }
 
         [HttpGet]

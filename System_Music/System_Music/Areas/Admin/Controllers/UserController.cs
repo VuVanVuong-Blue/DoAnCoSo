@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System_Music.Models.SqlModels;
+using System_Music.Models.DTOs;
 using System_Music.Services.Interfaces;
 using System_Music.Areas.Admin.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace System_Music.Areas.Admin.Controllers
 {
@@ -12,38 +14,25 @@ namespace System_Music.Areas.Admin.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
-        private readonly UserManager<User> _userManager;
 
-        public UserController(IUserService userService, UserManager<User> userManager)
+        public UserController(IUserService userService)
         {
             _userService = userService;
-            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
         {
             var users = await _userService.GetAllUsersAsync();
-            var userWithRoles = new List<(User User, string Role)>();
-            foreach (var user in users)
-            {
-                var roles = await _userManager.GetRolesAsync(user);
-                // Lấy vai trò đầu tiên (vì dropdown chỉ cho phép chọn 1 vai trò)
-                var role = roles.FirstOrDefault() ?? "None";
-                userWithRoles.Add((user, role));
-            }
             ViewBag.AllRoles = new List<string> { "None", SD.Role_User, SD.Role_Admin, SD.Role_Artist };
-            return View(userWithRoles);
+            return View(users);
         }
 
         public async Task<IActionResult> Details(string id)
         {
             var user = await _userService.GetUserByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            var roles = await _userManager.GetRolesAsync(user);
-            ViewBag.UserRole = roles.FirstOrDefault() ?? "None";
+            if (user == null) return NotFound();
+            
+            ViewBag.UserRole = user.Roles.FirstOrDefault() ?? "None";
             ViewBag.AllRoles = new List<string> { "None", SD.Role_User, SD.Role_Admin, SD.Role_Artist };
             return View(user);
         }
@@ -51,12 +40,9 @@ namespace System_Music.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             var user = await _userService.GetUserByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            var roles = await _userManager.GetRolesAsync(user);
-            ViewBag.UserRole = roles.FirstOrDefault() ?? "None";
+            if (user == null) return NotFound();
+            
+            ViewBag.UserRole = user.Roles.FirstOrDefault() ?? "None";
             ViewBag.AllRoles = new List<string> { "None", SD.Role_User, SD.Role_Admin, SD.Role_Artist };
             return View(user);
         }
@@ -64,104 +50,61 @@ namespace System_Music.Areas.Admin.Controllers
         public IActionResult Create()
         {
             ViewBag.AllRoles = new List<string> { "None", SD.Role_User, SD.Role_Admin, SD.Role_Artist };
-            return View();
+            return View(new UserRegisterRequest());
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(User user, string Password, string selectedRole)
+        public async Task<IActionResult> Create(UserRegisterRequest request, string selectedRole)
         {
             if (ModelState.IsValid)
             {
-                var result = await _userManager.CreateAsync(user, Password);
-                if (result.Succeeded)
-                {
-                    if (!string.IsNullOrEmpty(selectedRole) && selectedRole != "None")
+                try {
+                    await _userService.AddUserAsync(request);
+                    var user = await _userService.GetUserByEmailAsync(request.Email);
+                    if (user != null && !string.IsNullOrEmpty(selectedRole) && selectedRole != "None")
                     {
-                        await _userManager.AddToRoleAsync(user, selectedRole);
+                        await _userService.AddToRoleAsync(user.Id, selectedRole);
                     }
                     return RedirectToAction(nameof(Index));
                 }
-                foreach (var error in result.Errors)
+                catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    ModelState.AddModelError(string.Empty, ex.Message);
                 }
             }
             ViewBag.AllRoles = new List<string> { "None", SD.Role_User, SD.Role_Admin, SD.Role_Artist };
-            return View(user);
+            return View(request);
         }
 
         public async Task<IActionResult> Edit(string id)
         {
             var user = await _userService.GetUserByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            var roles = await _userManager.GetRolesAsync(user);
-            ViewBag.UserRole = roles.FirstOrDefault() ?? "None";
+            if (user == null) return NotFound();
+            
+            ViewBag.UserRole = user.Roles.FirstOrDefault() ?? "None";
             ViewBag.AllRoles = new List<string> { "None", SD.Role_User, SD.Role_Admin, SD.Role_Artist };
             return View(user);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, User user, string selectedRole)
+        public async Task<IActionResult> Edit(string id, UserDto userDto, string selectedRole)
         {
-            if (id != user.Id)
-            {
-                return NotFound();
-            }
-
-            // Lấy người dùng hiện tại từ database để giữ các trường không có trong form
-            var existingUser = await _userService.GetUserByIdAsync(id);
-            if (existingUser == null)
-            {
-                return NotFound();
-            }
+            if (id != userDto.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Chỉ cập nhật các trường được gửi từ form
-                    existingUser.UserName = user.UserName;
-                    existingUser.Email = user.Email;
-                    existingUser.FullName = user.FullName;
-                    existingUser.Country = user.Country;
-                    // Cập nhật thông tin người dùng
-                    await _userService.UpdateUserAsync(existingUser);
+                    await _userService.UpdateUserAsync(userDto);
 
-                    // Cập nhật vai trò
-                    var userToUpdate = await _userManager.FindByIdAsync(id);
-                    if (userToUpdate == null)
-                    {
-                        return NotFound();
-                    }
-
-                    var currentRoles = await _userManager.GetRolesAsync(userToUpdate);
-                    var removeResult = await _userManager.RemoveFromRolesAsync(userToUpdate, currentRoles);
-                    if (!removeResult.Succeeded)
-                    {
-                        foreach (var error in removeResult.Errors)
-                        {
-                            ModelState.AddModelError(string.Empty, error.Description);
-                        }
-                        throw new Exception("Failed to remove existing roles.");
-                    }
+                    var currentRoles = await _userService.GetRolesAsync(id);
+                    await _userService.RemoveFromRolesAsync(id, currentRoles);
 
                     if (!string.IsNullOrEmpty(selectedRole) && selectedRole != "None")
                     {
-                        var addResult = await _userManager.AddToRoleAsync(userToUpdate, selectedRole);
-                        if (!addResult.Succeeded)
-                        {
-                            foreach (var error in addResult.Errors)
-                            {
-                                ModelState.AddModelError(string.Empty, error.Description);
-                            }
-                            throw new Exception("Failed to add new role.");
-                        }
+                        await _userService.AddToRoleAsync(id, selectedRole);
                     }
 
                     return RedirectToAction(nameof(Index));
@@ -172,11 +115,11 @@ namespace System_Music.Areas.Admin.Controllers
                 }
             }
 
-            // Nếu ModelState không hợp lệ, truyền lại dữ liệu để hiển thị form
-            ViewBag.UserRole = (await _userManager.GetRolesAsync(existingUser)).FirstOrDefault() ?? "None";
+            ViewBag.UserRole = selectedRole;
             ViewBag.AllRoles = new List<string> { "None", SD.Role_User, SD.Role_Admin, SD.Role_Artist };
-            return View(existingUser);
+            return View(userDto);
         }
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken] 
         public async Task<IActionResult> DeleteConfirmed(string id) 

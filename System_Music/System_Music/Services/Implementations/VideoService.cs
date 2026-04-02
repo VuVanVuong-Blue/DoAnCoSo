@@ -1,5 +1,5 @@
-﻿using System_Music.Models.SqlModels;
-using System_Music.Interfaces;
+using System_Music.Models.SqlModels;
+using System_Music.Models.DTOs;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text.Json;
@@ -7,6 +7,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using System_Music.Services.Interfaces;
+using AutoMapper;
+using System;
+using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 
 namespace System_Music.Services.Implementations
@@ -19,8 +23,16 @@ namespace System_Music.Services.Implementations
         private readonly string _zingMp3ApiBaseUrl;
         private readonly ILogger<VideoService> _logger;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IMapper _mapper;
 
-        public VideoService(IVideoRepository videoRepository, SmartMusicDbContext context, IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<VideoService> logger, IServiceProvider serviceProvider)
+        public VideoService(
+            IVideoRepository videoRepository, 
+            SmartMusicDbContext context, 
+            IHttpClientFactory httpClientFactory, 
+            IConfiguration configuration, 
+            ILogger<VideoService> logger, 
+            IServiceProvider serviceProvider,
+            IMapper mapper)
         {
             _videoRepository = videoRepository;
             _context = context;
@@ -28,11 +40,16 @@ namespace System_Music.Services.Implementations
             _zingMp3ApiBaseUrl = configuration["ZingMp3Api:BaseUrl"];
             _logger = logger;
             _serviceProvider = serviceProvider;
+            _mapper = mapper;
         }
 
-        public async Task<Video> GetVideoByIdAsync(string encodeId)
+        public async Task<VideoDto> GetVideoByIdAsync(string encodeId)
         {
-            var existingVideo = await _videoRepository.GetVideoByIdAsync(encodeId);
+            var existingVideo = await _context.Videos
+                .Include(v => v.VideoArtists)
+                .ThenInclude(va => va.Artist)
+                .FirstOrDefaultAsync(v => v.EncodeId == encodeId);
+
             bool shouldUpdate = true;
 
             if (existingVideo != null)
@@ -40,22 +57,29 @@ namespace System_Music.Services.Implementations
                 _logger.LogInformation("Video {EncodeId} found in database", encodeId);
                 if (!string.IsNullOrEmpty(existingVideo.Hls))
                 {
-                    var uri = new Uri(existingVideo.Hls);
-                    var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
-                    if (query["authen"] != null)
+                    try 
                     {
-                        var authenParts = query["authen"].Split('~');
-                        var expPart = authenParts.FirstOrDefault(p => p.StartsWith("exp="));
-                        if (expPart != null && long.TryParse(expPart.Replace("exp=", ""), out var exp))
+                        var uri = new Uri(existingVideo.Hls);
+                        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+                        if (query["authen"] != null)
                         {
-                            var expDate = DateTimeOffset.FromUnixTimeSeconds(exp).UtcDateTime;
-                            if (expDate > DateTime.UtcNow)
+                            var authenParts = query["authen"].Split('~');
+                            var expPart = authenParts.FirstOrDefault(p => p.StartsWith("exp="));
+                            if (expPart != null && long.TryParse(expPart.Replace("exp=", ""), out var exp))
                             {
-                                _logger.LogInformation("HLS URL for {EncodeId} is still valid, using cached data", encodeId);
-                                shouldUpdate = false;
-                                return existingVideo;
+                                var expDate = DateTimeOffset.FromUnixTimeSeconds(exp).UtcDateTime;
+                                if (expDate > DateTime.UtcNow)
+                                {
+                                    _logger.LogInformation("HLS URL for {EncodeId} is still valid, using cached data", encodeId);
+                                    shouldUpdate = false;
+                                    return _mapper.Map<VideoDto>(existingVideo);
+                                }
                             }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Failed to parse HLS URL authentication for {EncodeId}", encodeId);
                     }
                 }
                 _logger.LogInformation("HLS URL for {EncodeId} is expired or invalid, attempting to fetch new data", encodeId);
@@ -64,249 +88,130 @@ namespace System_Music.Services.Implementations
             if (shouldUpdate)
             {
                 var url = $"{_zingMp3ApiBaseUrl}/api/video/{encodeId}";
-                _logger.LogInformation("Calling Zing MP3 API for video {EncodeId} at {Url}", encodeId, url);
-
                 try
                 {
                     var response = await _httpClient.GetAsync(url);
-                    if (!response.IsSuccessStatusCode)
+                    if (response.IsSuccessStatusCode)
                     {
-                        _logger.LogError("Failed to fetch video {EncodeId} from Zing MP3 API. Status: {StatusCode}", encodeId, response.StatusCode);
-                        if (existingVideo != null)
+                        var jsonString = await response.Content.ReadAsStringAsync();
+                        var apiResponse = JsonSerializer.Deserialize<ZingMp3ApiResponse>(jsonString);
+                        if (apiResponse != null && apiResponse.err == 0 && apiResponse.data != null)
                         {
-                            _logger.LogWarning("Returning cached video {EncodeId} due to API failure", encodeId);
-                            return existingVideo; // Trả về video cũ nếu API thất bại
-                        }
-                        throw new HttpRequestException("Không thể lấy thông tin MV từ API");
-                    }
-
-                    var jsonString = await response.Content.ReadAsStringAsync();
-                    _logger.LogInformation("API response for {EncodeId}: {Response}", encodeId, jsonString);
-
-                    var apiResponse = JsonSerializer.Deserialize<ZingMp3ApiResponse>(jsonString);
-                    if (apiResponse.err != 0 || apiResponse.data == null)
-                    {
-                        _logger.LogWarning("No video data found for encodeId {EncodeId}. Error: {Error}, Message: {Message}", encodeId, apiResponse.err, apiResponse.msg);
-                        if (existingVideo != null)
-                        {
-                            _logger.LogWarning("Returning cached video {EncodeId} due to invalid API response", encodeId);
-                            return existingVideo; // Trả về video cũ nếu API trả về lỗi
-                        }
-                        throw new Exception("Không tìm thấy video MV");
-                    }
-
-                    var videoData = apiResponse.data;
-
-                    string hlsUrl = null;
-                    var hlsDict = videoData.streaming?.hls;
-                    if (hlsDict != null)
-                    {
-                        hlsUrl = hlsDict.Where(kvp => !string.IsNullOrEmpty(kvp.Value))
-                                       .OrderByDescending(kvp => kvp.Key switch
-                                       {
-                                           "1080p" => 3,
-                                           "720p" => 2,
-                                           "360p" => 1,
-                                           _ => 0
-                                       })
-                                       .Select(kvp => kvp.Value)
-                                       .FirstOrDefault();
-                        _logger.LogInformation("Selected HLS URL for {EncodeId}: {HlsUrl}", encodeId, hlsUrl);
-                    }
-
-                    var video = new Video
-                    {
-                        EncodeId = videoData.encodeId,
-                        Title = videoData.title,
-                        Thumbnail = videoData.thumbnail,
-                        ThumbnailM = videoData.thumbnailM,
-                        Duration = videoData.duration,
-                        ArtistsNames = videoData.artistsNames,
-                        Link = videoData.link,
-                        Mp4_480 = videoData.streaming?.mp4_480 ?? string.Empty,
-                        Mp4_720 = videoData.streaming?.mp4_720 ?? string.Empty,
-                        Mp4_1080 = videoData.streaming?.mp4_1080 ?? string.Empty,
-                        Hls = hlsUrl ?? string.Empty
-                    };
-
-                    try
-                    {
-                        await _videoRepository.AddOrUpdateVideoAsync(video);
-                        _logger.LogInformation("Video {EncodeId} updated in database with new HLS URL", video.EncodeId);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Failed to update video {EncodeId} in database", video.EncodeId);
-                        if (existingVideo != null)
-                        {
-                            _logger.LogWarning("Returning cached video {EncodeId} due to database update failure", encodeId);
-                            return existingVideo; // Trả về video cũ nếu cập nhật thất bại
-                        }
-                        throw;
-                    }
-
-                    if (videoData.artists != null && videoData.artists.Any())
-                    {
-                        var artistService = _serviceProvider.GetService<IArtistService>();
-                        if (artistService == null) throw new InvalidOperationException("ArtistService not available");
-
-                        var videoArtists = new List<VideoArtist>();
-                        foreach (var artist in videoData.artists)
-                        {
-                            await artistService.SyncArtistsFromZingMp3Async(null, artist.id);
-                            var syncedArtist = (await artistService.GetAllArtistsAsync())
-                                .FirstOrDefault(a => a.ZingMp3ArtistId == artist.id);
-
-                            if (syncedArtist != null)
+                            var videoData = apiResponse.data;
+                            string hlsUrl = null;
+                            if (videoData.streaming?.hls != null)
                             {
-                                videoArtists.Add(new VideoArtist
-                                {
-                                    VideoEncodeId = video.EncodeId,
-                                    ArtistId = syncedArtist.ArtistId
-                                });
+                                hlsUrl = videoData.streaming.hls.OrderByDescending(kvp => kvp.Key).Select(kvp => kvp.Value).FirstOrDefault();
                             }
+
+                            var video = existingVideo ?? new Video { EncodeId = videoData.encodeId };
+                            video.Title = videoData.title;
+                            video.Thumbnail = videoData.thumbnail;
+                            video.ThumbnailM = videoData.thumbnailM;
+                            video.Duration = videoData.duration;
+                            video.ArtistsNames = videoData.artistsNames;
+                            video.Link = videoData.link;
+                            video.Mp4_480 = videoData.streaming?.mp4_480 ?? string.Empty;
+                            video.Mp4_720 = videoData.streaming?.mp4_720 ?? string.Empty;
+                            video.Mp4_1080 = videoData.streaming?.mp4_1080 ?? string.Empty;
+                            video.Hls = hlsUrl ?? string.Empty;
+                            video.UpdatedDate = DateTime.UtcNow;
+
+                            if (existingVideo == null)
+                                _context.Videos.Add(video);
                             else
-                            {
-                                _logger.LogWarning("Failed to sync artist {ArtistId} for video {EncodeId}, skipping", artist.id, video.EncodeId);
-                            }
-                        }
+                                _context.Videos.Update(video);
 
-                        if (videoArtists.Any())
-                        {
-                            try
+                            await _context.SaveChangesAsync();
+                            
+                            // Sync Artists
+                            if (videoData.artists != null)
                             {
-                                await _videoRepository.AddVideoArtistsAsync(videoArtists);
-                                _logger.LogInformation("Added {Count} VideoArtist records for {EncodeId}", videoArtists.Count, video.EncodeId);
+                                var artistService = _serviceProvider.GetService<IArtistService>();
+                                if (artistService != null)
+                                {
+                                    foreach (var a in videoData.artists)
+                                    {
+                                        await artistService.SyncArtistsFromZingMp3Async(null, a.id);
+                                    }
+                                }
                             }
-                            catch (Exception ex)
-                            {
-                                _logger.LogError(ex, "Failed to add VideoArtists for {EncodeId}", video.EncodeId);
-                                throw;
-                            }
-                        }
-                        else
-                        {
-                            _logger.LogWarning("No valid artists synced for video {EncodeId}", video.EncodeId);
+
+                            return _mapper.Map<VideoDto>(video);
                         }
                     }
-                    return video;
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error fetching video {EncodeId} from API", encodeId);
-                    if (existingVideo != null)
-                    {
-                        _logger.LogWarning("Returning cached video {EncodeId} due to API error", encodeId);
-                        return existingVideo; // Trả về video cũ nếu có lỗi
-                    }
-                    throw;
+                    _logger.LogError(ex, "Error fetching video {EncodeId} from Zing API", encodeId);
                 }
             }
 
-            return existingVideo;
+            return existingVideo != null ? _mapper.Map<VideoDto>(existingVideo) : null;
         }
 
-        public async Task<IEnumerable<Video>> GetAllVideosAsync()
+        public async Task<IEnumerable<VideoDto>> GetAllVideosAsync()
         {
             var videos = await _context.Videos
                 .Include(v => v.VideoArtists)
                 .ThenInclude(va => va.Artist)
                 .ToListAsync();
-            foreach (var video in videos)
-            {
-                Console.WriteLine($"Video {video.EncodeId} has {video.VideoArtists?.Count ?? 0} artists.");
-                foreach (var va in video.VideoArtists ?? new List<VideoArtist>())
-                {
-                    Console.WriteLine($"Artist: {va.Artist?.Name}, Image: {va.Artist?.Image}");
-                }
-            }
-            return videos ?? Enumerable.Empty<Video>();
+            return _mapper.Map<IEnumerable<VideoDto>>(videos);
         }
 
-        public async Task AddVideoAsync(Video video)
+        public async Task AddVideoAsync(VideoDto videoDto)
         {
+            var video = _mapper.Map<Video>(videoDto);
             _context.Videos.Add(video);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateVideoAsync(Video video)
+        public async Task UpdateVideoAsync(VideoDto videoDto)
         {
+            var video = _mapper.Map<Video>(videoDto);
             _context.Videos.Update(video);
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteVideoAsync(string encodeId)
         {
-            var video = await _videoRepository.GetVideoByIdAsync(encodeId);
-            if (video == null)
+            var video = await _context.Videos.FindAsync(encodeId);
+            if (video != null)
             {
-                _logger.LogWarning("Video {EncodeId} not found for deletion", encodeId);
-                throw new KeyNotFoundException($"Video with ID {encodeId} not found.");
-            }
-
-            var videoArtists = await _context.VideoArtists
-                .Where(va => va.VideoEncodeId == encodeId)
-                .ToListAsync();
-            if (videoArtists.Any())
-            {
-                _context.VideoArtists.RemoveRange(videoArtists);
+                _context.Videos.Remove(video);
                 await _context.SaveChangesAsync();
-                _logger.LogInformation("Removed {Count} VideoArtist records for {EncodeId}", videoArtists.Count, encodeId);
             }
-
-            await _videoRepository.DeleteVideoAsync(encodeId);
-            _logger.LogInformation("Video {EncodeId} deleted successfully", encodeId);
         }
 
-        public async Task<IEnumerable<Video>> GetRelatedVideosAsync(string videoId)
+        public async Task<IEnumerable<VideoDto>> GetRelatedVideosAsync(string videoId)
         {
-            var video = await _videoRepository.GetVideoByIdAsync(videoId);
-            if (video == null)
-            {
-                _logger.LogWarning("No video found with encodeId {EncodeId}", videoId);
-                return Enumerable.Empty<Video>();
-            }
-
-            // Lấy danh sách artistId của video hiện tại
             var artistIds = await _context.VideoArtists
                 .Where(va => va.VideoEncodeId == videoId)
                 .Select(va => va.ArtistId)
                 .ToListAsync();
 
-            if (!artistIds.Any())
+            List<Video> related;
+            if (artistIds.Any())
             {
-                _logger.LogInformation("No artists found for video {EncodeId}, fetching random videos", videoId);
-                return await _context.Videos
+                related = await _context.Videos
+                    .Include(v => v.VideoArtists)
+                    .ThenInclude(va => va.Artist)
+                    .Where(v => v.EncodeId != videoId && v.VideoArtists.Any(va => artistIds.Contains(va.ArtistId)))
+                    .Take(10)
+                    .ToListAsync();
+            }
+            else
+            {
+                related = await _context.Videos
                     .Include(v => v.VideoArtists)
                     .ThenInclude(va => va.Artist)
                     .Where(v => v.EncodeId != videoId)
-                    .OrderBy(r => Guid.NewGuid())
+                    .OrderBy(v => Guid.NewGuid())
                     .Take(10)
                     .ToListAsync();
             }
 
-            // Lấy các video có cùng artistId
-            var relatedVideos = await _context.Videos
-                .Include(v => v.VideoArtists)
-                .ThenInclude(va => va.Artist)
-                .Where(v => v.VideoArtists.Any(va => artistIds.Contains(va.ArtistId))
-                         && v.EncodeId != videoId)
-                .Take(10)
-                .ToListAsync();
-
-            if (!relatedVideos.Any())
-            {
-                _logger.LogInformation("No related videos found by artist for {EncodeId}, fetching random videos", videoId);
-                relatedVideos = await _context.Videos
-                    .Include(v => v.VideoArtists)
-                    .ThenInclude(va => va.Artist)
-                    .Where(v => v.EncodeId != videoId)
-                    .OrderBy(r => Guid.NewGuid())
-                    .Take(10)
-                    .ToListAsync();
-            }
-
-            return relatedVideos ?? Enumerable.Empty<Video>();
+            return _mapper.Map<IEnumerable<VideoDto>>(related);
         }
 
         public class ZingMp3ApiResponse
@@ -314,7 +219,6 @@ namespace System_Music.Services.Implementations
             public int err { get; set; }
             public string msg { get; set; }
             public ZingMp3VideoData data { get; set; }
-            public long timestamp { get; set; }
         }
 
         public class ZingMp3VideoData

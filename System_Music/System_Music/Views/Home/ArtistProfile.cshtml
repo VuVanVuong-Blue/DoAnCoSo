@@ -1,8 +1,8 @@
-﻿@model System_Music.Models.ViewModels.ArtistProfileViewModel
+@model System_Music.Models.ViewModels.ArtistProfileViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = Model.Artist.Name;
-    string artistImage = string.IsNullOrEmpty(Model.Artist.Image) ? "https://via.placeholder.com/600x800" : Model.Artist.Image;
+    string artistImage = string.IsNullOrEmpty(Model.Artist.ImageUrl) ? "https://via.placeholder.com/600x800" : Model.Artist.ImageUrl;
 }
 <link rel="stylesheet" href="~/css/artist-profile.css" />
 <link rel="stylesheet" href="~/css/footer.css" />
@@ -98,7 +98,7 @@
                     {
                         <div class="album-item">
                             <div class="album-image">
-                                <img src="@album.Image" alt="@album.Name" />
+                                <img src="@album.ImageUrl" alt="@album.Name" />
                                 <button class="play-album-btn" data-album-id="@album.AlbumId" aria-label="Phát album @album.Name">
                                     <svg class="play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                         <path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z" fill="#000000" />

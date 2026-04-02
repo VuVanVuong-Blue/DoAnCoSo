@@ -1,4 +1,6 @@
-﻿@model IEnumerable<System_Music.Models.SqlModels.Album>
+@using System_Music.Models.DTOs
+@model IEnumerable<AlbumDto>
+
 @{
     ViewData["Title"] = "Sync Albums from Zing MP3";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
@@ -6,97 +8,91 @@
 
 <h1 class="mt-4">Sync Albums from Zing MP3</h1>
 
-<p>
-    <a asp-action="Index" class="btn btn-secondary">Back to Albums List</a>
-    <a asp-controller="Track" asp-action="SyncFromZingMp3" class="btn btn-info">Sync Tracks from Zing MP3</a>
-</p>
-
-<div class="row mb-4">
-    <div class="col-md-6">
+<div class="card mb-4 shadow-sm">
+    <div class="card-body bg-light">
         <form asp-action="SyncFromZingMp3" method="get">
-            <div class="form-group">
-                <label for="albumEncodeId">Enter Album Encode ID (e.g., 6BZO0I0O):</label>
-                <input type="text" id="albumEncodeId" name="albumEncodeId" class="form-control" value="@ViewData["AlbumEncodeId"]" />
+            <div class="row align-items-end">
+                <div class="col-md-8">
+                    <div class="form-group mb-0">
+                        <label for="albumEncodeId" class="form-label font-weight-bold">Album Encode ID (e.g., 6BZO0I0O)</label>
+                        <input type="text" id="albumEncodeId" name="albumEncodeId" class="form-control" value="@ViewData["AlbumEncodeId"]" placeholder="Enter Zing MP3 album encode ID..." />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">Sync Album</button>
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary mt-2">Sync Album from Zing MP3</button>
         </form>
     </div>
 </div>
 
 @if (TempData["Error"] != null)
 {
-    <div class="alert alert-danger">
-        @TempData["Error"]
+    <div class="alert alert-danger shadow-sm">
+         <i class="fas fa-exclamation-triangle me-2"></i> @TempData["Error"]
     </div>
 }
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success">
-        @TempData["Success"]
+    <div class="alert alert-success shadow-sm">
+        <i class="fas fa-check-circle me-2"></i> @TempData["Success"]
     </div>
 }
 
 @if (Model == null || !Model.Any())
 {
-    <div class="alert alert-warning">
-        No albums synced yet. Enter an Album Encode ID and click "Sync" to sync.
+    <div class="alert alert-info shadow-sm text-center py-4">
+        <i class="fas fa-info-circle fa-2x mb-3 d-block text-secondary"></i>
+        Enter an Album Encode ID and click "Sync" to fetch data from Zing MP3.
     </div>
 }
 else
 {
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>@Html.DisplayNameFor(model => model.First().AlbumId)</th>
-                <th>@Html.DisplayNameFor(model => model.First().Name)</th>
-                <th>@Html.DisplayNameFor(model => model.First().Image)</th>
-                <th>Total Tracks</th>
-                <th>Artists</th>
-                <th>Release Date</th>
-                <th>Zing MP3 Album ID</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var album in Model)
-            {
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover table-striped mb-0">
+            <thead class="table-dark">
                 <tr>
-                    <td>@Html.DisplayFor(modelItem => album.AlbumId)</td>
-                    <td>@Html.DisplayFor(modelItem => album.Name)</td>
-                    <td>
-                        @if (!string.IsNullOrEmpty(album.Image))
-                        {
-                            <img src="@album.Image" alt="@album.Name" style="width: 100px; height: auto;" />
-                        }
-                        else
-                        {
-                            <span>No Image</span>
-                        }
-                    </td>
-                    <td>@(album.Tracks?.Count ?? 0)</td>
-                    <td>
-                        @if (album.AlbumArtists != null && album.AlbumArtists.Any())
-                        {
-                            @string.Join(", ", album.AlbumArtists.Select(aa => aa.Artist.Name))
-                        }
-                        else
-                        {
-                            <span>No Artists</span>
-                        }
-                    </td>
-                    <td>@album.ReleaseDate.ToString("dd/MM/yyyy")</td>
-                    <td>@Html.DisplayFor(modelItem => album.ZingMp3AlbumId)</td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@album.AlbumId" class="btn btn-info btn-sm">Details</a>
-                        <a asp-action="Edit" asp-route-id="@album.AlbumId" class="btn btn-warning btn-sm">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@album.AlbumId" class="btn btn-danger btn-sm">Delete</a>
-                    </td>
+                    <th>Cover</th>
+                    <th>Album Name</th>
+                    <th>Artists</th>
+                    <th>Tracks</th>
+                    <th>Release Date</th>
+                    <th>Zing ID</th>
+                    <th>Actions</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var album in Model)
+                {
+                    <tr>
+                        <td class="align-middle">
+                            <img src="@album.ImageUrl" alt="@album.Name" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;" onerror="this.src='/images/default-album.png'" />
+                        </td>
+                        <td class="align-middle font-weight-bold">@album.Name</td>
+                        <td class="align-middle">
+                            @(string.Join(", ", album.Artists.Select(a => a.Name)))
+                        </td>
+                        <td class="align-middle text-center">
+                            <span class="badge bg-primary rounded-pill">@album.Tracks.Count</span>
+                        </td>
+                        <td class="align-middle text-nowrap">@(album.ReleaseDate?.ToShortDateString() ?? "N/A")</td>
+                        <td class="align-middle text-muted small">@album.ZingMp3AlbumId</td>
+                        <td class="align-middle text-nowrap">
+                            <a asp-action="Details" asp-route-id="@album.AlbumId" class="btn btn-info btn-sm">Details</a>
+                            <a asp-action="Edit" asp-route-id="@album.AlbumId" class="btn btn-warning btn-sm">Edit</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
+
+<div class="mt-4 pb-5">
+    <a asp-action="Index" class="btn btn-secondary shadow-sm">Back to Albums List</a>
+    <a asp-controller="Track" asp-action="SyncFromZingMp3" class="btn btn-outline-info shadow-sm">Sync Tracks from Zing MP3</a>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

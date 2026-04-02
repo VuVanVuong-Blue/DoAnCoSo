@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System_Music.Models.SqlModels;
+using Microsoft.AspNetCore.Mvc;
+using System_Music.Models.Common;
+using System_Music.Models.DTOs;
 using System_Music.Services.Interfaces;
 
-namespace System_Music.Controllers
+namespace System_Music.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -16,10 +17,10 @@ namespace System_Music.Controllers
         }
 
         [HttpGet("top")]
-        public async Task<ActionResult<List<ChartRanking>>> GetTopTracks(string country = "Việt Nam", string timeFrame = "daily", int limit = 50)
+        public async Task<IActionResult> GetTopTracks(string country = "Việt Nam", string timeFrame = "daily", int limit = 50)
         {
             var rankings = await _chartService.GetTopTracksAsync(country, timeFrame, limit);
-            return Ok(rankings);
+            return Ok(ApiResult<List<ChartRankingDto>>.Success(rankings));
         }
     }
 }

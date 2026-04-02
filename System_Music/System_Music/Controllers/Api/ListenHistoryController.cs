@@ -1,82 +1,74 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System_Music.Models.SqlModels;
 using System_Music.Services.Interfaces;
-using Microsoft.Extensions.Logging; // Thêm namespace này
+using System_Music.Models.Common;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 
-[Route("api/[controller]")]
-[ApiController]
-public class ListenHistoryController : ControllerBase
+namespace System_Music.Controllers.Api
 {
-    private readonly IListenHistoryService _listenHistoryService;
-    private readonly ILogger<ListenHistoryController> _logger; // Thêm logger
-
-    public ListenHistoryController(IListenHistoryService listenHistoryService, ILogger<ListenHistoryController> logger)
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme + "," + IdentityConstants.ApplicationScheme)]
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ListenHistoryController : ControllerBase
     {
-        _listenHistoryService = listenHistoryService;
-        _logger = logger;
-    }
+        private readonly IListenHistoryService _listenHistoryService;
+        private readonly ILogger<ListenHistoryController> _logger;
 
-    [HttpPost("Add")]
-    public async Task<IActionResult> Add([FromBody] ListenHistoryRequest request)
-    {
-        _logger.LogInformation("Received request to add listen history: {@Request}", request);
-
-        try
+        public ListenHistoryController(IListenHistoryService listenHistoryService, ILogger<ListenHistoryController> logger)
         {
-            if (request == null || string.IsNullOrEmpty(request.EntityType) || string.IsNullOrEmpty(request.EntityId))
-            {
-                _logger.LogWarning("Invalid request data: {@Request}", request);
-                return BadRequest(new { success = false, message = "Dữ liệu đầu vào không hợp lệ." });
-            }
-
-            if (!Enum.TryParse<EntityType>(request.EntityType, true, out var entityType))
-            {
-                _logger.LogWarning("Invalid EntityType: {@EntityType}", request.EntityType);
-                return BadRequest(new { success = false, message = "EntityType không hợp lệ." });
-            }
-
-            if (!int.TryParse(request.EntityId, out var entityId))
-            {
-                _logger.LogWarning("Invalid EntityId: {@EntityId}", request.EntityId);
-                return BadRequest(new { success = false, message = "EntityId không hợp lệ, phải là một số nguyên." });
-            }
-
-            var userId = HttpContext.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-            {
-                _logger.LogWarning("UserId not found in HttpContext");
-                return Unauthorized(new { success = false, message = "Không thể xác định người dùng." });
-            }
-
-            var listenHistory = new ListenHistory
-            {
-                UserId = userId,
-                EntityType = entityType,
-                TrackId = entityType == EntityType.Track ? entityId : null,
-                AlbumId = entityType == EntityType.Album ? entityId : null,
-                ArtistId = entityType == EntityType.Artist ? entityId : null,
-                PlaylistId = entityType == EntityType.Playlist ? entityId : null,
-                ListenDate = DateTime.UtcNow
-            };
-
-            _logger.LogInformation("Saving listen history: {@ListenHistory}", listenHistory);
-            await _listenHistoryService.AddListenHistoryAsync(listenHistory);
-            _logger.LogInformation("Listen history saved successfully for UserId: {UserId}", userId);
-            return Ok(new { success = true, message = "Lịch sử đã được lưu." });
+            _listenHistoryService = listenHistoryService;
+            _logger = logger;
         }
-        catch (Exception ex)
+
+        [HttpPost("Add")]
+        public async Task<IActionResult> Add([FromBody] ListenHistoryRequest request)
         {
-            _logger.LogError(ex, "Error saving listen history: {Message}", ex.Message);
-            return StatusCode(500, new { success = false, message = $"Lỗi khi lưu lịch sử: {ex.Message}" });
+            try
+            {
+                if (request == null || string.IsNullOrEmpty(request.EntityType))
+                {
+                    return BadRequest(ApiResult<object>.Failure("Dữ liệu đầu vào không hợp lệ."));
+                }
+
+                if (!Enum.TryParse<EntityType>(request.EntityType, true, out var entityType))
+                {
+                    return BadRequest(ApiResult<object>.Failure("EntityType không hợp lệ."));
+                }
+
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized(ApiResult<object>.Failure("Không thể xác định người dùng."));
+                }
+
+                var listenHistory = new ListenHistory
+                {
+                    UserId = userId,
+                    EntityType = entityType,
+                    TrackId = entityType == EntityType.Track ? request.EntityId : null,
+                    AlbumId = entityType == EntityType.Album ? request.EntityId : null,
+                    ArtistId = entityType == EntityType.Artist ? request.EntityId : null,
+                    PlaylistId = entityType == EntityType.Playlist ? request.EntityId : null,
+                    ListenDate = DateTime.UtcNow
+                };
+
+                await _listenHistoryService.AddListenHistoryAsync(listenHistory);
+                return Ok(ApiResult<object>.Success(null, "Lịch sử đã được lưu."));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving listen history");
+                return StatusCode(500, ApiResult<object>.Failure($"Lỗi khi lưu lịch sử: {ex.Message}"));
+            }
         }
     }
-}
 
-public class ListenHistoryRequest
-{
-    public string EntityType { get; set; }
-    public string EntityId { get; set; }
+    public class ListenHistoryRequest
+    {
+        public string EntityType { get; set; }
+        public int EntityId { get; set; }
+    }
 }

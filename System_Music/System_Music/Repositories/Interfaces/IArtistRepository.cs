@@ -1,4 +1,4 @@
-﻿using System_Music.Models.SqlModels;
+using System_Music.Models.SqlModels;
 
 namespace System_Music.Repositories.Interfaces
 {
@@ -6,5 +6,6 @@ namespace System_Music.Repositories.Interfaces
     {
         Task<List<Artist>> GetArtistsByCountryAsync(string country);
         Task<Artist> GetByIdWithDetailsAsync(int id);
+        Task<List<Artist>> GetArtistsBySearchAsync(string searchTerm);
     }
 }

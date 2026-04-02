@@ -1,106 +1,109 @@
-﻿@model System_Music.Models.SqlModels.Track
+@using System_Music.Models.DTOs
+@model TrackDto
 
 @{
     ViewData["Title"] = "Tạo bài hát mới";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="container mt-5">
-    <h2 class="mb-4">Tạo bài hát mới</h2>
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">@TempData["Success"]</div>
-    }
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">@TempData["Error"]</div>
-    }
-    <form asp-action="Create" method="post" enctype="multipart/form-data">
-        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+<div class="row mt-4">
+    <div class="col-md-9 mx-auto">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">Tạo bài hát mới</h3>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-        <div class="form-group mb-3">
-            <label asp-for="Title" class="form-label"></label>
-            <input asp-for="Title" class="form-control" />
-            <span asp-validation-for="Title" class="text-danger"></span>
-        </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="Title" class="form-label font-weight-bold"></label>
+                                <input asp-for="Title" class="form-control" />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
 
-        <div class="form-group mb-3">
-            <label asp-for="Duration" class="form-label"></label>
-            <input asp-for="Duration" class="form-control" type="number" />
-            <span asp-validation-for="Duration" class="text-danger"></span>
-        </div>
+                            <div class="form-group mb-3">
+                                <label asp-for="Duration" class="form-label font-weight-bold">Thời lượng (giây)</label>
+                                <input asp-for="Duration" class="form-control" type="number" />
+                                <span asp-validation-for="Duration" class="text-danger"></span>
+                            </div>
 
-        <div class="form-group mb-3">
-            <label asp-for="Description" class="form-label"></label>
-            <textarea asp-for="Description" class="form-control" rows="5"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
-        </div>
+                            <div class="form-group mb-3">
+                                <label asp-for="AlbumId" class="form-label font-weight-bold">Album</label>
+                                <select asp-for="AlbumId" class="form-select">
+                                    <option value="">-- Single (Không thuộc album) --</option>
+                                    @foreach (var album in (IEnumerable<AlbumDto>)ViewBag.Albums)
+                                    {
+                                        <option value="@album.AlbumId">@album.Name</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="AlbumId" class="text-danger"></span>
+                            </div>
 
-        <div class="form-group mb-3">
-            <label class="form-label">File nhạc</label>
-            <input type="file" name="audioFile" class="form-control" required />
-            <small class="form-text text-muted">File nhạc sẽ được lưu vào /wwwroot/tracks/</small>
-        </div>
+                            <div class="form-group mb-3">
+                                <label class="form-label font-weight-bold">File nhạc (.mp3)</label>
+                                <input type="file" name="audioFile" class="form-control" required accept="audio/*" />
+                                <small class="text-muted">Dung lượng tối đa đề xuất: 10MB</small>
+                            </div>
 
-        <div class="form-group mb-3">
-            <label class="form-label">Ảnh bìa</label>
-            <input type="file" name="imageFile" class="form-control" />
-            <small class="form-text text-muted">Ảnh bìa sẽ được lưu vào /wwwroot/images/tracks/ (Không bắt buộc)</small>
-        </div>
+                            <div class="form-group mb-3">
+                                <label class="form-label font-weight-bold">Ảnh bìa bài hát</label>
+                                <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                                <input type="hidden" asp-for="ImageUrl" />
+                            </div>
+                        </div>
 
-        <div class="form-group mb-3">
-            <label asp-for="AlbumId" class="form-label"></label>
-            <select asp-for="AlbumId" class="form-control">
-                <option value="">-- Chọn album (để trống nếu là single) --</option>
-                @foreach (var album in ViewBag.Albums)
-                {
-                    <option value="@album.AlbumId">@album.Name</option>
-                }
-            </select>
-            <span asp-validation-for="AlbumId" class="text-danger"></span>
-        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label font-weight-bold">Nghệ sĩ tham gia</label>
+                                <div class="border rounded p-3 bg-light" style="max-height: 150px; overflow-y: auto;">
+                                    @foreach (var artist in (IEnumerable<ArtistDto>)ViewBag.Artists)
+                                    {
+                                        <div class="form-check">
+                                            <input type="checkbox" name="artistIds" value="@artist.ArtistId" class="form-check-input" id="artist_@artist.ArtistId" />
+                                            <label class="form-check-label" for="artist_@artist.ArtistId">@artist.Name</label>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
 
-        <div class="form-group mb-3">
-            <label asp-for="ZingMp3TrackId" class="form-label">ID từ Zing MP3</label>
-            <input asp-for="ZingMp3TrackId" class="form-control" placeholder="Nhập ID từ Zing MP3 (nếu có)" />
-            <span asp-validation-for="ZingMp3TrackId" class="text-danger"></span>
-        </div>
+                            <div class="form-group mb-3">
+                                <label class="form-label font-weight-bold">Thể loại</label>
+                                <div class="border rounded p-3 bg-light" style="max-height: 150px; overflow-y: auto;">
+                                    @foreach (var genre in (IEnumerable<GenreDto>)ViewBag.Genres)
+                                    {
+                                        <div class="form-check">
+                                            <input type="checkbox" name="genreIds" value="@genre.GenreId" class="form-check-input" id="genre_@genre.GenreId" />
+                                            <label class="form-check-label" for="genre_@genre.GenreId">@genre.Name</label>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
 
-        <div class="form-group mb-3">
-            <label class="form-label">Nghệ sĩ</label>
-            @if (ViewBag.Artists != null)
-            {
-                @foreach (var artist in ViewBag.Artists)
-                {
-                    <div class="form-check mb-2">
-                        <input type="checkbox" name="artistIds" value="@artist.ArtistId" class="form-check-input" id="artist_@artist.ArtistId" />
-                        <label class="form-check-label" for="artist_@artist.ArtistId">@artist.Name</label>
+                            <div class="form-group mb-3">
+                                <label asp-for="ZingMp3TrackId" class="form-label font-weight-bold">Zing MP3 Encode ID</label>
+                                <input asp-for="ZingMp3TrackId" class="form-control" placeholder="Ví dụ: ZUABC123" />
+                                <span asp-validation-for="ZingMp3TrackId" class="text-danger"></span>
+                            </div>
+                        </div>
                     </div>
-                }
-            }
-            else
-            {
-                <span>Không có nghệ sĩ nào để chọn.</span>
-            }
-            <small class="form-text text-muted">Chọn các nghệ sĩ tham gia bài hát</small>
-        </div>
 
-        <div class="form-group mb-3">
-            <label class="form-label">Thể loại</label>
-            <select name="genreIds" multiple class="form-control">
-                @foreach (var genre in ViewBag.Genres)
-                {
-                    <option value="@genre.GenreId">@genre.Name</option>
-                }
-            </select>
-            <small class="form-text text-muted">Giữ Ctrl để chọn nhiều thể loại</small>
-        </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="Description" class="form-label font-weight-bold"></label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
 
-        <div class="form-group mt-4">
-            <button type="submit" class="btn btn-primary">Tạo mới</button>
-            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+                        <button type="submit" class="btn btn-primary px-5">Tạo bài hát</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </form>
+    </div>
 </div>
 
 @section Scripts {

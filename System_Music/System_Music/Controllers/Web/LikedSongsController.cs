@@ -1,105 +1,102 @@
-﻿// LikedSongsController.cs
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System_Music.Models.SqlModels;
 using System_Music.Models.ViewModels;
+using System_Music.Models.DTOs;
 using System_Music.Services.Interfaces;
 using System.Threading.Tasks;
-using System_Music.Services.Implementations;
+using System.Collections.Generic;
+using System;
 
-public class LikedSongsController : Controller
+namespace System_Music.Controllers.Web
 {
-    private readonly UserManager<User> _userManager;
-    private readonly ITrackService _trackService;
-    private readonly ILikeTrackService _likeTrackService;
-
-    public LikedSongsController(UserManager<User> userManager, ITrackService trackService, ILikeTrackService likeTrackService)
+    public class LikedSongsController : Controller
     {
-        _userManager = userManager;
-        _trackService = trackService;
-        _likeTrackService = likeTrackService;
-    }
+        private readonly UserManager<User> _userManager;
+        private readonly ITrackService _trackService;
+        private readonly ILikeTrackService _likeTrackService;
+        private readonly IMapper _mapper;
 
-    public async Task<IActionResult> Index()
-    {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
+        public LikedSongsController(
+            UserManager<User> userManager, 
+            ITrackService trackService, 
+            ILikeTrackService likeTrackService,
+            IMapper mapper)
         {
-            return RedirectToAction("Login", "Account", new { area = "Identity" });
+            _userManager = userManager;
+            _trackService = trackService;
+            _likeTrackService = likeTrackService;
+            _mapper = mapper;
         }
 
-        var likedSongsPlaylist = new Playlist
+        public async Task<IActionResult> Index()
         {
-            PlaylistId = 0,
-            Name = "Bài hát đã thích",
-            UserId = user.Id,
-            IsPublic = false,
-            CreatedDate = DateTime.Now,
-            ImageMediaId = null,
-            PlaylistTracks = new List<PlaylistTrack>()
-        };
-
-        var likedTracks = await _trackService.GetLikedTracksAsync(user.Id);
-
-        // Khởi tạo và điền dữ liệu vào LikeDates
-        var likeDates = new Dictionary<int, DateTime>();
-        foreach (var track in likedTracks)
-        {
-            var likeTrack = await _likeTrackService.GetLikeByUserAndTrackAsync(user.Id, track.TrackId);
-            if (likeTrack != null)
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                likeDates[track.TrackId] = likeTrack?.LikeDate ?? DateTime.UtcNow;
+                return RedirectToAction("Login", "Account", new { area = "Identity" });
             }
-            else
+
+            var likedTracks = await _trackService.GetLikedTracksAsync(user.Id);
+
+            var likedSongsPlaylist = new PlaylistDto
             {
-                likeDates[track.TrackId] = DateTime.UtcNow; // Giá trị mặc định nếu không có LikeDate
-            }
-            likedSongsPlaylist.PlaylistTracks.Add(new PlaylistTrack
-            {
-                Track = track,
-                AddedDate = likeDates[track.TrackId]
-            });
-        }
-
-        var model = new PlaylistViewModel
-        {
-            Playlist = likedSongsPlaylist,
-            Tracks = likedTracks,
-            LikeDates = likeDates
-        };
-
-        return View("~/Views/Playlist/IndexPlayList.cshtml", model);
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddToLikedSongs(int trackId)
-    {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            return Unauthorized();
-        }
-
-        var track = await _trackService.GetTrackByIdAsync(trackId);
-        if (track == null)
-        {
-            return NotFound();
-        }
-
-        // Kiểm tra xem bài hát đã được thích chưa
-        var hasLiked = await _likeTrackService.HasLikedTrackAsync(user.Id, trackId);
-        if (!hasLiked)
-        {
-            var likeTrack = new LikeTrack
-            {
+                PlaylistId = 0,
+                Name = "Bài hát đã thích",
                 UserId = user.Id,
-                TrackId = trackId,
-                LikeDate = DateTime.UtcNow
+                IsPublic = false,
+                CreatedDate = DateTime.Now,
+                ImageUrl = "/images/liked-songs-placeholder.png",
+                Tracks = likedTracks
             };
-            await _likeTrackService.AddLikeAsync(likeTrack);
+
+            var likeDates = new Dictionary<int, DateTime>();
+            foreach (var track in likedTracks)
+            {
+                var likeTrackDto = await _likeTrackService.GetLikeByUserAndTrackAsync(user.Id, track.TrackId);
+                likeDates[track.TrackId] = lookUpLikeDate(likeTrackDto);
+            }
+
+            var model = new PlaylistViewModel
+            {
+                Playlist = likedSongsPlaylist,
+                Tracks = likedTracks,
+                LikeDates = likeDates,
+                CurrentUser = _mapper.Map<UserDto>(user)
+            };
+
+            return View("~/Views/Playlist/IndexPlaylist.cshtml", model);
         }
 
-        return Json(new { success = true });
+        private DateTime lookUpLikeDate(LikeTrackDto? likeTrackDto)
+        {
+            return likeTrackDto?.LikeDate ?? DateTime.UtcNow;
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddToLikedSongs(int trackId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var track = await _trackService.GetTrackByIdAsync(trackId);
+            if (track == null) return NotFound();
+
+            var hasLiked = await _likeTrackService.HasLikedTrackAsync(user.Id, trackId);
+            if (!hasLiked)
+            {
+                var likeTrackDto = new LikeTrackDto
+                {
+                    UserId = user.Id,
+                    TrackId = trackId,
+                    LikeDate = DateTime.UtcNow
+                };
+                await _likeTrackService.AddLikeAsync(likeTrackDto);
+            }
+
+            return Json(new { success = true });
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System_Music.Models.SqlModels;
 using System_Music.Repositories.Interfaces;
 
@@ -27,6 +27,12 @@ namespace System_Music.Repositories.Implementations
         {
             return _context.Users
                 .FirstOrDefaultAsync(u => u.Id == id);
+        }
+
+        public async Task<User> GetByRefreshTokenAsync(string refreshToken)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
         }
     }
 }

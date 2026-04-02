@@ -1,16 +1,20 @@
-﻿using System_Music.Models.SqlModels;
+using System_Music.Models.DTOs;
+using System_Music.Models.SqlModels;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace System_Music.Services.Interfaces
 {
     public interface IGenreService
     {
-        Task<List<Genre>> GetAllGenresAsync();
-        Task<Genre> GetGenreByIdAsync(int id);
-        Task AddGenreAsync(Genre genre);
-        Task UpdateGenreAsync(Genre genre);
+        Task<List<GenreDto>> GetAllGenresAsync();
+        Task<GenreDto> GetGenreByIdAsync(int id);
+        Task<GenreDto> GetGenreWithDetailsAsync(int id);
+        Task AddGenreAsync(GenreDto genreDto);
+        Task UpdateGenreAsync(GenreDto genreDto);
         Task DeleteGenreAsync(int id);
-        Task<List<Genre>> GetGenresByTrackIdAsync(int trackId);
+        Task<List<GenreDto>> GetGenresByTrackIdAsync(int trackId);
         Task<bool> GenreExistsAsync(int genreId);
-        Task<List<Genre>> SyncGenresFromZingMp3Async(); // Thêm phương thức mới
+        Task<List<GenreDto>> SyncGenresFromZingMp3Async();
     }
-}   
+}

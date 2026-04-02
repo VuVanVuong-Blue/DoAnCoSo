@@ -1,4 +1,4 @@
-﻿using System_Music.Models.SqlModels;
+using System_Music.Models.SqlModels;
 
 namespace System_Music.Repositories.Interfaces
 {
@@ -8,5 +8,6 @@ namespace System_Music.Repositories.Interfaces
         Task<Album> GetByIdAsync(int id);
         Task<Album> GetByIdWithDetailsAsync(int id);
         Task<List<Album>> SyncAlbumFromZingMp3Async(string albumEncodeId);
+        Task<List<Album>> GetAlbumsBySearchAsync(string searchTerm);
     }
 }

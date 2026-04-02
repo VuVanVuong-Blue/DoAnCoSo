@@ -1,9 +1,11 @@
-﻿using System_Music.Models.SqlModels;
+using System_Music.Models.DTOs;
+using System.Collections.Generic;
 
 namespace System_Music.Models.ViewModels
 {
     public class TrackDetailViewModel
     {
-        public Track Track { get; set; } = new Track();
+        public TrackDto Track { get; set; } = new TrackDto();
+        public List<TrackDto> RecommendedTracks { get; set; } = new List<TrackDto>();
     }
 }

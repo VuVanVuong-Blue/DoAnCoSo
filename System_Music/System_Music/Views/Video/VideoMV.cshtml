@@ -1,9 +1,11 @@
-﻿@{
+@using System_Music.Models.DTOs
+@model VideoDto
+
+@{
     ViewData["Title"] = "Video Detail";
     Layout = "~/Views/Video/LayoutVideo.cshtml";
+    var relatedVideos = (ViewBag.RelatedVideos as IEnumerable<VideoDto>)?.ToList() ?? new List<VideoDto>();
 }
-
-@model System_Music.Models.SqlModels.Video
 
 @section Styles {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
@@ -15,12 +17,12 @@
     <div class="video-header">
         <div class="media">
             <div class="media-left">
-                <img src="@(string.IsNullOrEmpty(Model.VideoArtists?.FirstOrDefault()?.Artist?.Image) ? "https://photo-resize-zmp3.zmdcdn.me/w240_r1x1_jpeg/avatars/default.jpg" : Model.VideoArtists.FirstOrDefault().Artist.Image)" alt="@Model.ArtistsNames">
+                <img src="@(string.IsNullOrEmpty(Model.Artists?.FirstOrDefault()?.ImageUrl) ? "https://photo-resize-zmp3.zmdcdn.me/w240_r1x1_jpeg/avatars/default.jpg" : Model.Artists.FirstOrDefault().ImageUrl)" alt="@Model.ArtistsNames">
             </div>
             <div class="media-content">
                 <div class="title">@Model.Title</div>
                 <div class="subtitle">
-                    <a href="/artist/@Model.VideoArtists.FirstOrDefault()?.ArtistId">@Model.ArtistsNames</a>
+                    <a href="/artist/@(Model.Artists?.FirstOrDefault()?.ArtistId ?? 0)">@Model.ArtistsNames</a>
                 </div>
             </div>
             <div class="media-right">
@@ -60,7 +62,7 @@
         }
     </div>
 
-    <!-- Phần related-videos trong VideoMV.cshtml -->
+    <!-- Related Videos -->
     <div class="related-videos queue-player column mar-b-0">
         <div class="video-queue is-horizontal">
             <div class="list-playing">
@@ -71,27 +73,16 @@
                             <div class="auto-play-text">TỰ ĐỘNG PHÁT</div>
                             <i class="icon ic-svg-switch">
                                 <svg id="Layer_1" x="0px" y="0px" width="24px" height="15px" viewBox="0 0 24 15" xml:space="preserve">
-                                <style type="text/css">
-                                    .st0 {
-                                        fill: #666;
-                                    }
-
-                                    .st1 {
-                                        fill-rule: evenodd;
-                                        clip-rule: evenodd;
-                                        fill: #FFFFFF;
-                                    }
-</style>
-                                <path id="Rectangle-8" class="st0" d="M16.5,0h-9C3.4,0,0,3.4,0,7.5l0,0C0,11.6,3.4,15,7.5,15h9c4.1,0,7.5-3.4,7.5-7.5l0,0 C24,3.4,20.6,0,16.5,0z"></path>
-                                <circle id="Oval-2" class="st1" cx="16.5" cy="7.5" r="6.5"></circle>
-                            </svg>
+                                    <path id="Rectangle-8" class="st0" style="fill: #666;" d="M16.5,0h-9C3.4,0,0,3.4,0,7.5l0,0C0,11.6,3.4,15,7.5,15h9c4.1,0,7.5-3.4,7.5-7.5l0,0 C24,3.4,20.6,0,16.5,0z"></path>
+                                    <circle id="Oval-2" class="st1" style="fill-rule: evenodd; clip-rule: evenodd; fill: #FFFFFF;" cx="16.5" cy="7.5" r="6.5"></circle>
+                                </svg>
                             </i>
                         </button>
                     </div>
                     <div class="zm-carousel-wrapper">
                         <div class="zm-carousel">
                             <div class="zm-carousel__container">
-                                @foreach (var video in ViewBag.RelatedVideos as List<System_Music.Models.SqlModels.Video>)
+                                @foreach (var video in relatedVideos)
                                 {
                                     <div class="zm-carousel-item is-fullhd-1.2 is-widescreen-2 is-desktop-20 is-touch-3 is-tablet-3">
                                         <div class="zm-card video-item @(video.EncodeId == Model.EncodeId ? "video-active" : "")" data-video-id="@video.EncodeId">
@@ -125,7 +116,7 @@
                                                         </a>
                                                     </div>
                                                     <div class="subtitle is-one-line">
-                                                        <a class="is-ghost" href="/artist/@video.VideoArtists.FirstOrDefault()?.ArtistId">@video.ArtistsNames</a>
+                                                        <a class="is-ghost" href="/artist/@(video.Artists?.FirstOrDefault()?.ArtistId ?? 0)">@video.ArtistsNames</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -138,146 +129,64 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
-        @section Scripts {
-            @if (!string.IsNullOrEmpty(Model.Hls))
-            {
-                <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-                <script>
-                    document.addEventListener('DOMContentLoaded', () => {
-                        const video = document.getElementById('hls-video');
-                        const videoSrc = "@Html.Raw(Model.Hls)";
-                        console.log('HLS video source:', videoSrc);
-
-                        // Khởi tạo trình phát HLS
-                        if (Hls.isSupported()) {
-                            const hls = new Hls({
-                                maxBufferLength: 30,
-                                maxMaxBufferLength: 60,
-                                autoStartLoad: true
-                            });
-                            hls.loadSource(videoSrc);
-                            hls.attachMedia(video);
-                            hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                                console.log('HLS manifest parsed, ready to play');
-                                video.play().catch(err => console.error('Auto-play failed:', err));
-                            });
-                            hls.on(Hls.Events.ERROR, (event, data) => {
-                                console.error('HLS error:', data);
-                            });
-                        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                            video.src = videoSrc;
-                            video.addEventListener('loadedmetadata', () => {
-                                console.log('Native HLS loaded, ready to play');
-                                video.play().catch(err => console.error('Auto-play failed:', err));
-                            });
-                        } else {
-                            console.error('HLS not supported on this browser');
-                        }
-
-                        // Handle related videos click
-                        const videoCards = document.querySelectorAll('.video-item');
-                        videoCards.forEach(card => {
-                            card.addEventListener('click', (e) => {
-                                const playButton = e.target.closest('.action-play');
-                                if (playButton) {
-                                    const videoId = playButton.getAttribute('data-video-id');
-                                    if (videoId) {
-                                        console.log('Play button clicked, redirecting to:', `/Video/VideoMV?videoId=${videoId}`);
-                                        window.location.href = `/Video/VideoMV?videoId=${videoId}`;
-                                    }
-                                    return;
-                                }
-
-                                const videoId = card.getAttribute('data-video-id');
-                                if (videoId) {
-                                    console.log('Video card clicked, redirecting to:', `/Video/VideoMV?videoId=${videoId}`);
-                                    window.location.href = `/Video/VideoMV?videoId=${videoId}`;
-                                }
-                            });
-                        });
-
-                        // Handle like button toggle
-                        const likeBtn = document.querySelector('.animation-like');
-                        if (likeBtn) {
-                            likeBtn.addEventListener('click', () => {
-                                likeBtn.classList.toggle('active');
-                                const likeIcon = likeBtn.querySelector('.ic-like');
-                                const likeFullIcon = likeBtn.querySelector('.ic-like-full');
-                                if (likeBtn.classList.contains('active')) {
-                                    likeIcon.style.display = 'none';
-                                    likeFullIcon.style.display = 'inline';
-                                } else {
-                                    likeIcon.style.display = 'inline';
-                                    likeFullIcon.style.display = 'none';
-                                }
-                            });
-                        }
-
-                        // Handle close button
-                        const closeBtn = document.querySelector('.close-btn');
-                        if (closeBtn) {
-                            closeBtn.addEventListener('click', () => {
-                                console.log('Close button clicked, redirecting to home');
-                                window.location.href = '/';
-                            });
-                        }
-
-                        // Handle auto-play toggle
-                        let autoPlayEnabled = false;
-                        const autoPlayBtn = document.querySelector('.zm-auto-play-switch');
-                        const autoPlayText = autoPlayBtn?.querySelector('.auto-play-text');
-                        const toggleCircle = autoPlayBtn?.querySelector('.ic-svg-switch svg circle.st1');
-                        const videoItems = Array.from(document.querySelectorAll('.video-item')); // Sửa từ autoPlayBtn sang document
-
-                        if (autoPlayBtn && autoPlayText && toggleCircle) {
-                            console.log('Auto-play button initialized, video items:', videoItems.length);
-                            autoPlayBtn.addEventListener('click', () => {
-                                autoPlayEnabled = !autoPlayEnabled;
-                                console.log('Auto-play toggled:', autoPlayEnabled);
-                                autoPlayText.textContent = autoPlayEnabled ? 'TẮT TỰ ĐỘNG' : 'TỰ ĐỘNG PHÁT';
-                                autoPlayBtn.querySelector('.ic-svg-switch svg path.st0').style.fill = autoPlayEnabled ? '#00c4b4' : '#666';
-                                toggleCircle.setAttribute('cx', autoPlayEnabled ? '16.5' : '7.5');
-                                if (autoPlayEnabled) {
-                                    autoPlayBtn.classList.add('active');
-                                } else {
-                                    autoPlayBtn.classList.remove('active');
-                                }
-                            });
-                        } else {
-                            console.error('Auto-play button or elements not found:', { autoPlayBtn, autoPlayText, toggleCircle });
-                        }
-
-                        // Auto-play next video when current video ends
-                        if (videoItems.length > 0) {
-                            video.addEventListener('ended', () => {
-                                console.log('Video ended, autoPlayEnabled:', autoPlayEnabled);
-                                if (autoPlayEnabled) {
-                                    const currentIndex = videoItems.findIndex(item => item.classList.contains('video-active'));
-                                    console.log('Current video index:', currentIndex);
-                                    if (currentIndex === -1) {
-                                        console.error('No active video found');
-                                        return;
-                                    }
-                                    const nextIndex = (currentIndex + 1) % videoItems.length;
-                                    const nextVideo = videoItems[nextIndex];
-                                    if (nextVideo) {
-                                        const videoId = nextVideo.getAttribute('data-video-id');
-                                        if (videoId) {
-                                            console.log('Auto-playing next video:', `/Video/VideoMV?videoId=${videoId}`);
-                                            window.location.href = `/Video/VideoMV?videoId=${videoId}`;
-                                        } else {
-                                            console.error('Next video ID not found');
-                                        }
-                                    } else {
-                                        console.error('Next video not found');
-                                    }
-                                }
-                            });
-                        } else {
-                            console.error('No video items found for auto-play');
-                        }
+@section Scripts {
+    @if (!string.IsNullOrEmpty(Model.Hls))
+    {
+        <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const video = document.getElementById('hls-video');
+                const videoSrc = "@Html.Raw(Model.Hls)";
+                
+                if (Hls.isSupported()) {
+                    const hls = new Hls();
+                    hls.loadSource(videoSrc);
+                    hls.attachMedia(video);
+                    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                        video.play().catch(err => console.error('Auto-play failed:', err));
                     });
-                </script>
-            }
-        }
+                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = videoSrc;
+                    video.addEventListener('loadedmetadata', () => {
+                        video.play().catch(err => console.error('Auto-play failed:', err));
+                    });
+                }
+
+                // Related videos logic
+                const videoCards = document.querySelectorAll('.video-item');
+                videoCards.forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        const videoId = card.getAttribute('data-video-id');
+                        if (videoId) window.location.href = `/Video/VideoMV?videoId=${videoId}`;
+                    });
+                });
+
+                // Auto-play next logic
+                let autoPlayEnabled = false;
+                const autoPlayBtn = document.querySelector('.zm-auto-play-switch');
+                if (autoPlayBtn) {
+                    autoPlayBtn.addEventListener('click', () => {
+                        autoPlayEnabled = !autoPlayEnabled;
+                        autoPlayBtn.querySelector('.auto-play-text').textContent = autoPlayEnabled ? 'TẮT TỰ ĐỘNG' : 'TỰ ĐỘNG PHÁT';
+                        autoPlayBtn.querySelector('path#Rectangle-8').style.fill = autoPlayEnabled ? '#00c4b4' : '#666';
+                        autoPlayBtn.querySelector('circle#Oval-2').setAttribute('cx', autoPlayEnabled ? '16.5' : '7.5');
+                    });
+                }
+
+                video.addEventListener('ended', () => {
+                    if (autoPlayEnabled) {
+                        const items = Array.from(document.querySelectorAll('.video-item'));
+                        const currentIndex = items.findIndex(i => i.classList.contains('video-active'));
+                        if (currentIndex !== -1 && currentIndex < items.length - 1) {
+                            const nextId = items[currentIndex + 1].getAttribute('data-video-id');
+                            window.location.href = `/Video/VideoMV?videoId=${nextId}`;
+                        }
+                    }
+                });
+            });
+        </script>
+    }
+}

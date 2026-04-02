@@ -1,19 +1,15 @@
-﻿@model IEnumerable<System_Music.Models.SqlModels.Artist>
+@using System_Music.Models.DTOs
+@model IEnumerable<ArtistDto>
 
 @{
-    ViewData["Title"] = "Artists";
+    ViewData["Title"] = "Manage Artists";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
-<h2>Artists</h2>
+<h1 class="mt-4">Manage Artists</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Create New Artist
-    </a>
-    <a asp-action="SyncFromZingMp3" class="btn btn-success">
-        <i class="bi bi-cloud-download"></i> Sync from Zing MP3
-    </a>
+    <a asp-action="Create" class="btn btn-primary">Create New Artist</a>
 </p>
 
 <table class="table table-striped">
@@ -22,7 +18,7 @@
             <th>Image</th>
             <th>Name</th>
             <th>Country</th>
-            <th>Zing MP3 Artist ID</th>
+            <th>Zing ID</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -31,28 +27,15 @@
         {
             <tr>
                 <td>
-                    @if (!string.IsNullOrEmpty(artist.Image))
-                    {
-                        <img src="@artist.Image" alt="@artist.Name" style="max-width: 50px; max-height: 50px;" class="rounded-circle" />
-                    }
-                    else
-                    {
-                        <span>No Image</span>
-                    }
+                    <img src="@artist.ImageUrl" alt="@artist.Name" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;" onerror="this.src='/images/default-artist.png'" />
                 </td>
                 <td>@artist.Name</td>
                 <td>@artist.Country</td>
                 <td>@artist.ZingMp3ArtistId</td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@artist.ArtistId" class="btn btn-info btn-sm">
-                        <i class="bi bi-eye"></i> Details
-                    </a>
-                    <a asp-action="Edit" asp-route-id="@artist.ArtistId" class="btn btn-warning btn-sm">
-                        <i class="bi bi-pencil-square"></i> Edit
-                    </a>
-                    <a asp-action="Delete" asp-route-id="@artist.ArtistId" class="btn btn-danger btn-sm">
-                        <i class="bi bi-trash"></i> Delete
-                    </a>
+                    <a asp-action="Details" asp-route-id="@artist.ArtistId" class="btn btn-info btn-sm">Details</a>
+                    <a asp-action="Edit" asp-route-id="@artist.ArtistId" class="btn btn-warning btn-sm">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@artist.ArtistId" class="btn btn-danger btn-sm">Delete</a>
                 </td>
             </tr>
         }

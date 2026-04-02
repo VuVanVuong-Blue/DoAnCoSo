@@ -1,12 +1,16 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System_Music.Models.SqlModels;
+using System_Music.Models.DTOs;
 using System_Music.Services.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
 
 namespace System_Music.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Policy = "Admin")] // Sử dụng chính sách "Admin" thay vì Roles
+    [Authorize(Roles = "Admin")]
     public class GenreController : Controller
     {
         private readonly IGenreService _genreService;
@@ -24,18 +28,18 @@ namespace System_Music.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            return View(new GenreDto());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Genre genre)
+        public async Task<IActionResult> Create(GenreDto genreDto)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    await _genreService.AddGenreAsync(genre);
+                    await _genreService.AddGenreAsync(genreDto);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -43,15 +47,15 @@ namespace System_Music.Areas.Admin.Controllers
                     ModelState.AddModelError(string.Empty, ex.Message);
                 }
             }
-            return View(genre);
+            return View(genreDto);
         }
 
         public async Task<IActionResult> Edit(int id)
         {
             try
             {
-                var genre = await _genreService.GetGenreByIdAsync(id);
-                return View(genre);
+                var genreDto = await _genreService.GetGenreByIdAsync(id);
+                return View(genreDto); 
             }
             catch (KeyNotFoundException)
             {
@@ -61,45 +65,44 @@ namespace System_Music.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Genre genre)
+        public async Task<IActionResult> Edit(int id, GenreDto genreDto)
         {
-            Console.WriteLine($"[DEBUG] Edit POST được gọi với id = {id}, genre.GenreId = {genre.GenreId}, Name = {genre.Name}");
-
-            if (id != genre.GenreId)
-            {
-                Console.WriteLine("[DEBUG] ID không khớp, trả về NotFound()");
-                return NotFound();
-            }
+            if (id != genreDto.GenreId) return NotFound();
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    Console.WriteLine($"[DEBUG] Updating Genre: {genre.Description}");
-                    await _genreService.UpdateGenreAsync(genre);
-                    Console.WriteLine("[DEBUG] Gọi UpdateGenreAsync thành công");
+                    await _genreService.UpdateGenreAsync(genreDto);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[ERROR] Lỗi khi gọi UpdateGenreAsync: {ex.Message}");
                     ModelState.AddModelError(string.Empty, ex.Message);
                 }
             }
-            else
-            {
-                Console.WriteLine("[DEBUG] ModelState không hợp lệ");
-            }
+            return View(genreDto);
+        }
 
-            return View(genre);
+        public async Task<IActionResult> Details(int id)
+        {
+            try
+            {
+                var genreDto = await _genreService.GetGenreWithDetailsAsync(id);
+                return View(genreDto);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
         }
 
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                var genre = await _genreService.GetGenreByIdAsync(id);
-                return View(genre);
+                var genreDto = await _genreService.GetGenreByIdAsync(id);
+                return View(genreDto);
             }
             catch (KeyNotFoundException)
             {
@@ -119,21 +122,8 @@ namespace System_Music.Areas.Admin.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                var genre = await _genreService.GetGenreByIdAsync(id);
-                return View(genre);
-            }
-        }
-
-        public async Task<IActionResult> Details(int id)
-        {
-            try
-            {
-                var genre = await _genreService.GetGenreByIdAsync(id);
-                return View(genre);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
+                var genreDto = await _genreService.GetGenreByIdAsync(id);
+                return View(genreDto);
             }
         }
 
@@ -142,7 +132,7 @@ namespace System_Music.Areas.Admin.Controllers
         {
             try
             {
-                IEnumerable<Genre> genres;
+                IEnumerable<GenreDto> genres;
                 if (refresh)
                 {
                     genres = await _genreService.SyncGenresFromZingMp3Async();
@@ -155,8 +145,7 @@ namespace System_Music.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[ERROR] Error syncing genres from Zing MP3: {ex.Message}");
-                TempData["Error"] = "Failed to sync genres from Zing MP3. Please try again later.";
+                TempData["Error"] = $"Failed to sync genres: {ex.Message}";
                 return RedirectToAction(nameof(Index));
             }
         }

@@ -1,7 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System_Music.Models.SqlModels;
+using System_Music.Models.DTOs;
 using System_Music.Services.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
+using Microsoft.AspNetCore.Http;
+using System.Linq;
 
 namespace System_Music.Areas.Admin.Controllers
 {
@@ -10,10 +16,12 @@ namespace System_Music.Areas.Admin.Controllers
     public class ArtistController : Controller
     {
         private readonly IArtistService _artistService;
+        private readonly IMediaService _mediaService;
 
-        public ArtistController(IArtistService artistService)
+        public ArtistController(IArtistService artistService, IMediaService mediaService)
         {
             _artistService = artistService;
+            _mediaService = mediaService;
         }
 
         public async Task<IActionResult> Index()
@@ -24,104 +32,69 @@ namespace System_Music.Areas.Admin.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            var artist = await _artistService.GetArtistByIdAsync(id);
-            if (artist == null)
-            {
-                return NotFound();
-            }
-            return View(artist);
+            var artistDto = await _artistService.GetArtistByIdAsync(id);
+            if (artistDto == null) return NotFound();
+            return View(artistDto);
         }
 
         public IActionResult Create()
         {
-            return View();
+            return View(new ArtistDto());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Artist artist, IFormFile? ImageFile, string ImageUrl)
+        public async Task<IActionResult> Create(ArtistDto artistDto, IFormFile? ImageFile, string ImageUrl)
         {
-            Console.WriteLine($"Artist name: {artist.Name}");
-            Console.WriteLine($"ImageUrl: {ImageUrl}");
-            Console.WriteLine($"ImageFile: {(ImageFile != null ? ImageFile.FileName : "NULL")}");
-
             if (!string.IsNullOrWhiteSpace(ImageUrl))
             {
-                artist.Image = ImageUrl;
+                artistDto.ImageUrl = ImageUrl;
             }
             else if (ImageFile != null && ImageFile.Length > 0)
             {
-                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/artists");
-                Console.WriteLine($"Upload folder: {uploadsFolder}");
-
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
-
-                var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(ImageFile.FileName)}";
-                var filePath = Path.Combine(uploadsFolder, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await ImageFile.CopyToAsync(stream);
-                }
-
-                artist.Image = $"/images/artists/{fileName}";
+                artistDto.ImageUrl = await _mediaService.UploadFileAsync(ImageFile, "images/artists");
             }
 
             if (ModelState.IsValid)
             {
-                await _artistService.AddArtistAsync(artist);
+                await _artistService.AddArtistAsync(artistDto);
                 return RedirectToAction(nameof(Index));
             }
 
-            foreach (var modelState in ModelState)
-            {
-                foreach (var error in modelState.Value.Errors)
-                {
-                    Console.WriteLine($"ModelState error in {modelState.Key}: {error.ErrorMessage}");
-                }
-            }
-
-            return View(artist);
+            return View(artistDto);
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var artist = await _artistService.GetArtistByIdAsync(id);
-            if (artist == null)
-            {
-                return NotFound();
-            }
-            return View(artist);
+            var artistDto = await _artistService.GetArtistByIdAsync(id);
+            if (artistDto == null) return NotFound();
+            return View(artistDto);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Artist artist)
+        public async Task<IActionResult> Edit(int id, ArtistDto artistDto, IFormFile? ImageFile)
         {
-            if (id != artist.ArtistId)
+            if (id != artistDto.ArtistId) return NotFound();
+
+            if (ImageFile != null && ImageFile.Length > 0)
             {
-                return NotFound();
+                artistDto.ImageUrl = await _mediaService.UploadFileAsync(ImageFile, "images/artists");
             }
 
             if (ModelState.IsValid)
             {
-                await _artistService.UpdateArtistAsync(artist);
+                await _artistService.UpdateArtistAsync(artistDto);
                 return RedirectToAction(nameof(Index));
             }
-            return View(artist);
+            return View(artistDto);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            var artist = await _artistService.GetArtistByIdAsync(id);
-            if (artist == null)
-            {
-                return NotFound();
-            }
-            return View(artist);
+            var artistDto = await _artistService.GetArtistByIdAsync(id);
+            if (artistDto == null) return NotFound();
+            return View(artistDto);
         }
 
         [HttpPost, ActionName("Delete")]
@@ -137,7 +110,7 @@ namespace System_Music.Areas.Admin.Controllers
         {
             try
             {
-                IEnumerable<Artist> artists;
+                IEnumerable<ArtistDto> artists;
                 if (!string.IsNullOrEmpty(artistName) || !string.IsNullOrEmpty(artistId))
                 {
                     ViewData["ArtistName"] = artistName;
@@ -152,7 +125,6 @@ namespace System_Music.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[ERROR] Error syncing artists from Zing MP3: {ex.Message}");
                 TempData["Error"] = "Failed to sync artists from Zing MP3. Please try again later.";
                 return RedirectToAction(nameof(Index));
             }

@@ -1,4 +1,4 @@
-﻿using System_Music.Models.SqlModels;
+using System_Music.Models.SqlModels;
 
 namespace System_Music.Repositories.Interfaces
 {
@@ -7,5 +7,6 @@ namespace System_Music.Repositories.Interfaces
         Task DeleteAsync(string id);
         Task<User> GetByEmailAsync(string email);
         Task<User> GetByIdAsync(string id);
+        Task<User> GetByRefreshTokenAsync(string refreshToken);
     }
 }

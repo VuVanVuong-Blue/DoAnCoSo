@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System_Music.Models.SqlModels;
 using System_Music.Repositories.Interfaces;
 
@@ -32,7 +32,6 @@ namespace System_Music.Repositories.Implementations
         public async Task AddAsync(TrackGenre trackGenre)
         {
             await _context.TrackGenres.AddAsync(trackGenre);
-            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int trackId, int genreId)
@@ -42,7 +41,6 @@ namespace System_Music.Repositories.Implementations
             if (trackGenre != null)
             {
                 _context.TrackGenres.Remove(trackGenre);
-                await _context.SaveChangesAsync();
             }
         }
 

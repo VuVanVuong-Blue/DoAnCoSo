@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System_Music.Models;
 using System_Music.Services.Implementations;
 using System_Music.Services.Interfaces;
 using System_Music.Models.ViewModels;
-public class PaymentController : Controller
+namespace System_Music.Controllers.Web
+{
+    public class PaymentController : Controller
 {
     private IMomoService _momoService;
     public PaymentController(IMomoService momoService)
@@ -39,4 +41,5 @@ public class PaymentController : Controller
     }
 
 
+    }
 }

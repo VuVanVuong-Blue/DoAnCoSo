@@ -1,4 +1,4 @@
-﻿@model System_Music.Models.SqlModels.Genre
+@model System_Music.Models.DTOs.GenreDto
 
 @{
     ViewData["Title"] = "Genre Details";
@@ -32,12 +32,12 @@
             Tracks
         </dt>
         <dd class="col-sm-10">
-            @if (Model.TrackGenres != null && Model.TrackGenres.Any())
+            @if (Model.Tracks != null && Model.Tracks.Any())
             {
                 <ul>
-                    @foreach (var trackGenre in Model.TrackGenres)
+                    @foreach (var track in Model.Tracks)
                     {
-                        <li>@trackGenre.Track?.Title</li>
+                        <li>@track.Title</li>
                     }
                 </ul>
             }

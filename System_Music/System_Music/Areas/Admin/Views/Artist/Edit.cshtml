@@ -1,56 +1,56 @@
-﻿@model System_Music.Models.SqlModels.Artist
+@using System_Music.Models.DTOs
+@model ArtistDto
 
 @{
     ViewData["Title"] = "Edit Artist";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
-<h2>Edit Artist</h2>
+<h1 class="mt-4">Edit Artist</h1>
 
-<form asp-action="Edit" method="post">
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="ArtistId" />
 
-    <div class="form-group">
+    <div class="form-group mb-3">
         <label asp-for="Name" class="control-label"></label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="Image" class="control-label"></label>
-        <input asp-for="Image" class="form-control" placeholder="Enter image URL (e.g., https://example.com/artist.jpg)" />
-        <span asp-validation-for="Image" class="text-danger"></span>
-        @if (!string.IsNullOrEmpty(Model.Image))
+    <div class="form-group mb-3">
+        <label class="control-label">Artist Image</label>
+        <input type="text" asp-for="ImageUrl" class="form-control mb-2" placeholder="Image URL" />
+        <input type="file" name="ImageFile" class="form-control" />
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
         {
-            <div class="mt-2">
-                <img src="@Model.Image" alt="Artist Image" style="max-width: 200px;" />
+            <div class="mt-2 text-center">
+                <img src="@Model.ImageUrl" alt="Artist Image" style="max-width: 200px; border-radius: 8px;" onerror="this.src='/images/default-artist.png'" />
             </div>
         }
     </div>
 
-    <div class="form-group">
+    <div class="form-group mb-3">
         <label asp-for="Country" class="control-label"></label>
         <input asp-for="Country" class="form-control" />
         <span asp-validation-for="Country" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="Bio" class="control-label"></label>
-        <textarea asp-for="Bio" class="form-control"></textarea>
-        <span asp-validation-for="Bio" class="text-danger"></span>
+    <div class="form-group mb-3">
+        <label asp-for="Biography" class="control-label"></label>
+        <textarea asp-for="Biography" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Biography" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
+    <div class="form-group mb-3">
         <label asp-for="BirthDate" class="control-label"></label>
         <input asp-for="BirthDate" class="form-control" type="date" />
         <span asp-validation-for="BirthDate" class="text-danger"></span>
     </div>
 
-    <div class="form-group form-check">
-        <label class="form-check-label">
-            <input class="form-check-input" asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)
-        </label>
+    <div class="form-group form-check mb-3">
+        <input class="form-check-input" asp-for="IsActive" /> 
+        <label class="form-check-label" asp-for="IsActive">Active</label>
     </div>
 
     <div class="form-group">
